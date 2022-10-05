@@ -4,14 +4,20 @@ namespace ConventionalReleaseNotes;
 
 public class Changelog
 {
-    public static string From(string? o)
+    public static string From(params string?[] o)
     {
         var changelog = "# Changelog" + NewLine;
-        if (o?.Contains("feat: ") is true)
+        foreach (var commitMessage in o)
         {
-            changelog += NewLine;
-            changelog += "## Features" + NewLine + NewLine;
-            changelog += o.Replace("feat: ", "- ");
+            if (commitMessage?.Contains("feat: ") is true)
+            {
+                if (!changelog.Contains("## Features"))
+                {
+                    changelog += NewLine;
+                    changelog += "## Features" + NewLine + NewLine;
+                }
+                changelog += commitMessage.Replace("feat: ", "- ");
+            }
         }
         return changelog;
     }
