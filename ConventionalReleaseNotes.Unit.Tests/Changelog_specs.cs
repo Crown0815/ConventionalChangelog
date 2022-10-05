@@ -1,6 +1,6 @@
-using System;
 using Shouldly;
 using Xunit;
+using static System.Environment;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 
@@ -10,7 +10,8 @@ public class Changelog_specs
     private const string FeaturesHeader = "## Features";
     private const string BulletPoint = "- ";
 
-    private static readonly string EmptyChangeLog = ChangelogHeader + Environment.NewLine;
+    private static readonly string EmptyChangeLog = ChangelogHeader + NewLine;
+    private static readonly string HeaderSeparator = NewLine + NewLine;
 
     [Theory]
     [InlineData("")]
@@ -35,9 +36,9 @@ public class Changelog_specs
     {
         var featureCommit = Feature("New Feature");
         var changelog = Changelog.From(featureCommit);
-        changelog.ShouldBe(ChangelogHeader+Environment.NewLine+Environment.NewLine+
-                           FeaturesHeader+Environment.NewLine+Environment.NewLine+
-                           BulletPoint+"New Feature");
+        changelog.ShouldBe(ChangelogHeader + HeaderSeparator +
+                           FeaturesHeader + HeaderSeparator +
+                           BulletPoint + "New Feature");
     }
 
     [Fact]
@@ -46,10 +47,10 @@ public class Changelog_specs
         var featureCommit1 = Feature("New Feature1");
         var featureCommit2 = Feature("New Feature2");
         var changelog = Changelog.From(featureCommit1, featureCommit2);
-        changelog.ShouldBe(ChangelogHeader+Environment.NewLine+Environment.NewLine+
-                           FeaturesHeader+Environment.NewLine+Environment.NewLine+
-                           BulletPoint+"New Feature1"+
-                           BulletPoint+"New Feature2");
+        changelog.ShouldBe(ChangelogHeader + HeaderSeparator +
+                           FeaturesHeader + HeaderSeparator +
+                           BulletPoint + "New Feature1" +
+                           BulletPoint + "New Feature2");
     }
 
     private static string Feature(string featureSummary) => "feat: " + featureSummary;
