@@ -4,29 +4,36 @@ namespace ConventionalReleaseNotes;
 
 public class Changelog
 {
+    private const string BulletPoint = "- ";
+    private const string ChangelogTitle = "# Changelog";
+
     public static string From(params string?[] o)
     {
-        var changelog = "# Changelog" + NewLine;
+        var changelog = ChangelogTitle + NewLine;
         foreach (var commitMessage in o)
         {
-            if (commitMessage?.Contains("feat: ") is true)
+            var prefix = "feat: ";
+            var header = "## Features";
+            if (commitMessage?.Contains(prefix) is true)
             {
-                if (!changelog.Contains("## Features"))
+                if (!changelog.Contains(header))
                 {
                     changelog += NewLine;
-                    changelog += "## Features" + NewLine + NewLine;
+                    changelog += header + NewLine + NewLine;
                 }
-                changelog += commitMessage.Replace("feat: ", "- ");
+                changelog += commitMessage.Replace(prefix, BulletPoint);
             }
 
-            if (commitMessage?.Contains("fix: ") is true)
+            prefix = "fix: ";
+            header = "## Bug Fixes";
+            if (commitMessage?.Contains(prefix) is true)
             {
-                if (!changelog.Contains("## Bug Fixes"))
+                if (!changelog.Contains(header))
                 {
                     changelog += NewLine;
-                    changelog += "## Bug Fixes" + NewLine + NewLine;
+                    changelog += header + NewLine + NewLine;
                 }
-                changelog += commitMessage.Replace("fix: ", "- ");
+                changelog += commitMessage.Replace(prefix, BulletPoint);
             }
         }
         return changelog;
