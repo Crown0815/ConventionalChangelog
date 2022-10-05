@@ -1,13 +1,16 @@
+using static System.Environment;
+
 namespace ConventionalReleaseNotes;
 
 public class Changelog
 {
     public static string From(string? o)
     {
-        var changelog = "# Changelog" + Environment.NewLine;
+        var changelog = "# Changelog" + NewLine;
         if (o?.Contains("feat: ") is true)
         {
-            changelog += "## Features" + Environment.NewLine + Environment.NewLine;
+            changelog += NewLine;
+            changelog += "## Features" + NewLine + NewLine;
             changelog += o.Replace("feat: ", "- ");
         }
         return changelog;

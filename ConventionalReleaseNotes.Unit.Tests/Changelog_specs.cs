@@ -35,7 +35,7 @@ public class Changelog_specs
     {
         const string featureCommit = "feat: New Feature";
         var changelog = Changelog.From(featureCommit);
-        changelog.ShouldBe(ChangelogHeader+Environment.NewLine+
+        changelog.ShouldBe(ChangelogHeader+Environment.NewLine+Environment.NewLine+
                            FeaturesHeader+Environment.NewLine+Environment.NewLine+
                            BulletPoint+"New Feature");
     }
