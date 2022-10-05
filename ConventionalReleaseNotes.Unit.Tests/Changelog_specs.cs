@@ -14,6 +14,9 @@ public class Changelog_specs
     private static readonly string EmptyChangeLog = ChangelogHeader + NewLine;
     private static readonly string HeaderSeparator = NewLine + NewLine;
 
+    private static string Feature(string summary) => "feat: " + summary;
+    private static string Bugfix(string summary) => "fix: " + summary;
+
     [Theory]
     [InlineData("")]
     [InlineData(null)]
@@ -63,7 +66,4 @@ public class Changelog_specs
                            BugFixesHeader + HeaderSeparator +
                            BulletPoint + "New Fix");
     }
-
-    private static string Feature(string summary) => "feat: " + summary;
-    private static string Bugfix(string summary) => "fix: " + summary;
 }
