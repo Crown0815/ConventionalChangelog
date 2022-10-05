@@ -18,6 +18,16 @@ public class Changelog
                 }
                 changelog += commitMessage.Replace("feat: ", "- ");
             }
+
+            if (commitMessage?.Contains("fix: ") is true)
+            {
+                if (!changelog.Contains("## Bug Fixes"))
+                {
+                    changelog += NewLine;
+                    changelog += "## Bug Fixes" + NewLine + NewLine;
+                }
+                changelog += commitMessage.Replace("fix: ", "- ");
+            }
         }
         return changelog;
     }

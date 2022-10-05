@@ -9,6 +9,7 @@ public class Changelog_specs
     private const string ChangelogHeader = "# Changelog";
     private const string FeaturesHeader = "## Features";
     private const string BulletPoint = "- ";
+    private const string BugFixesHeader = "## Bug Fixes";
 
     private static readonly string EmptyChangeLog = ChangelogHeader + NewLine;
     private static readonly string HeaderSeparator = NewLine + NewLine;
@@ -53,5 +54,16 @@ public class Changelog_specs
                            BulletPoint + "New Feature2");
     }
 
-    private static string Feature(string featureSummary) => "feat: " + featureSummary;
+    [Fact]
+    public void A_changelog_from_a_fix_is_the_changelog_header_plus_a_feature_group_containing_the_feature()
+    {
+        var featureCommit = Bugfix("New Fix");
+        var changelog = Changelog.From(featureCommit);
+        changelog.ShouldBe(ChangelogHeader + HeaderSeparator +
+                           BugFixesHeader + HeaderSeparator +
+                           BulletPoint + "New Fix");
+    }
+
+    private static string Feature(string summary) => "feat: " + summary;
+    private static string Bugfix(string summary) => "fix: " + summary;
 }
