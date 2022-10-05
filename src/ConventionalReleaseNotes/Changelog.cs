@@ -12,30 +12,30 @@ public class Changelog
         var changelog = ChangelogTitle + NewLine;
         foreach (var commitMessage in o)
         {
-            var prefix = "feat: ";
-            var header = "## Features";
-            if (commitMessage?.Contains(prefix) is true)
+            var change = new ChangeType("feat: ", "## Features");
+            if (commitMessage?.Contains(change.Prefix) is true)
             {
-                if (!changelog.Contains(header))
+                if (!changelog.Contains(change.Header))
                 {
                     changelog += NewLine;
-                    changelog += header + NewLine + NewLine;
+                    changelog += change.Header + NewLine + NewLine;
                 }
-                changelog += commitMessage.Replace(prefix, BulletPoint);
+                changelog += commitMessage.Replace(change.Prefix, BulletPoint);
             }
 
-            prefix = "fix: ";
-            header = "## Bug Fixes";
-            if (commitMessage?.Contains(prefix) is true)
+            change = new ChangeType("fix: ", "## Bug Fixes");
+            if (commitMessage?.Contains(change.Prefix) is true)
             {
-                if (!changelog.Contains(header))
+                if (!changelog.Contains(change.Header))
                 {
                     changelog += NewLine;
-                    changelog += header + NewLine + NewLine;
+                    changelog += change.Header + NewLine + NewLine;
                 }
-                changelog += commitMessage.Replace(prefix, BulletPoint);
+                changelog += commitMessage.Replace(change.Prefix, BulletPoint);
             }
         }
         return changelog;
     }
+
+    private record ChangeType(string Prefix, string Header);
 }
