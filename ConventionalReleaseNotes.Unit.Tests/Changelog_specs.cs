@@ -33,7 +33,7 @@ public class Changelog_specs
     [Fact]
     public void A_changelog_from_a_feature_is_the_changelog_header_plus_a_feature_group_containing_the_feature()
     {
-        const string featureCommit = "feat: New Feature";
+        var featureCommit = Feature("New Feature");
         var changelog = Changelog.From(featureCommit);
         changelog.ShouldBe(ChangelogHeader+Environment.NewLine+Environment.NewLine+
                            FeaturesHeader+Environment.NewLine+Environment.NewLine+
@@ -43,12 +43,14 @@ public class Changelog_specs
     [Fact]
     public void A_changelog_from_multiple_features_is_the_changelog_header_plus_a_feature_group_containing_the_features()
     {
-        const string featureCommit1 = "feat: New Feature1";
-        const string featureCommit2 = "feat: New Feature2";
+        var featureCommit1 = Feature("New Feature1");
+        var featureCommit2 = Feature("New Feature2");
         var changelog = Changelog.From(featureCommit1, featureCommit2);
         changelog.ShouldBe(ChangelogHeader+Environment.NewLine+Environment.NewLine+
                            FeaturesHeader+Environment.NewLine+Environment.NewLine+
                            BulletPoint+"New Feature1"+
                            BulletPoint+"New Feature2");
     }
+
+    private static string Feature(string featureSummary) => "feat: " + featureSummary;
 }
