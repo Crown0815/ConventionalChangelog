@@ -8,6 +8,7 @@ public class Changelog_specs
 {
     private const string ChangelogHeader = "# Changelog";
     private const string FeaturesHeader = "## Features";
+    private const string BulletPoint = "- ";
 
     private static readonly string EmptyChangeLog = ChangelogHeader + Environment.NewLine;
 
@@ -36,6 +37,6 @@ public class Changelog_specs
         var changelog = Changelog.From(featureCommit);
         changelog.ShouldBe(ChangelogHeader+Environment.NewLine+
                            FeaturesHeader+Environment.NewLine+Environment.NewLine+
-                           "- New Feature");
+                           BulletPoint+"New Feature");
     }
 }
