@@ -14,15 +14,14 @@ public class Changelog
         {
             foreach (var change in new ChangeType[]{new("feat: ", "## Features"), new("fix: ", "## Bug Fixes")})
             {
-                if (commitMessage?.Contains(change.Prefix) is true)
+                if (commitMessage?.Contains(change.Prefix) is not true) continue;
+
+                if (!changelog.Contains(change.Header))
                 {
-                    if (!changelog.Contains(change.Header))
-                    {
-                        changelog += NewLine;
-                        changelog += change.Header + NewLine + NewLine;
-                    }
-                    changelog += commitMessage.Replace(change.Prefix, BulletPoint);
+                    changelog += NewLine;
+                    changelog += change.Header + NewLine + NewLine;
                 }
+                changelog += commitMessage.Replace(change.Prefix, BulletPoint);
             }
         }
         return changelog;
