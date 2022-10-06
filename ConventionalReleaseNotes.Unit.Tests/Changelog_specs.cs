@@ -20,7 +20,9 @@ public class Changelog_specs
 
     [Theory]
     [InlineData(null)]
-    public void A_changelog_from_null_throws_null_exception(string @null)
+    [InlineData(new object[]{new string[]{null!}})]
+    [InlineData(new object[]{new string[]{null!, null!}})]
+    public void A_changelog_from_null_throws_null_exception(string[] @null)
     {
         Action fromNull = () => Changelog.From(@null);
         fromNull.Should().Throw<NullReferenceException>();
