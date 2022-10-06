@@ -6,9 +6,9 @@ public class Changelog
 {
     private static readonly ChangeType[] ChangeTypes =
     {
-        new("feat: ", "## Features"),
-        new("fix: ", "## Bug Fixes"),
-        new("perf: ", "## Performance Improvements")
+        new("feat: ", "Features"),
+        new("fix: ", "Bug Fixes"),
+        new("perf: ", "Performance Improvements")
     };
 
     private const string BulletPoint = "- ";
@@ -26,13 +26,15 @@ public class Changelog
                 if (!changelog.Contains(change.Header))
                 {
                     changelog += NewLine;
-                    changelog += change.Header + NewLine + NewLine;
+                    changelog += ChangeGroupHeader(change.Header) + NewLine + NewLine;
                 }
                 changelog += commitMessage.Replace(change.Prefix, BulletPoint);
             }
         }
         return changelog;
     }
+
+    private static string ChangeGroupHeader(string header) => $"## {header}";
 
     private record ChangeType(string Prefix, string Header);
 }
