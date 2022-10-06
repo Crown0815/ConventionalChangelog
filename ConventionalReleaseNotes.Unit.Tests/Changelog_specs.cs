@@ -27,8 +27,10 @@ public class Changelog_specs
     }
 
     [Theory]
+    [InlineData]
     [InlineData("")]
-    public void A_changelog_with_no_changes_is_just_the_changelog_header(string noChanges)
+    [InlineData("", "")]
+    public void A_changelog_with_no_changes_is_just_the_changelog_header(params string[] noChanges)
     {
         var changelog = Changelog.From(noChanges);
         changelog.Should().Be(EmptyChangeLog);
