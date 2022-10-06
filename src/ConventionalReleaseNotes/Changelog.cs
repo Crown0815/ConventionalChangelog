@@ -4,6 +4,13 @@ namespace ConventionalReleaseNotes;
 
 public class Changelog
 {
+    private static readonly ChangeType[] ChangeTypes =
+    {
+        new("feat: ", "## Features"),
+        new("fix: ", "## Bug Fixes"),
+        new("perf: ", "## Performance Improvements")
+    };
+
     private const string BulletPoint = "- ";
     private const string ChangelogTitle = "# Changelog";
 
@@ -12,7 +19,7 @@ public class Changelog
         var changelog = ChangelogTitle + NewLine;
         foreach (var commitMessage in o)
         {
-            foreach (var change in new ChangeType[]{new("feat: ", "## Features"), new("fix: ", "## Bug Fixes"), new("perf: ", "## Performance Improvements")})
+            foreach (var change in ChangeTypes)
             {
                 if (commitMessage.Contains(change.Prefix) is not true) continue;
 
