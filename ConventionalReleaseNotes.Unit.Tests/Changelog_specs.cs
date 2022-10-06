@@ -32,7 +32,7 @@ public class Changelog_specs
     [InlineData]
     [InlineData("")]
     [InlineData("", "")]
-    public void A_changelog_with_no_changes_is_just_the_changelog_header(params string[] noChanges)
+    public void A_changelog_from_no_changes_is_empty(params string[] noChanges)
     {
         var changelog = Changelog.From(noChanges);
         changelog.Should().Be(EmptyChangeLog);
@@ -41,7 +41,7 @@ public class Changelog_specs
     [Theory]
     [InlineData("some message")]
     [InlineData("1234: abc")]
-    public void A_changelog_from_non_conventional_commits_is_just_the_changelog_header(string nonConventionalCommits)
+    public void A_changelog_from_non_conventional_commits_is_empty(string nonConventionalCommits)
     {
         var changelog = Changelog.From(nonConventionalCommits);
         changelog.Should().Be(EmptyChangeLog);
