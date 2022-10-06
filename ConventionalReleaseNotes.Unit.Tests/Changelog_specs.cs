@@ -42,27 +42,29 @@ public class Changelog_specs
         changelog.Should().Be(EmptyChangeLog);
     }
 
+
+
     private static string Conventional(string type, string summary) => $"{type}: {summary}";
     private static string Level2(string header) => $"## {header}";
 
     public static readonly object[][] VisibleConventionalCommitTypes =
     {
-        new object[]{"feat", "Features"},
-        new object[]{"fix", "Bug Fixes"},
-        new object[]{"perf", "Performance Improvements"},
+        new object[]{new ConventionalCommitType("feat", "Features")},
+        new object[]{new ConventionalCommitType("fix", "Bug Fixes")},
+        new object[]{new ConventionalCommitType("perf", "Performance Improvements")},
     };
 
     [Theory]
     [MemberData(nameof(VisibleConventionalCommitTypes))]
-    public void A_changelog_from_multiple_conventional_commits_is_the_changelog_header_plus_a_group_containing_the_descriptions(string type, string header)
+    public void A_changelog_from_multiple_conventional_commits_is_the_changelog_header_plus_a_group_containing_the_descriptions(ConventionalCommitType type)
     {
         var description1 = "Some Description1";
         var description2 = "Some Description2";
-        var featureCommit1 = Conventional(type, description1);
-        var featureCommit2 = Conventional(type, description2);
+        var featureCommit1 = Conventional(type.Indicator, description1);
+        var featureCommit2 = Conventional(type.Indicator, description2);
         var changelog = Changelog.From(featureCommit1, featureCommit2);
         changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                              Level2(header) + HeaderSeparator +
+                              Level2(type.Header) + HeaderSeparator +
                               BulletPoint + description1 +
                               BulletPoint + description2);
     }
