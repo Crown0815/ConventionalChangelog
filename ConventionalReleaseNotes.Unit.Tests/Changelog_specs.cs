@@ -1,4 +1,4 @@
-using Shouldly;
+using FluentAssertions;
 using Xunit;
 using static System.Environment;
 
@@ -23,7 +23,7 @@ public class Changelog_specs
     public void A_changelog_with_no_changes_is_just_the_changelog_header(string noChanges)
     {
         var changelog = Changelog.From(noChanges);
-        changelog.ShouldBe(EmptyChangeLog);
+        changelog.Should().Be(EmptyChangeLog);
     }
 
     [Theory]
@@ -32,7 +32,7 @@ public class Changelog_specs
     public void A_changelog_from_non_conventional_commits_is_just_the_changelog_header(string nonConventionalCommits)
     {
         var changelog = Changelog.From(nonConventionalCommits);
-        changelog.ShouldBe(EmptyChangeLog);
+        changelog.Should().Be(EmptyChangeLog);
     }
 
     [Fact]
@@ -40,9 +40,9 @@ public class Changelog_specs
     {
         var featureCommit = Feature("New Feature");
         var changelog = Changelog.From(featureCommit);
-        changelog.ShouldBe(ChangelogHeader + HeaderSeparator +
-                           FeaturesHeader + HeaderSeparator +
-                           BulletPoint + "New Feature");
+        changelog.Should().Be(ChangelogHeader + HeaderSeparator +
+                              FeaturesHeader + HeaderSeparator +
+                              BulletPoint + "New Feature");
     }
 
     [Fact]
@@ -51,10 +51,10 @@ public class Changelog_specs
         var featureCommit1 = Feature("New Feature1");
         var featureCommit2 = Feature("New Feature2");
         var changelog = Changelog.From(featureCommit1, featureCommit2);
-        changelog.ShouldBe(ChangelogHeader + HeaderSeparator +
-                           FeaturesHeader + HeaderSeparator +
-                           BulletPoint + "New Feature1" +
-                           BulletPoint + "New Feature2");
+        changelog.Should().Be(ChangelogHeader + HeaderSeparator +
+                              FeaturesHeader + HeaderSeparator +
+                              BulletPoint + "New Feature1" +
+                              BulletPoint + "New Feature2");
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public class Changelog_specs
     {
         var featureCommit = Bugfix("New Fix");
         var changelog = Changelog.From(featureCommit);
-        changelog.ShouldBe(ChangelogHeader + HeaderSeparator +
-                           BugFixesHeader + HeaderSeparator +
-                           BulletPoint + "New Fix");
+        changelog.Should().Be(ChangelogHeader + HeaderSeparator +
+                              BugFixesHeader + HeaderSeparator +
+                              BulletPoint + "New Fix");
     }
 }
