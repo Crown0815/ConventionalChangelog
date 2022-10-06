@@ -9,21 +9,14 @@ public class Changelog_specs
 {
     private const string ChangelogHeader = "# Changelog";
     private const string BulletPoint = "- ";
-    private const string FeaturesHeader = "## Features";
-    private const string BugFixesHeader = "## Bug Fixes";
-    private const string PerformanceImprovementsHeader = "## Performance Improvements";
 
     private static readonly string EmptyChangeLog = ChangelogHeader + NewLine;
     private static readonly string HeaderSeparator = NewLine + NewLine;
 
-    private static string Feature(string summary) => "feat: " + summary;
-    private static string Bugfix(string summary) => "fix: " + summary;
-    private static string PerformanceImprovement(string summary) => "perf: " + summary;
-
     [Theory]
     [InlineData(null)]
-    [InlineData(new object[]{new string[]{null!}})]
-    [InlineData(new object[]{new string[]{null!, null!}})]
+    [InlineData(new object[] { new string[] { null! } })]
+    [InlineData(new object[] { new string[] { null!, null! } })]
     public void A_changelog_from_null_throws_null_exception(string[] @null)
     {
         Action fromNull = () => Changelog.From(@null);
@@ -49,6 +42,17 @@ public class Changelog_specs
         changelog.Should().Be(EmptyChangeLog);
     }
 
+
+    private const string FeaturesHeader = "## Features";
+    private const string BugFixesHeader = "## Bug Fixes";
+    private const string PerformanceImprovementsHeader = "## Performance Improvements";
+
+    private static string Feature(string summary) => Conventional("feat", summary);
+    private static string Bugfix(string summary) => Conventional("fix", summary);
+    private static string PerformanceImprovement(string summary) => Conventional("perf", summary);
+
+    private static string Conventional(string type, string summary) => type + ": " + summary;
+
     [Fact]
     public void A_changelog_from_a_feature_is_the_changelog_header_plus_a_feature_group_containing_the_feature()
     {
@@ -60,7 +64,8 @@ public class Changelog_specs
     }
 
     [Fact]
-    public void A_changelog_from_multiple_features_is_the_changelog_header_plus_a_feature_group_containing_the_features()
+    public void
+        A_changelog_from_multiple_features_is_the_changelog_header_plus_a_feature_group_containing_the_features()
     {
         var featureCommit1 = Feature("New Feature1");
         var featureCommit2 = Feature("New Feature2");
