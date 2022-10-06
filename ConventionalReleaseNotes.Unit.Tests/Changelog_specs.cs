@@ -8,9 +8,10 @@ namespace ConventionalReleaseNotes.Unit.Tests;
 public class Changelog_specs
 {
     private const string ChangelogHeader = "# Changelog";
-    private const string FeaturesHeader = "## Features";
     private const string BulletPoint = "- ";
+    private const string FeaturesHeader = "## Features";
     private const string BugFixesHeader = "## Bug Fixes";
+    private const string PerformanceImprovementsHeader = "## Performance Improvements";
 
     private static readonly string EmptyChangeLog = ChangelogHeader + NewLine;
     private static readonly string HeaderSeparator = NewLine + NewLine;
@@ -86,7 +87,7 @@ public class Changelog_specs
         var performanceImprovement = PerformanceImprovement("New Performance Improvement");
         var changelog = Changelog.From(performanceImprovement);
         changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                              "## Performance Improvements" + HeaderSeparator +
+                              PerformanceImprovementsHeader + HeaderSeparator +
                               BulletPoint + "New Performance Improvement");
     }
 }
