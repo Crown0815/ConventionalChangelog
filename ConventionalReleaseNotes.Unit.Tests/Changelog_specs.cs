@@ -54,18 +54,6 @@ public class Changelog_specs
 
     [Theory]
     [MemberData(nameof(VisibleConventionalCommitTypes))]
-    public void A_changelog_from_a_conventional_commit_is_the_changelog_header_plus_a_group_containing_the_description(string type, string header)
-    {
-        var description = "Some Description";
-        var featureCommit = Conventional(type, description);
-        var changelog = Changelog.From(featureCommit);
-        changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                              Level2(header) + HeaderSeparator +
-                              BulletPoint + description);
-    }
-
-    [Theory]
-    [MemberData(nameof(VisibleConventionalCommitTypes))]
     public void A_changelog_from_multiple_conventional_commits_is_the_changelog_header_plus_a_group_containing_the_descriptions(string type, string header)
     {
         var description1 = "Some Description1";
