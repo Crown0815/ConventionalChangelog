@@ -42,57 +42,40 @@ public class Changelog_specs
         changelog.Should().Be(EmptyChangeLog);
     }
 
+    private static string Conventional(string type, string summary) => $"{type}: {summary}";
+    private static string Level2(string header) => $"## {header}";
 
-    private const string FeaturesHeader = "## Features";
-    private const string BugFixesHeader = "## Bug Fixes";
-    private const string PerformanceImprovementsHeader = "## Performance Improvements";
-
-    private static string Feature(string summary) => Conventional("feat", summary);
-    private static string Bugfix(string summary) => Conventional("fix", summary);
-    private static string PerformanceImprovement(string summary) => Conventional("perf", summary);
-
-    private static string Conventional(string type, string summary) => type + ": " + summary;
-
-    [Fact]
-    public void A_changelog_from_a_feature_is_the_changelog_header_plus_a_feature_group_containing_the_feature()
+    public static readonly object[][] VisibleConventionalCommitTypes =
     {
-        var featureCommit = Feature("New Feature");
+        new object[]{"feat", "Features"},
+        new object[]{"fix", "Bug Fixes"},
+        new object[]{"perf", "Performance Improvements"},
+    };
+
+    [Theory]
+    [MemberData(nameof(VisibleConventionalCommitTypes))]
+    public void A_changelog_from_a_conventional_commit_is_the_changelog_header_plus_a_group_containing_the_description(string type, string header)
+    {
+        var description = "Some Description";
+        var featureCommit = Conventional(type, description);
         var changelog = Changelog.From(featureCommit);
         changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                              FeaturesHeader + HeaderSeparator +
-                              BulletPoint + "New Feature");
+                              Level2(header) + HeaderSeparator +
+                              BulletPoint + description);
     }
 
-    [Fact]
-    public void
-        A_changelog_from_multiple_features_is_the_changelog_header_plus_a_feature_group_containing_the_features()
+    [Theory]
+    [MemberData(nameof(VisibleConventionalCommitTypes))]
+    public void A_changelog_from_multiple_conventional_commits_is_the_changelog_header_plus_a_group_containing_the_descriptions(string type, string header)
     {
-        var featureCommit1 = Feature("New Feature1");
-        var featureCommit2 = Feature("New Feature2");
+        var description1 = "Some Description1";
+        var description2 = "Some Description2";
+        var featureCommit1 = Conventional(type, description1);
+        var featureCommit2 = Conventional(type, description2);
         var changelog = Changelog.From(featureCommit1, featureCommit2);
         changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                              FeaturesHeader + HeaderSeparator +
-                              BulletPoint + "New Feature1" +
-                              BulletPoint + "New Feature2");
-    }
-
-    [Fact]
-    public void A_changelog_from_a_fix_is_the_changelog_header_plus_a_feature_group_containing_the_feature()
-    {
-        var featureCommit = Bugfix("New Fix");
-        var changelog = Changelog.From(featureCommit);
-        changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                              BugFixesHeader + HeaderSeparator +
-                              BulletPoint + "New Fix");
-    }
-
-    [Fact]
-    public void A_changelog_from_a_perf_is_the_changelog_header_plus_a_performance_improvements_group()
-    {
-        var performanceImprovement = PerformanceImprovement("New Performance Improvement");
-        var changelog = Changelog.From(performanceImprovement);
-        changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                              PerformanceImprovementsHeader + HeaderSeparator +
-                              BulletPoint + "New Performance Improvement");
+                              Level2(header) + HeaderSeparator +
+                              BulletPoint + description1 +
+                              BulletPoint + description2);
     }
 }
