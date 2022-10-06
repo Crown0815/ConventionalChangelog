@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using Xunit;
 using static System.Environment;
@@ -18,8 +19,15 @@ public class Changelog_specs
     private static string Bugfix(string summary) => "fix: " + summary;
 
     [Theory]
-    [InlineData("")]
     [InlineData(null)]
+    public void A_changelog_from_null_throws_null_exception(string @null)
+    {
+        Action fromNull = () => Changelog.From(@null);
+        fromNull.Should().Throw<NullReferenceException>();
+    }
+
+    [Theory]
+    [InlineData("")]
     public void A_changelog_with_no_changes_is_just_the_changelog_header(string noChanges)
     {
         var changelog = Changelog.From(noChanges);
