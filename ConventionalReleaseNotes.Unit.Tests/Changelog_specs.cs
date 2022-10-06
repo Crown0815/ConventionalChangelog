@@ -17,6 +17,7 @@ public class Changelog_specs
 
     private static string Feature(string summary) => "feat: " + summary;
     private static string Bugfix(string summary) => "fix: " + summary;
+    private static string PerformanceImprovement(string summary) => "perf: " + summary;
 
     [Theory]
     [InlineData(null)]
@@ -77,5 +78,15 @@ public class Changelog_specs
         changelog.Should().Be(ChangelogHeader + HeaderSeparator +
                               BugFixesHeader + HeaderSeparator +
                               BulletPoint + "New Fix");
+    }
+
+    [Fact]
+    public void A_changelog_from_a_perf_is_the_changelog_header_plus_a_performance_improvements_group()
+    {
+        var performanceImprovement = PerformanceImprovement("New Performance Improvement");
+        var changelog = Changelog.From(performanceImprovement);
+        changelog.Should().Be(ChangelogHeader + HeaderSeparator +
+                              "## Performance Improvements" + HeaderSeparator +
+                              BulletPoint + "New Performance Improvement");
     }
 }

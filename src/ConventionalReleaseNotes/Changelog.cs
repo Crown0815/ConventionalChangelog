@@ -12,7 +12,7 @@ public class Changelog
         var changelog = ChangelogTitle + NewLine;
         foreach (var commitMessage in o)
         {
-            foreach (var change in new ChangeType[]{new("feat: ", "## Features"), new("fix: ", "## Bug Fixes")})
+            foreach (var change in new ChangeType[]{new("feat: ", "## Features"), new("fix: ", "## Bug Fixes"), new("perf: ", "## Performance Improvements")})
             {
                 if (commitMessage.Contains(change.Prefix) is not true) continue;
 
