@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using static System.Environment;
 
 namespace ConventionalReleaseNotes;
@@ -11,17 +12,19 @@ public class Changelog
         new("perf: ", "Performance Improvements"),
     };
 
+
     private const string BulletPoint = "- ";
     private const string ChangelogTitle = "# Changelog";
+    private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
     public static string From(params string[] o)
     {
-        var changelog = ChangelogTitle + NewLine;
+        var changelog = EmptyChangelog;
         foreach (var commitMessage in o)
         {
             foreach (var change in ChangeTypes)
             {
-                if (commitMessage.Contains(change.Indicator) is not true) continue;
+                if (!commitMessage.Contains(change.Indicator)) continue;
 
                 if (!changelog.Contains(change.Header))
                 {
@@ -30,6 +33,9 @@ public class Changelog
                 }
                 changelog += commitMessage.Replace(change.Indicator, BulletPoint);
             }
+            if (Regex.IsMatch(commitMessage, "[a-z]+: .+"))
+                if (changelog == EmptyChangelog)
+                    changelog += NewLine + "*General Code Improvements*";
         }
         return changelog;
     }

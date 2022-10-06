@@ -42,30 +42,47 @@ public class Changelog_specs
         changelog.Should().Be(EmptyChangeLog);
     }
 
-
-
-    private static string Conventional(string type, string summary) => $"{type}: {summary}";
-    private static string Level2(string header) => $"## {header}";
-
-    public static readonly object[][] VisibleConventionalCommitTypes =
+    public class A_changelog_from_conventional_commits_with
     {
-        new object[]{new ConventionalCommitType("feat", "Features")},
-        new object[]{new ConventionalCommitType("fix", "Bug Fixes")},
-        new object[]{new ConventionalCommitType("perf", "Performance Improvements")},
-    };
+        private static string Conventional(string type, string summary) => $"{type}: {summary}";
+        private static string Level2(string header) => $"## {header}";
 
-    [Theory]
-    [MemberData(nameof(VisibleConventionalCommitTypes))]
-    public void A_changelog_from_multiple_conventional_commits_is_the_changelog_header_plus_a_group_containing_the_descriptions(ConventionalCommitType type)
-    {
-        var description1 = "Some Description1";
-        var description2 = "Some Description2";
-        var featureCommit1 = Conventional(type.Indicator, description1);
-        var featureCommit2 = Conventional(type.Indicator, description2);
-        var changelog = Changelog.From(featureCommit1, featureCommit2);
-        changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                              Level2(type.Header) + HeaderSeparator +
-                              BulletPoint + description1 +
-                              BulletPoint + description2);
+        public static readonly object[][] ChangelogRelevantCommitTypes =
+        {
+            new object[]{new ConventionalCommitType("feat", "Features")},
+            new object[]{new ConventionalCommitType("fix", "Bug Fixes")},
+            new object[]{new ConventionalCommitType("perf", "Performance Improvements")},
+        };
+
+        [Theory]
+        [MemberData(nameof(ChangelogRelevantCommitTypes))]
+        public void changelog_relevant_types_is_the_changelog_header_plus_a_group_containing_the_descriptions(ConventionalCommitType type)
+        {
+            var description1 = "Some Description1";
+            var description2 = "Some Description2";
+            var conventionalCommit1 = Conventional(type.Indicator, description1);
+            var conventionalCommit2 = Conventional(type.Indicator, description2);
+            var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
+            changelog.Should().Be(ChangelogHeader + HeaderSeparator +
+                                  Level2(type.Header) + HeaderSeparator +
+                                  BulletPoint + description1 +
+                                  BulletPoint + description2);
+        }
+
+        public static readonly object[][] ChangelogIrrelevantCommitTypes =
+        {
+            new object[]{new ConventionalCommitType("chore", "")},
+        };
+
+        [Theory]
+        [MemberData(nameof(ChangelogIrrelevantCommitTypes))]
+        public void changelog_irrelevant_types_contains_general_code_improvements_message(ConventionalCommitType type)
+        {
+            var conventionalCommit1 = Conventional(type.Indicator, "Some Description1");
+            var conventionalCommit2 = Conventional(type.Indicator, "Some Description2");
+            var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
+            changelog.Should().Be(ChangelogHeader + HeaderSeparator +
+                                  "*General Code Improvements*");
+        }
     }
 }
