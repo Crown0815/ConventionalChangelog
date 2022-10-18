@@ -54,19 +54,19 @@ public class Changelog_specs
             new object[]{new ConventionalCommitType("perf", "Performance Improvements")},
         };
 
+        private static string Description(int index) => $"Some Description{index}";
+
         [Theory]
         [MemberData(nameof(ChangelogRelevantCommitTypes))]
         public void changelog_relevant_types_is_the_changelog_header_plus_a_group_containing_the_descriptions(ConventionalCommitType type)
         {
-            var description1 = "Some Description1";
-            var description2 = "Some Description2";
-            var conventionalCommit1 = Conventional(type.Indicator, description1);
-            var conventionalCommit2 = Conventional(type.Indicator, description2);
+            var conventionalCommit1 = Conventional(type.Indicator, Description(1));
+            var conventionalCommit2 = Conventional(type.Indicator, Description(2));
             var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
             changelog.Should().Be(ChangelogHeader + HeaderSeparator +
                                   Level2(type.Header) + HeaderSeparator +
-                                  BulletPoint + description1 +
-                                  BulletPoint + description2);
+                                  BulletPoint + Description(1) +
+                                  BulletPoint + Description(2));
         }
 
         public static readonly object[][] ChangelogIrrelevantCommitTypes =
@@ -78,8 +78,8 @@ public class Changelog_specs
         [MemberData(nameof(ChangelogIrrelevantCommitTypes))]
         public void changelog_irrelevant_types_contains_general_code_improvements_message(ConventionalCommitType type)
         {
-            var conventionalCommit1 = Conventional(type.Indicator, "Some Description1");
-            var conventionalCommit2 = Conventional(type.Indicator, "Some Description2");
+            var conventionalCommit1 = Conventional(type.Indicator, Description(1));
+            var conventionalCommit2 = Conventional(type.Indicator, Description(2));
             var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
             changelog.Should().Be(ChangelogHeader + HeaderSeparator +
                                   "*General Code Improvements*");
