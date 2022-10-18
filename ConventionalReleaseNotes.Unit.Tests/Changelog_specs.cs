@@ -27,7 +27,7 @@ public class Changelog_specs
     [InlineData]
     [InlineData("")]
     [InlineData("", "")]
-    public void A_changelog_from_no_changes_is_empty(params string[] noChanges)
+    public void A_changelog_from_empty_changes_is_empty(params string[] noChanges)
     {
         var changelog = Changelog.From(noChanges);
         changelog.Should().Be(EmptyChangeLog);
