@@ -8,10 +8,10 @@ namespace ConventionalReleaseNotes.Unit.Tests;
 public class Changelog_specs
 {
     private const string ChangelogHeader = "# Changelog";
-    private const string BulletPoint = "- ";
 
     private static readonly string EmptyChangeLog = ChangelogHeader + NewLine;
     private static readonly string HeaderSeparator = NewLine + NewLine;
+    private static string BulletPoint(string content) => $"- {content}{NewLine}" ;
 
     [Theory]
     [InlineData(null)]
@@ -44,6 +44,7 @@ public class Changelog_specs
 
     public class A_changelog_from_conventional_commits_with
     {
+        private static string Description(int index) => $"Some Description{index}";
         private static string Conventional(string type, string summary) => $"{type}: {summary}";
         private static string Level2(string header) => $"## {header}";
 
@@ -54,8 +55,6 @@ public class Changelog_specs
             new object[]{new ConventionalCommitType("perf", "Performance Improvements")},
         };
 
-        private static string Description(int index) => $"Some Description{index}";
-
         [Theory]
         [MemberData(nameof(ChangelogRelevantCommitTypes))]
         public void changelog_relevant_types_is_the_changelog_header_plus_a_group_containing_the_descriptions(ConventionalCommitType type)
@@ -65,8 +64,8 @@ public class Changelog_specs
             var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
             changelog.Should().Be(ChangelogHeader + HeaderSeparator +
                                   Level2(type.Header) + HeaderSeparator +
-                                  BulletPoint + Description(1) +
-                                  BulletPoint + Description(2));
+                                  BulletPoint(Description(1)) +
+                                  BulletPoint(Description(2)));
         }
 
         public static readonly object[][] ChangelogIrrelevantCommitTypes =

@@ -31,7 +31,7 @@ public class Changelog
                     changelog += NewLine;
                     changelog += ChangeGroupHeader(change.Header) + NewLine + NewLine;
                 }
-                changelog += commitMessage.Replace(change.Indicator, BulletPoint);
+                changelog += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
             }
             if (Regex.IsMatch(commitMessage, "[a-z]+: .+"))
                 if (changelog == EmptyChangelog)
