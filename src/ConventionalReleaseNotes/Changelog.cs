@@ -40,29 +40,29 @@ public class Changelog
         var log = new LogAggregate();
 
         foreach (var change in ChangeTypes)
+        foreach (var commitMessage in o)
         {
-            foreach (var commitMessage in o)
+            if (!Regex.IsMatch(commitMessage, @$"{change.Indicator}.+")) continue;
+
+            if (change.ShallDisplay)
             {
-                if (!Regex.IsMatch(commitMessage, @$"{change.Indicator}.+")) continue;
-
-                if (change.ShallDisplay)
+                if (!log.Text.Contains(change.Header))
                 {
-                    if (!log.Text.Contains(change.Header))
-                    {
-                        if (!log.IsEmpty)
-                            log.Text += NewLine;
-
+                    if (!log.IsEmpty)
                         log.Text += NewLine;
-                        log.Text += ChangeGroupHeader(change.Header) + NewLine + NewLine;
-                    }
-                    log.Text += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
+
+                    log.Text += NewLine;
+                    log.Text += ChangeGroupHeader(change.Header) + NewLine + NewLine;
                 }
-                else
-                {
-                    log.HasGeneralCodeImprovements = true;
-                }
+
+                log.Text += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
+            }
+            else
+            {
+                log.HasGeneralCodeImprovements = true;
             }
         }
+
         return log.ToString();
     }
 
