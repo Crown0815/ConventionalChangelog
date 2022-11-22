@@ -7,7 +7,7 @@ using static System.Environment;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 
-public class Changelog_specs
+public partial class Changelog_specs
 {
     private const string ChangelogHeader = "# Changelog";
 
@@ -45,39 +45,17 @@ public class Changelog_specs
         changelog.Should().Be(EmptyChangeLog);
     }
 
-    public class A_changelog_from_conventional_commits_with
+    public class A_changelog_from_changelog_irrelevant_conventional_commits
     {
         private static string Description(int index) => $"Some Description{index}";
         private static string Conventional(string type, string summary) => $"{type}: {summary}";
-        private static string Level2(string header) => $"## {header}";
 
-        private static readonly ConventionalCommitType Feature = new("feat", "Features");
-        private static readonly ConventionalCommitType Bugfix = new("fix", "Bug Fixes");
-        private static readonly ConventionalCommitType PerformanceImprovement = new("perf", "Performance Improvements");
+        private static readonly string[] ChangelogIrrelevantCommitTypeIndicators =
+            { "build", "chore", "ci", "docs", "style", "refactor", "test" };
 
-        public static readonly object[][] ChangelogRelevantCommitTypes =
-        {
-            new object[]{Feature},
-            new object[]{Bugfix},
-            new object[]{PerformanceImprovement},
-        };
-
-        [Theory]
-        [MemberData(nameof(ChangelogRelevantCommitTypes))]
-        public void changelog_relevant_types_is_the_changelog_header_plus_a_group_containing_the_descriptions(ConventionalCommitType type)
-        {
-            var conventionalCommit1 = Conventional(type.Indicator, Description(1));
-            var conventionalCommit2 = Conventional(type.Indicator, Description(2));
-            var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
-            changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                                  Level2(type.Header) + HeaderSeparator +
-                                  BulletPoint(Description(1)) +
-                                  BulletPoint(Description(2)));
-        }
-
-        public static readonly IEnumerable<object[]> ChangelogIrrelevantCommitTypes = new[]
-                { "build", "chore", "ci", "docs", "style", "refactor", "test" }
-                .Select(x => new object[] { new ConventionalCommitType(x, "") });
+        public static readonly IEnumerable<object[]> ChangelogIrrelevantCommitTypes =
+            ChangelogIrrelevantCommitTypeIndicators
+            .Select(x => new object[] { new ConventionalCommitType(x, "") });
 
         [Theory]
         [MemberData(nameof(ChangelogIrrelevantCommitTypes))]
@@ -88,45 +66,6 @@ public class Changelog_specs
             var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
             changelog.Should().Be(ChangelogHeader + HeaderSeparator +
                                   "*General Code Improvements*");
-        }
-
-        [Fact]
-        public void changelog_relevant_and_irrelevant_types_contains_entries_for_relevant_types()
-        {
-            var commits = new[]
-            {
-                Conventional(Feature.Indicator, Description(1)),
-                Conventional("chore", Description(2)),
-            };
-            var changelog = Changelog.From(commits);
-            changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                                  Level2(Feature.Header) + HeaderSeparator +
-                                  BulletPoint(Description(1)));
-        }
-
-        [Fact]
-        public void unordered_changelog_relevant_types_is_for_each_type_the_changelog_header_plus_a_group_containing_the_descriptions()
-        {
-            var commits = new[]
-            {
-                Conventional(Feature.Indicator, Description(1)),
-                Conventional(Bugfix.Indicator, Description(2)),
-                Conventional(PerformanceImprovement.Indicator, Description(3)),
-                Conventional(Feature.Indicator, Description(4)),
-                Conventional(PerformanceImprovement.Indicator, Description(5)),
-                Conventional(Bugfix.Indicator, Description(6)),
-            };
-            var changelog = Changelog.From(commits);
-            changelog.Should().Be(ChangelogHeader + HeaderSeparator +
-                                  Level2(Feature.Header) + HeaderSeparator +
-                                  BulletPoint(Description(1)) +
-                                  BulletPoint(Description(4)) + HeaderSeparator +
-                                  Level2(Bugfix.Header) + HeaderSeparator +
-                                  BulletPoint(Description(2)) +
-                                  BulletPoint(Description(6)) + HeaderSeparator +
-                                  Level2(PerformanceImprovement.Header) + HeaderSeparator +
-                                  BulletPoint(Description(3)) +
-                                  BulletPoint(Description(5)));
         }
     }
 }
