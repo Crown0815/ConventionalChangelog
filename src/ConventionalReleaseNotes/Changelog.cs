@@ -12,6 +12,13 @@ internal class LogAggregate
     public bool HasGeneralCodeImprovements { get; set; }
 
     public bool IsEmpty => Text == EmptyChangelog;
+
+    public override string ToString()
+    {
+        if (IsEmpty && HasGeneralCodeImprovements)
+            return Text + NewLine + "*General Code Improvements*";
+        return Text;
+    }
 }
 
 
@@ -56,9 +63,7 @@ public class Changelog
                 }
             }
         }
-        if (log.IsEmpty && log.HasGeneralCodeImprovements)
-            log.Text += NewLine + "*General Code Improvements*";
-        return log.Text;
+        return log.ToString();
     }
 
     private static string ChangeGroupHeader(string header) => $"## {header}";
