@@ -5,10 +5,13 @@ namespace ConventionalReleaseNotes;
 
 internal class LogAggregate
 {
-    public string Text { get; set; } = Changelog.EmptyChangelog;
+    private const string ChangelogTitle = "# Changelog";
+    private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
+
+    public string Text { get; set; } = EmptyChangelog;
     public bool HasGeneralCodeImprovements { get; set; }
 
-    public bool IsEmpty => Text == Changelog.EmptyChangelog;
+    public bool IsEmpty => Text == EmptyChangelog;
 }
 
 
@@ -23,8 +26,6 @@ public class Changelog
 
 
     private const string BulletPoint = "- ";
-    private const string ChangelogTitle = "# Changelog";
-    internal static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
     public static string From(params string[] o)
     {
