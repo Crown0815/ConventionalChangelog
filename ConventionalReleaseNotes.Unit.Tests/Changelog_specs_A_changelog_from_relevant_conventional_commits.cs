@@ -27,9 +27,11 @@ public partial class Changelog_specs
         public void is_the_changelog_header_plus_a_group_containing_the_descriptions(
             ConventionalCommitType type)
         {
-            var conventionalCommit1 = Model.ConventionalCommitMessage(type.Indicator, Description(1));
-            var conventionalCommit2 = Model.ConventionalCommitMessage(type.Indicator, Description(2));
-            var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
+            var message1 = Model.ConventionalCommitMessage(type.Indicator, Description(1));
+            var message2 = Model.ConventionalCommitMessage(type.Indicator, Description(2));
+
+            var changelog = Changelog.From(message1, message2);
+
             changelog.Should().Be(_changelog
                 .WithGroup(type.Header)
                     .WithBullet(Description(1))
@@ -39,12 +41,11 @@ public partial class Changelog_specs
         [Fact]
         public void and_irrelevant_commits_contains_all_relevant_entries()
         {
-            var commits = new[]
-            {
-                Model.ConventionalCommitMessage(Feature.Indicator, Description(1)),
-                Model.ConventionalCommitMessage("chore", Description(2)),
-            };
-            var changelog = Changelog.From(commits);
+            var message1 = Model.ConventionalCommitMessage(Feature.Indicator, Description(1));
+            var message2 = Model.ConventionalCommitMessage("chore", Description(2));
+
+            var changelog = Changelog.From(message1, message2);
+
             changelog.Should().Be(_changelog
                 .WithGroup(Feature.Header)
                     .WithBullet(Description(1)));
@@ -53,7 +54,7 @@ public partial class Changelog_specs
         [Fact]
         public void in_random_order_is_for_each_type_the_changelog_header_plus_a_group_containing_the_descriptions()
         {
-            var commits = new[]
+            var messages = new[]
             {
                 Model.ConventionalCommitMessage(Feature.Indicator, Description(1)),
                 Model.ConventionalCommitMessage(Bugfix.Indicator, Description(2)),
@@ -62,7 +63,9 @@ public partial class Changelog_specs
                 Model.ConventionalCommitMessage(PerformanceImprovement.Indicator, Description(5)),
                 Model.ConventionalCommitMessage(Bugfix.Indicator, Description(6)),
             };
-            var changelog = Changelog.From(commits);
+
+            var changelog = Changelog.From(messages);
+
             changelog.Should().Be(_changelog
                 .WithGroup(Feature.Header)
                     .WithBullet(Description(1))
