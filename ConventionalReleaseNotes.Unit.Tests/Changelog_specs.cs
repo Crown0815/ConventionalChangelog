@@ -51,6 +51,6 @@ public partial class Changelog_specs
         var conventionalCommit1 = Model.ConventionalCommitMessage(indicator, "unused");
         var conventionalCommit2 = Model.ConventionalCommitMessage(indicator, "unused");
         var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
-        changelog.Should().Be(_emptyChangeLog.WithGeneralCodeImprovements());
+        changelog.Should().Be(_emptyChangeLog.WithGeneralCodeImprovementsMessage());
     }
 }

@@ -18,7 +18,7 @@ internal static class Model
 
         public Changelog WithBullet(string content) => With($"- {content}{Environment.NewLine}");
 
-        public string WithGeneralCodeImprovements() => With(Environment.NewLine + "*General Code Improvements*");
+        public string WithGeneralCodeImprovementsMessage() => With(Environment.NewLine + "*General Code Improvements*");
 
         private Changelog With(string text)
         {
