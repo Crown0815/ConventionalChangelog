@@ -41,7 +41,7 @@ public class Changelog
 
                 if (!log.Text.Contains(change.Header))
                 {
-                    if (log.Text != EmptyChangelog)
+                    if (!log.IsEmpty)
                         log.Text += NewLine;
 
                     log.Text += NewLine;
