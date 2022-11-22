@@ -49,20 +49,20 @@ public static class Changelog
         new("[a-z]+: ", "", true),
     };
 
-    public static string From(params string[] o)
+    public static string From(params string[] commitMessages)
     {
         var log = new LogAggregate();
 
-        foreach (var commitType in CommitTypes)
-        foreach (var commitMessage in o)
+        foreach (var type in CommitTypes)
+        foreach (var message in commitMessages)
         {
-            if (commitMessage.DoesNotMatch(commitType)) continue;
+            if (message.DoesNotMatch(type)) continue;
 
-            if (commitType.HideFromChangelog)
+            if (type.HideFromChangelog)
                 log.HasGeneralCodeImprovements = true;
             else
             {
-                log.AddBullet(commitType.Header, commitMessage.Replace(commitType.Indicator, ""));
+                log.AddBullet(type.Header, message.Replace(type.Indicator, ""));
             }
         }
 
