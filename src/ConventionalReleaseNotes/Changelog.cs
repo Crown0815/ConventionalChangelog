@@ -5,6 +5,7 @@ namespace ConventionalReleaseNotes;
 
 internal class LogAggregate
 {
+    private const string BulletPoint = "- ";
     private const string ChangelogTitle = "# Changelog";
     private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
@@ -12,6 +13,8 @@ internal class LogAggregate
     public bool HasGeneralCodeImprovements { get; set; }
 
     public bool IsEmpty => Text == EmptyChangelog;
+
+    public void AddBullet(string text) => Text += BulletPoint + text + NewLine;
 
     public override string ToString()
     {
@@ -32,9 +35,6 @@ public class Changelog
         new("[a-z]+: ", "", true),
     };
 
-
-    private const string BulletPoint = "- ";
-
     public static string From(params string[] o)
     {
         var log = new LogAggregate();
@@ -45,9 +45,7 @@ public class Changelog
             if (!Regex.IsMatch(commitMessage, @$"{change.Indicator}.+")) continue;
 
             if (change.HideFromChangelog)
-            {
                 log.HasGeneralCodeImprovements = true;
-            }
             else
             {
                 if (!log.Text.Contains(change.Header))
@@ -59,7 +57,7 @@ public class Changelog
                     log.Text += ChangeGroupHeader(change.Header) + NewLine + NewLine;
                 }
 
-                log.Text += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
+                log.AddBullet(commitMessage.Replace(change.Indicator, ""));
             }
         }
 
