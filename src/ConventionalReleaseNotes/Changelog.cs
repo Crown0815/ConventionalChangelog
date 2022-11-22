@@ -5,9 +5,12 @@ namespace ConventionalReleaseNotes;
 
 internal class LogAggregate
 {
-    public string Text { get; set; }
+    public string Text { get; set; } = Changelog.EmptyChangelog;
     public bool HasGeneralCodeImprovements { get; set; }
+
+    public bool IsEmpty => Text == Changelog.EmptyChangelog;
 }
+
 
 public class Changelog
 {
@@ -21,14 +24,11 @@ public class Changelog
 
     private const string BulletPoint = "- ";
     private const string ChangelogTitle = "# Changelog";
-    private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
+    internal static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
     public static string From(params string[] o)
     {
-        var log = new LogAggregate
-        {
-            Text = EmptyChangelog,
-        };
+        var log = new LogAggregate();
 
         foreach (var change in ChangeTypes)
         {
@@ -50,7 +50,7 @@ public class Changelog
                 log.Text += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
             }
         }
-        if (log.Text == EmptyChangelog && log.HasGeneralCodeImprovements)
+        if (log.IsEmpty && log.HasGeneralCodeImprovements)
             log.Text += NewLine + "*General Code Improvements*";
         return log.Text;
     }
