@@ -48,11 +48,15 @@ public class Changelog_specs
         private static string Conventional(string type, string summary) => $"{type}: {summary}";
         private static string Level2(string header) => $"## {header}";
 
+        private static readonly ConventionalCommitType Feature = new("feat", "Features");
+        private static readonly ConventionalCommitType Bugfix = new("fix", "Bug Fixes");
+        private static readonly ConventionalCommitType PerformanceImprovement = new("perf", "Performance Improvements");
+
         public static readonly object[][] ChangelogRelevantCommitTypes =
         {
-            new object[]{new ConventionalCommitType("feat", "Features")},
-            new object[]{new ConventionalCommitType("fix", "Bug Fixes")},
-            new object[]{new ConventionalCommitType("perf", "Performance Improvements")},
+            new object[]{Feature},
+            new object[]{Bugfix},
+            new object[]{PerformanceImprovement},
         };
 
         [Theory]
