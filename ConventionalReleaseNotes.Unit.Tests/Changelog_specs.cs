@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Xunit;
 using static System.Environment;
@@ -73,10 +75,9 @@ public class Changelog_specs
                                   BulletPoint(Description(2)));
         }
 
-        public static readonly object[][] ChangelogIrrelevantCommitTypes =
-        {
-            new object[]{new ConventionalCommitType("chore", "")},
-        };
+        public static readonly IEnumerable<object[]> ChangelogIrrelevantCommitTypes = new[]
+                { "build", "chore", "ci", "docs", "style", "refactor", "test" }
+                .Select(x => new object[] { new ConventionalCommitType(x, "") });
 
         [Theory]
         [MemberData(nameof(ChangelogIrrelevantCommitTypes))]
