@@ -29,7 +29,7 @@ public class Changelog
         new("feat: ", "Features"),
         new("fix: ", "Bug Fixes"),
         new("perf: ", "Performance Improvements"),
-        new("[a-z]+: ", "", false),
+        new("[a-z]+: ", "", true),
     };
 
 
@@ -44,7 +44,11 @@ public class Changelog
         {
             if (!Regex.IsMatch(commitMessage, @$"{change.Indicator}.+")) continue;
 
-            if (change.ShallDisplay)
+            if (change.HideFromChangelog)
+            {
+                log.HasGeneralCodeImprovements = true;
+            }
+            else
             {
                 if (!log.Text.Contains(change.Header))
                 {
@@ -56,10 +60,6 @@ public class Changelog
                 }
 
                 log.Text += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
-            }
-            else
-            {
-                log.HasGeneralCodeImprovements = true;
             }
         }
 
