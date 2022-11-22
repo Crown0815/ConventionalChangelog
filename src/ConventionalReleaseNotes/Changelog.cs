@@ -10,7 +10,7 @@ internal class LogAggregate
     private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
     private string _text = EmptyChangelog;
-    public bool HasGeneralCodeImprovements { get; set; }
+    private bool _hasGeneralCodeImprovements;
 
     private bool IsEmpty => _text == EmptyChangelog;
 
@@ -28,14 +28,18 @@ internal class LogAggregate
         _text += BulletPoint + text + NewLine;
     }
 
+
+
     private static string ChangeGroupHeader(string header) => $"## {header}";
 
     public override string ToString()
     {
-        if (IsEmpty && HasGeneralCodeImprovements)
+        if (IsEmpty && _hasGeneralCodeImprovements)
             return _text + NewLine + "*General Code Improvements*";
         return _text;
     }
+
+    public void AddHidden(string _, string __) => _hasGeneralCodeImprovements = true;
 }
 
 
@@ -59,11 +63,9 @@ public static class Changelog
             if (message.DoesNotMatch(type)) continue;
 
             if (type.HideFromChangelog)
-                log.HasGeneralCodeImprovements = true;
+                log.AddHidden(type.Header, Regex.Replace(message, type.Indicator, ""));
             else
-            {
                 log.AddBullet(type.Header, message.Replace(type.Indicator, ""));
-            }
         }
 
         return log.ToString();
