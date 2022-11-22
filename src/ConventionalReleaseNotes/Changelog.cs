@@ -3,6 +3,11 @@ using static System.Environment;
 
 namespace ConventionalReleaseNotes;
 
+internal class LogAggregate
+{
+    public bool HasGeneralCodeImprovements { get; set; }
+}
+
 public class Changelog
 {
     private static readonly ConventionalCommitType[] ChangeTypes =
@@ -20,13 +25,13 @@ public class Changelog
     public static string From(params string[] o)
     {
         var changelog = EmptyChangelog;
-        var hasGeneralCodeImprovements = false;
+        var log = new LogAggregate();
         foreach (var change in ChangeTypes)
         {
             foreach (var commitMessage in o)
             {
-                if (!hasGeneralCodeImprovements && Regex.IsMatch(commitMessage, "[a-z]+: .+"))
-                    hasGeneralCodeImprovements = true;
+                if (!log.HasGeneralCodeImprovements && Regex.IsMatch(commitMessage, "[a-z]+: .+"))
+                    log.HasGeneralCodeImprovements = true;
 
                 if (!commitMessage.Contains(change.Indicator)) continue;
 
@@ -41,7 +46,7 @@ public class Changelog
                 changelog += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
             }
         }
-        if (changelog == EmptyChangelog && hasGeneralCodeImprovements)
+        if (changelog == EmptyChangelog && log.HasGeneralCodeImprovements)
             changelog += NewLine + "*General Code Improvements*";
         return changelog;
     }
