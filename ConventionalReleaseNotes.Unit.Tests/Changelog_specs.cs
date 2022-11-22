@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Xunit;
 
@@ -40,22 +38,20 @@ public partial class Changelog_specs
         changelog.Should().Be(EmptyChangeLog);
     }
 
-    private static string Description(int index) => $"Some Description{index}";
     private static string Conventional(string type, string summary) => $"{type}: {summary}";
 
-    private static readonly string[] ChangelogIrrelevantCommitTypeIndicators =
-        { "build", "chore", "ci", "docs", "style", "refactor", "test" };
-
-    public static readonly IEnumerable<object[]> ChangelogIrrelevantCommitTypes =
-        ChangelogIrrelevantCommitTypeIndicators
-        .Select(x => new object[] { new ConventionalCommitType(x, "") });
-
     [Theory]
-    [MemberData(nameof(ChangelogIrrelevantCommitTypes))]
-    public void A_changelog_from_changelog_irrelevant_conventional_commits_contains_general_code_improvements_message(ConventionalCommitType type)
+    [InlineData("build")]
+    [InlineData("chore")]
+    [InlineData("ci")]
+    [InlineData("docs")]
+    [InlineData("style")]
+    [InlineData("refactor")]
+    [InlineData("test")]
+    public void A_changelog_from_changelog_irrelevant_conventional_commits_contains_general_code_improvements_message(string indicator)
     {
-        var conventionalCommit1 = Conventional(type.Indicator, Description(1));
-        var conventionalCommit2 = Conventional(type.Indicator, Description(2));
+        var conventionalCommit1 = Conventional(indicator, "unused");
+        var conventionalCommit2 = Conventional(indicator, "unused");
         var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
         changelog.Should().Be(EmptyChangeLog.WithGeneralCodeImprovements());
     }
