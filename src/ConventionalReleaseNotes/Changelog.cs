@@ -25,7 +25,7 @@ public class Changelog
         {
             foreach (var commitMessage in o)
             {
-                if (commitMessage is not null && !hasGeneralCodeImprovements && Regex.IsMatch(commitMessage, "[a-z]+: .+"))
+                if (!hasGeneralCodeImprovements && Regex.IsMatch(commitMessage, "[a-z]+: .+"))
                     hasGeneralCodeImprovements = true;
 
                 if (!commitMessage.Contains(change.Indicator)) continue;

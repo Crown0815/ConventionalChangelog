@@ -21,7 +21,7 @@ public class Changelog_specs
     public void A_changelog_from_null_throws_null_exception(string[] @null)
     {
         Action fromNull = () => Changelog.From(@null);
-        fromNull.Should().Throw<NullReferenceException>();
+        fromNull.Should().Throw<Exception>();
     }
 
     [Theory]
