@@ -9,18 +9,32 @@ internal class LogAggregate
     private const string ChangelogTitle = "# Changelog";
     private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
-    public string Text { get; set; } = EmptyChangelog;
+    private string _text = EmptyChangelog;
     public bool HasGeneralCodeImprovements { get; set; }
 
-    public bool IsEmpty => Text == EmptyChangelog;
+    private bool IsEmpty => _text == EmptyChangelog;
 
-    public void AddBullet(string text) => Text += BulletPoint + text + NewLine;
+    public void AddBullet(string header, string text)
+    {
+        if (!_text.Contains(header))
+        {
+            if (!IsEmpty)
+                _text += NewLine;
+
+            _text += NewLine;
+            _text += ChangeGroupHeader(header) + NewLine + NewLine;
+        }
+
+        _text += BulletPoint + text + NewLine;
+    }
+
+    private static string ChangeGroupHeader(string header) => $"## {header}";
 
     public override string ToString()
     {
         if (IsEmpty && HasGeneralCodeImprovements)
-            return Text + NewLine + "*General Code Improvements*";
-        return Text;
+            return _text + NewLine + "*General Code Improvements*";
+        return _text;
     }
 }
 
@@ -48,16 +62,7 @@ public static class Changelog
                 log.HasGeneralCodeImprovements = true;
             else
             {
-                if (!log.Text.Contains(commitType.Header))
-                {
-                    if (!log.IsEmpty)
-                        log.Text += NewLine;
-
-                    log.Text += NewLine;
-                    log.Text += ChangeGroupHeader(commitType.Header) + NewLine + NewLine;
-                }
-
-                log.AddBullet(commitMessage.Replace(commitType.Indicator, ""));
+                log.AddBullet(commitType.Header, commitMessage.Replace(commitType.Indicator, ""));
             }
         }
 
@@ -65,6 +70,4 @@ public static class Changelog
     }
 
     private static bool DoesNotMatch(this string m, ConventionalCommitType t) => !Regex.IsMatch(m, @$"{t.Indicator}.+");
-
-    private static string ChangeGroupHeader(string header) => $"## {header}";
 }
