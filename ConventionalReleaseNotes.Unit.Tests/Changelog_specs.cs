@@ -6,7 +6,7 @@ namespace ConventionalReleaseNotes.Unit.Tests;
 
 public partial class Changelog_specs
 {
-    private readonly ModelChangelog EmptyChangeLog = new ModelChangelog().WithTitle();
+    private readonly ModelChangelog _emptyChangeLog = new ModelChangelog().WithTitle();
 
     [Theory]
     [InlineData(null)]
@@ -26,7 +26,7 @@ public partial class Changelog_specs
     public void A_changelog_from_empty_changes_is_empty(params string[] noChanges)
     {
         var changelog = Changelog.From(noChanges);
-        changelog.Should().Be(EmptyChangeLog);
+        changelog.Should().Be(_emptyChangeLog);
     }
 
     [Theory]
@@ -35,7 +35,7 @@ public partial class Changelog_specs
     public void A_changelog_from_non_conventional_commits_is_empty(string nonConventionalCommits)
     {
         var changelog = Changelog.From(nonConventionalCommits);
-        changelog.Should().Be(EmptyChangeLog);
+        changelog.Should().Be(_emptyChangeLog);
     }
 
     private static string Conventional(string type, string summary) => $"{type}: {summary}";
@@ -53,6 +53,6 @@ public partial class Changelog_specs
         var conventionalCommit1 = Conventional(indicator, "unused");
         var conventionalCommit2 = Conventional(indicator, "unused");
         var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
-        changelog.Should().Be(EmptyChangeLog.WithGeneralCodeImprovements());
+        changelog.Should().Be(_emptyChangeLog.WithGeneralCodeImprovements());
     }
 }
