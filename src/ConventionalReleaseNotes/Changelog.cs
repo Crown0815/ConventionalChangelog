@@ -20,23 +20,29 @@ public class Changelog
     public static string From(params string[] o)
     {
         var changelog = EmptyChangelog;
-        foreach (var commitMessage in o)
+        var hasGeneralCodeImprovements = false;
+        foreach (var change in ChangeTypes)
         {
-            foreach (var change in ChangeTypes)
+            foreach (var commitMessage in o)
             {
+                if (commitMessage is not null && !hasGeneralCodeImprovements && Regex.IsMatch(commitMessage, "[a-z]+: .+"))
+                    hasGeneralCodeImprovements = true;
+
                 if (!commitMessage.Contains(change.Indicator)) continue;
 
                 if (!changelog.Contains(change.Header))
                 {
+                    if (changelog != EmptyChangelog)
+                        changelog += NewLine;
+
                     changelog += NewLine;
                     changelog += ChangeGroupHeader(change.Header) + NewLine + NewLine;
                 }
                 changelog += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
             }
-            if (Regex.IsMatch(commitMessage, "[a-z]+: .+"))
-                if (changelog == EmptyChangelog)
-                    changelog += NewLine + "*General Code Improvements*";
         }
+        if (changelog == EmptyChangelog && hasGeneralCodeImprovements)
+            changelog += NewLine + "*General Code Improvements*";
         return changelog;
     }
 

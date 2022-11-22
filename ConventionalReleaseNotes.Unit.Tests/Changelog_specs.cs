@@ -87,5 +87,31 @@ public class Changelog_specs
             changelog.Should().Be(ChangelogHeader + HeaderSeparator +
                                   "*General Code Improvements*");
         }
+
+
+        [Fact]
+        public void unordered_changelog_relevant_types_is_for_each_type_the_changelog_header_plus_a_group_containing_the_descriptions()
+        {
+            var commits = new[]
+            {
+                Conventional(Feature.Indicator, Description(1)),
+                Conventional(Bugfix.Indicator, Description(2)),
+                Conventional(PerformanceImprovement.Indicator, Description(3)),
+                Conventional(Feature.Indicator, Description(4)),
+                Conventional(PerformanceImprovement.Indicator, Description(5)),
+                Conventional(Bugfix.Indicator, Description(6)),
+            };
+            var changelog = Changelog.From(commits);
+            changelog.Should().Be(ChangelogHeader + HeaderSeparator +
+                                  Level2(Feature.Header) + HeaderSeparator +
+                                  BulletPoint(Description(1)) +
+                                  BulletPoint(Description(4)) + HeaderSeparator +
+                                  Level2(Bugfix.Header) + HeaderSeparator +
+                                  BulletPoint(Description(2)) +
+                                  BulletPoint(Description(6)) + HeaderSeparator +
+                                  Level2(PerformanceImprovement.Header) + HeaderSeparator +
+                                  BulletPoint(Description(3)) +
+                                  BulletPoint(Description(5)));
+        }
     }
 }
