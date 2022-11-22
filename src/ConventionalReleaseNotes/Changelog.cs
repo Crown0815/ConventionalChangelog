@@ -5,6 +5,7 @@ namespace ConventionalReleaseNotes;
 
 internal class LogAggregate
 {
+    public string Text { get; set; }
     public bool HasGeneralCodeImprovements { get; set; }
 }
 
@@ -24,8 +25,11 @@ public class Changelog
 
     public static string From(params string[] o)
     {
-        var changelog = EmptyChangelog;
-        var log = new LogAggregate();
+        var log = new LogAggregate
+        {
+            Text = EmptyChangelog,
+        };
+
         foreach (var change in ChangeTypes)
         {
             foreach (var commitMessage in o)
@@ -35,20 +39,20 @@ public class Changelog
 
                 if (!commitMessage.Contains(change.Indicator)) continue;
 
-                if (!changelog.Contains(change.Header))
+                if (!log.Text.Contains(change.Header))
                 {
-                    if (changelog != EmptyChangelog)
-                        changelog += NewLine;
+                    if (log.Text != EmptyChangelog)
+                        log.Text += NewLine;
 
-                    changelog += NewLine;
-                    changelog += ChangeGroupHeader(change.Header) + NewLine + NewLine;
+                    log.Text += NewLine;
+                    log.Text += ChangeGroupHeader(change.Header) + NewLine + NewLine;
                 }
-                changelog += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
+                log.Text += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
             }
         }
-        if (changelog == EmptyChangelog && log.HasGeneralCodeImprovements)
-            changelog += NewLine + "*General Code Improvements*";
-        return changelog;
+        if (log.Text == EmptyChangelog && log.HasGeneralCodeImprovements)
+            log.Text += NewLine + "*General Code Improvements*";
+        return log.Text;
     }
 
     private static string ChangeGroupHeader(string header) => $"## {header}";
