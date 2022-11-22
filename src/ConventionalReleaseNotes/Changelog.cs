@@ -22,6 +22,7 @@ public class Changelog
         new("feat: ", "Features"),
         new("fix: ", "Bug Fixes"),
         new("perf: ", "Performance Improvements"),
+        new("[a-z]+: ", "", false),
     };
 
 
@@ -35,20 +36,24 @@ public class Changelog
         {
             foreach (var commitMessage in o)
             {
-                if (!log.HasGeneralCodeImprovements && Regex.IsMatch(commitMessage, "[a-z]+: .+"))
-                    log.HasGeneralCodeImprovements = true;
-
                 if (!Regex.IsMatch(commitMessage, @$"{change.Indicator}.+")) continue;
 
-                if (!log.Text.Contains(change.Header))
+                if (change.ShallDisplay)
                 {
-                    if (!log.IsEmpty)
-                        log.Text += NewLine;
+                    if (!log.Text.Contains(change.Header))
+                    {
+                        if (!log.IsEmpty)
+                            log.Text += NewLine;
 
-                    log.Text += NewLine;
-                    log.Text += ChangeGroupHeader(change.Header) + NewLine + NewLine;
+                        log.Text += NewLine;
+                        log.Text += ChangeGroupHeader(change.Header) + NewLine + NewLine;
+                    }
+                    log.Text += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
                 }
-                log.Text += commitMessage.Replace(change.Indicator, BulletPoint) + NewLine;
+                else
+                {
+                    log.HasGeneralCodeImprovements = true;
+                }
             }
         }
         if (log.IsEmpty && log.HasGeneralCodeImprovements)
