@@ -18,6 +18,8 @@ internal class ModelChangelog
 
     public ModelChangelog WithBullet(string content) => With($"- {content}{NewLine}");
 
+    public string WithGeneralCodeImprovements() => With(NewLine + "*General Code Improvements*");
+
     private ModelChangelog With(string text)
     {
         _text += text;
