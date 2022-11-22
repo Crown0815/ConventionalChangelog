@@ -38,8 +38,6 @@ public partial class Changelog_specs
         changelog.Should().Be(_emptyChangeLog);
     }
 
-    private static string Conventional(string type, string summary) => $"{type}: {summary}";
-
     [Theory]
     [InlineData("build")]
     [InlineData("chore")]
@@ -50,8 +48,8 @@ public partial class Changelog_specs
     [InlineData("test")]
     public void A_changelog_from_changelog_irrelevant_conventional_commits_contains_general_code_improvements_message(string indicator)
     {
-        var conventionalCommit1 = Conventional(indicator, "unused");
-        var conventionalCommit2 = Conventional(indicator, "unused");
+        var conventionalCommit1 = Model.ConventionalCommitMessage(indicator, "unused");
+        var conventionalCommit2 = Model.ConventionalCommitMessage(indicator, "unused");
         var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
         changelog.Should().Be(_emptyChangeLog.WithGeneralCodeImprovements());
     }

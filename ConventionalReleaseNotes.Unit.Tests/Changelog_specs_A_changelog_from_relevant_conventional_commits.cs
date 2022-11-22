@@ -8,7 +8,6 @@ public partial class Changelog_specs
     public class A_changelog_from_relevant_conventional_commits
     {
         private static string Description(int index) => $"Some Description{index}";
-        private static string Conventional(string type, string summary) => $"{type}: {summary}";
 
         private static readonly ConventionalCommitType Feature = new("feat", "Features");
         private static readonly ConventionalCommitType Bugfix = new("fix", "Bug Fixes");
@@ -28,8 +27,8 @@ public partial class Changelog_specs
         public void is_the_changelog_header_plus_a_group_containing_the_descriptions(
             ConventionalCommitType type)
         {
-            var conventionalCommit1 = Conventional(type.Indicator, Description(1));
-            var conventionalCommit2 = Conventional(type.Indicator, Description(2));
+            var conventionalCommit1 = Model.ConventionalCommitMessage(type.Indicator, Description(1));
+            var conventionalCommit2 = Model.ConventionalCommitMessage(type.Indicator, Description(2));
             var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
             changelog.Should().Be(_changelog
                 .WithGroup(type.Header)
@@ -42,8 +41,8 @@ public partial class Changelog_specs
         {
             var commits = new[]
             {
-                Conventional(Feature.Indicator, Description(1)),
-                Conventional("chore", Description(2)),
+                Model.ConventionalCommitMessage(Feature.Indicator, Description(1)),
+                Model.ConventionalCommitMessage("chore", Description(2)),
             };
             var changelog = Changelog.From(commits);
             changelog.Should().Be(_changelog
@@ -56,12 +55,12 @@ public partial class Changelog_specs
         {
             var commits = new[]
             {
-                Conventional(Feature.Indicator, Description(1)),
-                Conventional(Bugfix.Indicator, Description(2)),
-                Conventional(PerformanceImprovement.Indicator, Description(3)),
-                Conventional(Feature.Indicator, Description(4)),
-                Conventional(PerformanceImprovement.Indicator, Description(5)),
-                Conventional(Bugfix.Indicator, Description(6)),
+                Model.ConventionalCommitMessage(Feature.Indicator, Description(1)),
+                Model.ConventionalCommitMessage(Bugfix.Indicator, Description(2)),
+                Model.ConventionalCommitMessage(PerformanceImprovement.Indicator, Description(3)),
+                Model.ConventionalCommitMessage(Feature.Indicator, Description(4)),
+                Model.ConventionalCommitMessage(PerformanceImprovement.Indicator, Description(5)),
+                Model.ConventionalCommitMessage(Bugfix.Indicator, Description(6)),
             };
             var changelog = Changelog.From(commits);
             changelog.Should().Be(_changelog

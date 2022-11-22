@@ -28,4 +28,7 @@ internal static class Model
 
         public static implicit operator string(Changelog x) => x._text;
     }
+
+    public static string ConventionalCommitMessage(string typeIndicator, string summary) =>
+        $"{typeIndicator}: {summary}";
 }
