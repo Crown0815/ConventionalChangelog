@@ -58,18 +58,17 @@ public static class Changelog
         var log = new LogAggregate();
 
         foreach (var type in CommitTypes)
-        foreach (var message in commitMessages)
+        foreach (var message in commitMessages.Where(type.Matches))
         {
-            if (message.DoesNotMatch(type)) continue;
-
             if (type.HideFromChangelog)
-                log.AddHidden(type.Header, Regex.Replace(message, type.Indicator, ""));
+                log.AddHidden(type.Header, type.MessageFrom(message));
             else
-                log.AddBullet(type.Header, message.Replace(type.Indicator, ""));
+                log.AddBullet(type.Header, type.MessageFrom(message));
         }
 
         return log.ToString();
     }
 
-    private static bool DoesNotMatch(this string m, ConventionalCommitType t) => !Regex.IsMatch(m, @$"{t.Indicator}.+");
+    private static string MessageFrom(this ConventionalCommitType t, string m) => Regex.Replace(m, t.Indicator, "");
+    private static bool Matches(this ConventionalCommitType t, string m) => Regex.IsMatch(m, $"{t.Indicator}.+");
 }
