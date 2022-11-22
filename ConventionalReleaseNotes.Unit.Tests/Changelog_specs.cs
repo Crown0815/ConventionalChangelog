@@ -13,7 +13,6 @@ public partial class Changelog_specs
 
     private static readonly string EmptyChangeLog = ChangelogHeader + NewLine;
     private static readonly string HeaderSeparator = NewLine + NewLine;
-    private static string BulletPoint(string content) => $"- {content}{NewLine}" ;
 
     [Theory]
     [InlineData(null)]

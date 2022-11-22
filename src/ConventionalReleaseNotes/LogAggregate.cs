@@ -15,9 +15,6 @@ internal class LogAggregate
     {
         if (!_text.Contains(header))
         {
-            if (!IsEmpty)
-                _text += Environment.NewLine;
-
             _text += Environment.NewLine;
             _text += ChangeGroupHeader(header) + Environment.NewLine + Environment.NewLine;
         }
