@@ -25,9 +25,9 @@ internal class LogAggregate
 }
 
 
-public class Changelog
+public static class Changelog
 {
-    private static readonly ConventionalCommitType[] ChangeTypes =
+    private static readonly ConventionalCommitType[] CommitTypes =
     {
         new("feat: ", "Features"),
         new("fix: ", "Bug Fixes"),
@@ -39,30 +39,32 @@ public class Changelog
     {
         var log = new LogAggregate();
 
-        foreach (var change in ChangeTypes)
+        foreach (var commitType in CommitTypes)
         foreach (var commitMessage in o)
         {
-            if (!Regex.IsMatch(commitMessage, @$"{change.Indicator}.+")) continue;
+            if (commitMessage.DoesNotMatch(commitType)) continue;
 
-            if (change.HideFromChangelog)
+            if (commitType.HideFromChangelog)
                 log.HasGeneralCodeImprovements = true;
             else
             {
-                if (!log.Text.Contains(change.Header))
+                if (!log.Text.Contains(commitType.Header))
                 {
                     if (!log.IsEmpty)
                         log.Text += NewLine;
 
                     log.Text += NewLine;
-                    log.Text += ChangeGroupHeader(change.Header) + NewLine + NewLine;
+                    log.Text += ChangeGroupHeader(commitType.Header) + NewLine + NewLine;
                 }
 
-                log.AddBullet(commitMessage.Replace(change.Indicator, ""));
+                log.AddBullet(commitMessage.Replace(commitType.Indicator, ""));
             }
         }
 
         return log.ToString();
     }
+
+    private static bool DoesNotMatch(this string m, ConventionalCommitType t) => !Regex.IsMatch(m, @$"{t.Indicator}.+");
 
     private static string ChangeGroupHeader(string header) => $"## {header}";
 }
