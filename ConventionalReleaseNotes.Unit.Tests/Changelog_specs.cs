@@ -17,6 +17,7 @@ public class Changelog_specs
     [InlineData(null)]
     [InlineData(new object[] { new string[] { null! } })]
     [InlineData(new object[] { new string[] { null!, null! } })]
+    [InlineData(new object[] { new[] { "", null!, "" } })]
     public void A_changelog_from_null_throws_null_exception(string[] @null)
     {
         Action fromNull = () => Changelog.From(@null);
