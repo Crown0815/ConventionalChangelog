@@ -90,6 +90,19 @@ public class Changelog_specs
                                   "*General Code Improvements*");
         }
 
+        [Fact]
+        public void changelog_relevant_and_irrelevant_types_contains_entries_for_relevant_types()
+        {
+            var commits = new[]
+            {
+                Conventional(Feature.Indicator, Description(1)),
+                Conventional("chore", Description(2)),
+            };
+            var changelog = Changelog.From(commits);
+            changelog.Should().Be(ChangelogHeader + HeaderSeparator +
+                                  Level2(Feature.Header) + HeaderSeparator +
+                                  BulletPoint(Description(1)));
+        }
 
         [Fact]
         public void unordered_changelog_relevant_types_is_for_each_type_the_changelog_header_plus_a_group_containing_the_descriptions()
