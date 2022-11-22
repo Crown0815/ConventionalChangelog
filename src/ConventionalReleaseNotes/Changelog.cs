@@ -38,7 +38,7 @@ public class Changelog
                 if (!log.HasGeneralCodeImprovements && Regex.IsMatch(commitMessage, "[a-z]+: .+"))
                     log.HasGeneralCodeImprovements = true;
 
-                if (!commitMessage.Contains(change.Indicator)) continue;
+                if (!Regex.IsMatch(commitMessage, @$"{change.Indicator}.+")) continue;
 
                 if (!log.Text.Contains(change.Header))
                 {
