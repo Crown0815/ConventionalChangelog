@@ -1,37 +1,10 @@
 ﻿using FluentAssertions;
 using Xunit;
-using static System.Environment;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 
-internal class ModelChangelog
-{
-    private const string ChangelogHeader = "# Changelog";
-    private static readonly string HeaderSeparator = NewLine + NewLine;
-
-    private string _text = "";
-    private static string Level2(string header) => $"## {header}";
-
-    public ModelChangelog WithTitle() => With(ChangelogHeader + NewLine);
-
-    public ModelChangelog WithGroup(string header) => With(NewLine + Level2(header) + HeaderSeparator);
-
-    public ModelChangelog WithBullet(string content) => With($"- {content}{NewLine}");
-
-    public string WithGeneralCodeImprovements() => With(NewLine + "*General Code Improvements*");
-
-    private ModelChangelog With(string text)
-    {
-        _text += text;
-        return this;
-    }
-
-    public static implicit operator string(ModelChangelog x) => x._text;
-}
-
 public partial class Changelog_specs
 {
-
     public class A_changelog_from_relevant_conventional_commits
     {
         private static string Description(int index) => $"Some Description{index}";
