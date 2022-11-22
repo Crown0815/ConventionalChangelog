@@ -21,7 +21,7 @@ public partial class Changelog_specs
             new object[] { PerformanceImprovement },
         };
 
-        private readonly ModelChangelog _changelog = new ModelChangelog().WithTitle();
+        private readonly Model.Changelog _changelog = new Model.Changelog().WithTitle();
 
         [Theory]
         [MemberData(nameof(ChangelogRelevantCommitTypes))]

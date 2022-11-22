@@ -6,7 +6,7 @@ namespace ConventionalReleaseNotes.Unit.Tests;
 
 public partial class Changelog_specs
 {
-    private readonly ModelChangelog _emptyChangeLog = new ModelChangelog().WithTitle();
+    private readonly Model.Changelog _emptyChangeLog = new Model.Changelog().WithTitle();
 
     [Theory]
     [InlineData(null)]
