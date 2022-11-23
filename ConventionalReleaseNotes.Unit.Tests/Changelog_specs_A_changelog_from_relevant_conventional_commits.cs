@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Xunit;
+using static ConventionalReleaseNotes.Unit.Tests.CommitType;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 
@@ -8,10 +9,6 @@ public partial class Changelog_specs
     public class A_changelog_from_relevant_conventional_commits
     {
         private static string Description(int index) => $"Some Description{index}";
-
-        private static readonly ConventionalCommitType Feature = new("feat", "Features");
-        private static readonly ConventionalCommitType Bugfix = new("fix", "Bug Fixes");
-        private static readonly ConventionalCommitType PerformanceImprovement = new("perf", "Performance Improvements");
 
         public static readonly object[][] ChangelogRelevantCommitTypes =
         {

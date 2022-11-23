@@ -3,14 +3,13 @@ using System.IO;
 using FluentAssertions;
 using LibGit2Sharp;
 using Xunit;
+using static ConventionalReleaseNotes.Unit.Tests.CommitType;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 
 public class Git_specs : IDisposable
 {
     private const string TestDirectoryName = "unittest";
-
-
 
     private readonly Repository _repository;
 
@@ -29,16 +28,16 @@ public class Git_specs : IDisposable
     [Fact]
     public void Changelog_from_a_single_branch_repository_with_conventional_commits_should_contain_all_commits()
     {
-        _repository.Commit(Model.ConventionalCommitMessage("feat", "new feature"));
-        _repository.Commit(Model.ConventionalCommitMessage("fix", "new fix"));
-        _repository.Commit(Model.ConventionalCommitMessage("perf", "new performance improvement"));
+        _repository.Commit(Model.ConventionalCommitMessage(Feature.Indicator, "new feature"));
+        _repository.Commit(Model.ConventionalCommitMessage(Bugfix.Indicator, "new fix"));
+        _repository.Commit(Model.ConventionalCommitMessage(PerformanceImprovement.Indicator, "new performance improvement"));
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
-            .WithGroup("Features")
+            .WithGroup(Feature.Header)
                 .WithBullet("new feature")
-            .WithGroup("Bug Fixes")
+            .WithGroup(Bugfix.Header)
                 .WithBullet("new fix")
-            .WithGroup("Performance Improvements")
+            .WithGroup(PerformanceImprovement.Header)
                 .WithBullet("new performance improvement"));
     }
 
