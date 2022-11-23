@@ -53,12 +53,20 @@ public class Git_specs : IDisposable
                 .WithBullet("Commit 0"));
     }
 
-    [Fact]
-    public void Changelog_from_conventional_commits_and_a_single_tag_should_contain_all_commits_after_the_tag()
+    [Theory]
+    [InlineData("0.0.4")]
+    [InlineData("1.2.3")]
+    [InlineData("10.20.30")]
+    [InlineData("1.1.2-prerelease+meta")]
+    [InlineData("1.1.2+meta")]
+    [InlineData("1.0.0-alpha")]
+    [InlineData("1.0.0-beta")]
+    [InlineData("1.0.0-alpha.1")]
+    public void Changelog_from_conventional_commits_and_a_single_tag_should_contain_all_commits_after_the_tag(string version)
     {
         _repository.Commit(Feature, "Before tag");
         var target = _repository.Commit(Feature, "Tagged commit");
-        _repository.Tags.Add("v1.0.0", target);
+        _repository.Tags.Add($"v{version}", target);
 
         3.Times(i => _repository.Commit(Feature, $"After tag {i}"));
 
