@@ -89,5 +89,19 @@ public class Git_specs : IDisposable
                 .WithBullet("After tag 0"));
     }
 
+    [Fact]
+    public void Changelog_from_conventional_commits_and_non_version_tags_should_contain_all_commits()
+    {
+        var target = _repository.Commit(Feature, "Tagged commit 1");
+        _repository.Tags.Add("a", target);
+        target = _repository.Commit(Feature, "Tagged commit 2");
+        _repository.Tags.Add("b", target);
+
+        Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
+            .WithGroup(Feature.Header)
+                .WithBullet("Tagged commit 2")
+                .WithBullet("Tagged commit 1"));
+    }
+
     public void Dispose() => _repository.Delete();
 }

@@ -35,12 +35,18 @@ public static class Changelog
     public static string FromRepository(string path)
     {
         using var repo = new Repository(path);
-        var tag = repo.Tags.LastOrDefault();
+        var tag = repo.Tags.Where(IsVersionTag).LastOrDefault();
         var filter = new CommitFilter {
             SortBy = CommitSortStrategies.Topological,
             ExcludeReachableFrom = tag,
         };
 
         return From(repo.Commits.QueryBy(filter).Select(c => c.MessageShort).ToArray());
+    }
+
+    private static bool IsVersionTag(Tag tag)
+    {
+        var semanticVersion = new Regex(@"^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$");
+        return semanticVersion.IsMatch(tag.FriendlyName.Replace("v", ""));
     }
 }
