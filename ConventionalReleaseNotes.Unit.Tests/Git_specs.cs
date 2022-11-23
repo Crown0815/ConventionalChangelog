@@ -28,9 +28,9 @@ public class Git_specs : IDisposable
     [Fact]
     public void Changelog_from_a_single_branch_repository_with_conventional_commits_should_contain_all_commits()
     {
-        _repository.Commit(Model.ConventionalCommitMessage(Feature.Indicator, "new feature"));
-        _repository.Commit(Model.ConventionalCommitMessage(Bugfix.Indicator, "new fix"));
-        _repository.Commit(Model.ConventionalCommitMessage(PerformanceImprovement.Indicator, "new performance improvement"));
+        _repository.Commit(Feature, "new feature");
+        _repository.Commit(Bugfix, "new fix");
+        _repository.Commit(PerformanceImprovement, "new performance improvement");
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
             .WithGroup(Feature.Header)

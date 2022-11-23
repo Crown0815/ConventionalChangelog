@@ -9,7 +9,12 @@ internal static class RepositoryInteractionExtensions
     private static readonly Identity TestIdentity = new("unit test", "unit@test.email");
     private static readonly Signature Signature = new(TestIdentity, DateTimeOffset.Now);
 
-    public static void Commit(this Repository r, string message)
+    public static void Commit(this Repository r, ConventionalCommitType type, string message)
+    {
+        r.Commit(Model.ConventionalCommitMessage(type.Indicator, message));
+    }
+
+    private static void Commit(this Repository r, string message)
     {
         r.Commit(message, Signature, Signature, CommitOptions);
     }
