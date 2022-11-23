@@ -6,19 +6,22 @@ internal static class Model
 {
     internal class Changelog
     {
-        private const string ChangelogHeader = "# Changelog";
+        private const string ChangelogTitle = "# Changelog";
+        private const string GeneralCodeImprovementsMessage = "*General Code Improvements*";
+
         private static readonly string HeaderSeparator = Environment.NewLine + Environment.NewLine;
 
         private string _text = "";
-        private static string Level2(string header) => $"## {header}";
 
-        public Changelog WithTitle() => With(ChangelogHeader + Environment.NewLine);
+        private static string Group(string header) => $"## {header}";
 
-        public Changelog WithGroup(string header) => With(Environment.NewLine + Level2(header) + HeaderSeparator);
+        public Changelog WithTitle() => With(ChangelogTitle + Environment.NewLine);
+
+        public Changelog WithGroup(string header) => With(Environment.NewLine + Group(header) + HeaderSeparator);
 
         public Changelog WithBullet(string content) => With($"- {content}{Environment.NewLine}");
 
-        public string WithGeneralCodeImprovementsMessage() => With(Environment.NewLine + "*General Code Improvements*");
+        public string WithGeneralCodeImprovementsMessage() => With(Environment.NewLine + GeneralCodeImprovementsMessage);
 
         private Changelog With(string text)
         {
