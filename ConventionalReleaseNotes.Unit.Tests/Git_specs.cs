@@ -31,8 +31,26 @@ public class Git_specs : IDisposable
     [Fact]
     public void Changelog_from_a_single_branch_repository_with_conventional_commits_should_contain_all_commits()
     {
-        _repository.Commit(Model.ConventionalCommitMessage("feat", "new feature"), Signature, Signature);
-        Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty.WithGroup("Features").WithBullet("new feature"));
+        _repository.Commit(Model.ConventionalCommitMessage("feat", "new feature"), Signature, Signature, new CommitOptions
+        {
+            AllowEmptyCommit = true,
+        });
+        _repository.Commit(Model.ConventionalCommitMessage("fix", "new fix"), Signature, Signature, new CommitOptions
+        {
+            AllowEmptyCommit = true,
+        });
+        _repository.Commit(Model.ConventionalCommitMessage("perf", "new performance improvement"), Signature, Signature, new CommitOptions
+        {
+            AllowEmptyCommit = true,
+        });
+
+        Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
+            .WithGroup("Features")
+                .WithBullet("new feature")
+            .WithGroup("Bug Fixes")
+                .WithBullet("new fix")
+            .WithGroup("Performance Improvements")
+                .WithBullet("new performance improvement"));
     }
 
     public void Dispose() => _repository.Delete();
