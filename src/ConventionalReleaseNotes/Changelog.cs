@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+    using System.Text.RegularExpressions;
 using LibGit2Sharp;
 
 namespace ConventionalReleaseNotes;
@@ -35,6 +35,12 @@ public static class Changelog
     public static string FromRepository(string path)
     {
         using var repo = new Repository(path);
-        return From(repo.Commits.Select(c => c.MessageShort).ToArray());
+        var tag = repo.Tags.SingleOrDefault();
+        var filter = new CommitFilter {
+            SortBy = CommitSortStrategies.Topological,
+            ExcludeReachableFrom = tag,
+        };
+
+        return From(repo.Commits.QueryBy(filter).Select(c => c.MessageShort).ToArray());
     }
 }

@@ -41,5 +41,21 @@ public class Git_specs : IDisposable
                 .WithBullet("new performance improvement"));
     }
 
+    [Fact]
+    public void Changelog_from_a_single_branch_repository_with_conventional_commits_and_a_tag_should_contain_all_commits_after_the_tag()
+    {
+        _repository.Commit(Feature, "Before tag");
+        var target = _repository.Commit(Feature, "Tagged commit");
+        _repository.Tags.Add("v1.0.0", target);
+
+        3.Times(i => _repository.Commit(Feature, $"After tag {i}"));
+
+        Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
+            .WithGroup(Feature.Header)
+                .WithBullet("After tag 2")
+                .WithBullet("After tag 1")
+                .WithBullet("After tag 0"));
+    }
+
     public void Dispose() => _repository.Delete();
 }
