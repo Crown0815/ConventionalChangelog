@@ -15,6 +15,8 @@ internal static class Model
 
         private static string Group(string header) => $"## {header}";
 
+        public static Changelog Empty => new Changelog().WithTitle();
+
         public Changelog WithTitle() => With(ChangelogTitle + Environment.NewLine);
 
         public Changelog WithGroup(string header) => With(Environment.NewLine + Group(header) + HeaderSeparator);

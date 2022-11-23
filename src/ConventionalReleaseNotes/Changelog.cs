@@ -30,4 +30,9 @@ public static class Changelog
 
     private static string MessageFrom(this ConventionalCommitType t, string m) => Regex.Replace(m, t.Indicator, "");
     private static bool Matches(this ConventionalCommitType t, string m) => Regex.IsMatch(m, $"{t.Indicator}.+");
+
+    public static string FromRepository(string path)
+    {
+        return From();
+    }
 }
