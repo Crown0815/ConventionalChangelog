@@ -35,7 +35,7 @@ public static class Changelog
     public static string FromRepository(string path)
     {
         using var repo = new Repository(path);
-        var tag = repo.Tags.SingleOrDefault();
+        var tag = repo.Tags.LastOrDefault();
         var filter = new CommitFilter {
             SortBy = CommitSortStrategies.Topological,
             ExcludeReachableFrom = tag,

@@ -69,5 +69,25 @@ public class Git_specs : IDisposable
                 .WithBullet("After tag 0"));
     }
 
+    [Fact]
+    public void Changelog_from_conventional_commits_and_multiple_tags_should_contain_all_commits_after_the_last_tag()
+    {
+        _repository.Commit(Feature, "Before tag 2");
+        var target = _repository.Commit(Feature, "Tagged commit 1");
+        _repository.Tags.Add("v1.0.0", target);
+
+        _repository.Commit(Feature, "Before tag 2");
+        target = _repository.Commit(Feature, "Tagged commit 2");
+        _repository.Tags.Add("v2.0.0", target);
+
+        3.Times(i => _repository.Commit(Feature, $"After tag {i}"));
+
+        Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
+            .WithGroup(Feature.Header)
+                .WithBullet("After tag 2")
+                .WithBullet("After tag 1")
+                .WithBullet("After tag 0"));
+    }
+
     public void Dispose() => _repository.Delete();
 }
