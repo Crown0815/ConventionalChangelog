@@ -5,6 +5,8 @@ namespace ConventionalReleaseNotes;
 
 public static class Changelog
 {
+    private const string VersionTagPrefix = "v";
+
     private static readonly ConventionalCommitType[] CommitTypes =
     {
         new("feat: ", "Features"),
@@ -46,7 +48,7 @@ public static class Changelog
 
     private static bool IsVersionTag(Tag tag)
     {
-        var semanticVersion = new Regex(@"^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$");
-        return semanticVersion.IsMatch(tag.FriendlyName.Replace("v", ""));
+        var tagNameWithoutVersionPrefix = tag.FriendlyName.Replace(VersionTagPrefix, "");
+        return tagNameWithoutVersionPrefix.IsSemanticVersion();
     }
 }
