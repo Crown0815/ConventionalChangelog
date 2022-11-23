@@ -3,7 +3,7 @@ using LibGit2Sharp;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 
-internal static class RepositoryExtensions
+internal static class RepositoryManagementExtensions
 {
     public static void Delete(this Repository repository)
     {

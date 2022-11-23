@@ -11,8 +11,6 @@ public class Git_specs : IDisposable
     private const string TestDirectoryName = "unittest";
 
 
-    private static readonly Identity TestIdentity = new("unit test", "unit@test.email");
-    private static readonly Signature Signature = new(TestIdentity, DateTimeOffset.Now);
 
     private readonly Repository _repository;
 
@@ -31,18 +29,9 @@ public class Git_specs : IDisposable
     [Fact]
     public void Changelog_from_a_single_branch_repository_with_conventional_commits_should_contain_all_commits()
     {
-        _repository.Commit(Model.ConventionalCommitMessage("feat", "new feature"), Signature, Signature, new CommitOptions
-        {
-            AllowEmptyCommit = true,
-        });
-        _repository.Commit(Model.ConventionalCommitMessage("fix", "new fix"), Signature, Signature, new CommitOptions
-        {
-            AllowEmptyCommit = true,
-        });
-        _repository.Commit(Model.ConventionalCommitMessage("perf", "new performance improvement"), Signature, Signature, new CommitOptions
-        {
-            AllowEmptyCommit = true,
-        });
+        _repository.Commit(Model.ConventionalCommitMessage("feat", "new feature"));
+        _repository.Commit(Model.ConventionalCommitMessage("fix", "new fix"));
+        _repository.Commit(Model.ConventionalCommitMessage("perf", "new performance improvement"));
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
             .WithGroup("Features")
