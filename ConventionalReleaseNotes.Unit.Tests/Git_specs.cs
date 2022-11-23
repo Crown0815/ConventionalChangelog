@@ -26,7 +26,7 @@ public class Git_specs : IDisposable
     }
 
     [Fact]
-    public void Changelog_from_a_single_branch_repository_with_conventional_commits_should_contain_all_commits()
+    public void Changelog_from_only_conventional_commits_contains_the_messages_of_the_commits()
     {
         _repository.Commit(Feature, "new feature");
         _repository.Commit(Bugfix, "new fix");
@@ -42,19 +42,19 @@ public class Git_specs : IDisposable
     }
 
     [Fact]
-    public void Changelog_from_a_single_branch_repository_with_conventional_commits_contains_messages_from_newest_to_oldest_commit()
+    public void Changelog_from_only_conventional_commits_contains_messages_from_newest_to_oldest_commit()
     {
         3.Times(i => _repository.Commit(Feature, $"Commit {i}"));
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
             .WithGroup(Feature.Header)
-            .WithBullet("Commit 2")
-            .WithBullet("Commit 1")
-            .WithBullet("Commit 0"));
+                .WithBullet("Commit 2")
+                .WithBullet("Commit 1")
+                .WithBullet("Commit 0"));
     }
 
     [Fact]
-    public void Changelog_from_a_single_branch_repository_with_conventional_commits_and_a_tag_should_contain_all_commits_after_the_tag()
+    public void Changelog_from_conventional_commits_and_a_single_tag_should_contain_all_commits_after_the_tag()
     {
         _repository.Commit(Feature, "Before tag");
         var target = _repository.Commit(Feature, "Tagged commit");
