@@ -4,6 +4,9 @@ internal class LogAggregate
 {
     private const string BulletPoint = "- ";
     private const string ChangelogTitle = "# Changelog";
+    private const string GeneralCodeImprovementsMessage = "*General Code Improvements*";
+    private const string GroupHeaderPrefix = "## ";
+
     private static readonly string EmptyChangelog = ChangelogTitle + Environment.NewLine;
 
     private string _text = EmptyChangelog;
@@ -22,14 +25,12 @@ internal class LogAggregate
         _text += BulletPoint + text + Environment.NewLine;
     }
 
-
-
-    private static string ChangeGroupHeader(string header) => $"## {header}";
+    private static string ChangeGroupHeader(string header) => GroupHeaderPrefix + header;
 
     public override string ToString()
     {
         if (IsEmpty && _hasGeneralCodeImprovements)
-            return _text + Environment.NewLine + "*General Code Improvements*";
+            return _text + Environment.NewLine + GeneralCodeImprovementsMessage;
         return _text;
     }
 
