@@ -80,8 +80,8 @@ public class Git_specs : IDisposable
     [Fact]
     public void Changelog_from_conventional_commits_and_multiple_tags_should_contain_all_commits_after_the_last_tag()
     {
-        _repository.Commit(Feature, "Before tag 2");
-        var target = _repository.Commit(Feature, "Tagged commit 1");
+        _repository.Commit(Feature, "Before tag");
+        var target = _repository.Commit(Feature, "Tagged commit");
         _repository.Tags.Add("v1.0.0", target);
 
         _repository.Commit(Feature, "Before tag 2");
