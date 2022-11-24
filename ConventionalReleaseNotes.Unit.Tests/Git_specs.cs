@@ -20,15 +20,16 @@ public class Git_specs : IDisposable
     }
 
     [Fact]
-    public void Changelog_from_an_empty_repository_should_be_empty()
+    public void An_empty_repository_produces_an_empty_changelog()
     {
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty);
     }
 
     [Fact]
-    public void Changelog_from_only_conventional_commits_contains_the_messages_of_the_commits()
+    public void A_repository_with_conventional_commits_produces_changelog_with_all_conventional_commit_messages()
     {
         _repository.Commit(Feature, "new feature");
+        _repository.Commit("non conventional commit message");
         _repository.Commit(Bugfix, "new fix");
         _repository.Commit(PerformanceImprovement, "new performance improvement");
 
