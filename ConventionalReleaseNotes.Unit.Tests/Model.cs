@@ -34,4 +34,6 @@ internal static class Model
 
     public static string ConventionalCommitMessage(string typeIndicator, string summary) =>
         $"{typeIndicator}: {summary}";
+
+    public static string Message(int seed) => $"Some Message {seed}";
 }
