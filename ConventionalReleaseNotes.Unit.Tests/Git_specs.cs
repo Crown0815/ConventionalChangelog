@@ -66,8 +66,7 @@ public class Git_specs : IDisposable
     public void Changelog_from_conventional_commits_and_a_single_tag_should_contain_all_commits_after_the_tag(string version)
     {
         _repository.Commit(Feature, "Before tag");
-        var target = _repository.Commit(Feature, "Tagged commit");
-        _repository.Tags.Add($"v{version}", target);
+        _repository.Commit(Feature, "Tagged commit").Tag($"v{version}");
 
         3.Times(i => _repository.Commit(Feature, Model.Message(i)));
 
@@ -82,12 +81,10 @@ public class Git_specs : IDisposable
     public void Changelog_from_conventional_commits_and_multiple_tags_should_contain_all_commits_after_the_last_tag()
     {
         _repository.Commit(Feature, "Before tag");
-        var target = _repository.Commit(Feature, "Tagged commit");
-        _repository.Tags.Add("v1.0.0", target);
+        _repository.Commit(Feature, "Tagged commit").Tag("v1.0.0");
 
         _repository.Commit(Feature, "Before tag 2");
-        target = _repository.Commit(Feature, "Tagged commit 2");
-        _repository.Tags.Add("v2.0.0", target);
+        _repository.Commit(Feature, "Tagged commit 2").Tag("v2.0.0");
 
         3.Times(i => _repository.Commit(Feature, Model.Message(i)));
 
@@ -101,10 +98,8 @@ public class Git_specs : IDisposable
     [Fact]
     public void Changelog_from_conventional_commits_and_non_version_tags_should_contain_all_commits()
     {
-        var target = _repository.Commit(Feature, Model.Message(1));
-        _repository.Tags.Add("a", target);
-        target = _repository.Commit(Feature, Model.Message(2));
-        _repository.Tags.Add("b", target);
+        _repository.Commit(Feature, Model.Message(1)).Tag("a");
+        _repository.Commit(Feature, Model.Message(2)).Tag("b");
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
             .WithGroup(Feature.Header)

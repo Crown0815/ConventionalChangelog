@@ -18,4 +18,11 @@ internal static class RepositoryInteractionExtensions
     {
         return r.Commit(message, Signature, Signature, CommitOptions);
     }
+
+    public static void Tag(this GitObject target, string name)
+    {
+        target.Repository().Tags.Add(name, target);
+    }
+
+    private static IRepository Repository(this IBelongToARepository x) => x.Repository;
 }
