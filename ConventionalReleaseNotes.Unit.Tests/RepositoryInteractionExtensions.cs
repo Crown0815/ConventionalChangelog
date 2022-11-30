@@ -11,7 +11,7 @@ internal static class RepositoryInteractionExtensions
 
     public static Commit Commit(this Repository r, ConventionalCommitType type, string message)
     {
-        return r.Commit(Model.ConventionalCommitMessage(type, message));
+        return r.Commit(type.CommitWith(message));
     }
 
     public static Commit Commit(this Repository r, string message)

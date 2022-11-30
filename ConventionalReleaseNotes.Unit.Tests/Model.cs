@@ -32,11 +32,14 @@ internal static class Model
         public static implicit operator string(Changelog x) => x._text;
     }
 
-    public static string ConventionalCommitMessage(ConventionalCommitType type, string summary) =>
-        ConventionalCommitMessage(type.Indicator, summary);
+    public static string CommitWithDescription(this ConventionalCommitType type, int seed) =>
+        ConventionalCommitMessage(type.Indicator, Description(seed));
+
+    public static string CommitWith(this ConventionalCommitType type, string description) =>
+        ConventionalCommitMessage(type.Indicator, description);
 
     public static string ConventionalCommitMessage(string typeIndicator, string summary) =>
         $"{typeIndicator}: {summary}";
 
-    public static string Message(int seed) => $"Some Message {seed}";
+    public static string Description(int seed) => $"Some Description {seed}";
 }

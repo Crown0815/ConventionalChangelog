@@ -29,29 +29,29 @@ public class Git_specs : IDisposable
     public void A_repository_with_conventional_commits_produces_changelog_with_all_conventional_commit_messages()
     {
         _repository.Commit("non conventional commit message should not appear in changelog");
-        _repository.Commit(Feature, Model.Message(1));
-        _repository.Commit(Bugfix, Model.Message(2));
-        _repository.Commit(PerformanceImprovement, Model.Message(3));
+        _repository.Commit(Feature, Model.Description(1));
+        _repository.Commit(Bugfix, Model.Description(2));
+        _repository.Commit(PerformanceImprovement, Model.Description(3));
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
             .WithGroup(Feature.Header)
-                .WithBullet(Model.Message(1))
+                .WithBullet(Model.Description(1))
             .WithGroup(Bugfix.Header)
-                .WithBullet(Model.Message(2))
+                .WithBullet(Model.Description(2))
             .WithGroup(PerformanceImprovement.Header)
-                .WithBullet(Model.Message(3)));
+                .WithBullet(Model.Description(3)));
     }
 
     [Fact]
     public void Changelog_from_only_conventional_commits_contains_messages_from_newest_to_oldest_commit()
     {
-        3.Times(i => _repository.Commit(Feature, Model.Message(i)));
+        3.Times(i => _repository.Commit(Feature, Model.Description(i)));
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
             .WithGroup(Feature.Header)
-                .WithBullet(Model.Message(2))
-                .WithBullet(Model.Message(1))
-                .WithBullet(Model.Message(0)));
+                .WithBullet(Model.Description(2))
+                .WithBullet(Model.Description(1))
+                .WithBullet(Model.Description(0)));
     }
 
     [Theory]
@@ -68,13 +68,13 @@ public class Git_specs : IDisposable
         _repository.Commit(Feature, "Before tag");
         _repository.Commit(Feature, "Tagged commit").Tag($"v{version}");
 
-        3.Times(i => _repository.Commit(Feature, Model.Message(i)));
+        3.Times(i => _repository.Commit(Feature, Model.Description(i)));
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
             .WithGroup(Feature.Header)
-                .WithBullet(Model.Message(2))
-                .WithBullet(Model.Message(1))
-                .WithBullet(Model.Message(0)));
+                .WithBullet(Model.Description(2))
+                .WithBullet(Model.Description(1))
+                .WithBullet(Model.Description(0)));
     }
 
     [Fact]
@@ -86,25 +86,25 @@ public class Git_specs : IDisposable
         _repository.Commit(Feature, "Before tag 2");
         _repository.Commit(Feature, "Tagged commit 2").Tag("v2.0.0");
 
-        3.Times(i => _repository.Commit(Feature, Model.Message(i)));
+        3.Times(i => _repository.Commit(Feature, Model.Description(i)));
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
             .WithGroup(Feature.Header)
-                .WithBullet(Model.Message(2))
-                .WithBullet(Model.Message(1))
-                .WithBullet(Model.Message(0)));
+                .WithBullet(Model.Description(2))
+                .WithBullet(Model.Description(1))
+                .WithBullet(Model.Description(0)));
     }
 
     [Fact]
     public void Changelog_from_conventional_commits_and_non_version_tags_should_contain_all_commits()
     {
-        _repository.Commit(Feature, Model.Message(1)).Tag("a");
-        _repository.Commit(Feature, Model.Message(2)).Tag("b");
+        _repository.Commit(Feature, Model.Description(1)).Tag("a");
+        _repository.Commit(Feature, Model.Description(2)).Tag("b");
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
             .WithGroup(Feature.Header)
-                .WithBullet(Model.Message(2))
-                .WithBullet(Model.Message(1)));
+                .WithBullet(Model.Description(2))
+                .WithBullet(Model.Description(1)));
     }
 
     public void Dispose() => _repository.Delete();

@@ -19,28 +19,28 @@ public class A_changelog_from_relevant_conventional_commits
     [MemberData(nameof(ChangelogRelevantCommitTypes))]
     public void is_the_changelog_header_plus_a_group_containing_the_descriptions(ConventionalCommitType type)
     {
-        var message1 = Model.ConventionalCommitMessage(type, Model.Message(1));
-        var message2 = Model.ConventionalCommitMessage(type, Model.Message(2));
+        var message1 = type.CommitWithDescription(1);
+        var message2 = type.CommitWithDescription(2);
 
         var changelog = Changelog.From(message1, message2);
 
         changelog.Should().Be(_changelog
             .WithGroup(type.Header)
-                .WithBullet(Model.Message(1))
-                .WithBullet(Model.Message(2)));
+                .WithBullet(Model.Description(1))
+                .WithBullet(Model.Description(2)));
     }
 
     [Fact]
     public void and_irrelevant_commits_contains_all_relevant_entries()
     {
-        var message1 = Model.ConventionalCommitMessage(Feature, Model.Message(1));
-        var message2 = Model.ConventionalCommitMessage("chore", Model.Message(2));
+        var message1 = Feature.CommitWithDescription(1);
+        var message2 = Model.ConventionalCommitMessage("chore", Model.Description(2));
 
         var changelog = Changelog.From(message1, message2);
 
         changelog.Should().Be(_changelog
             .WithGroup(Feature.Header)
-                .WithBullet(Model.Message(1)));
+                .WithBullet(Model.Description(1)));
     }
 
     [Fact]
@@ -48,38 +48,38 @@ public class A_changelog_from_relevant_conventional_commits
     {
         var messages = new[]
         {
-            Model.ConventionalCommitMessage(Feature, Model.Message(1)),
-            Model.ConventionalCommitMessage(Bugfix, Model.Message(2)),
-            Model.ConventionalCommitMessage(PerformanceImprovement, Model.Message(3)),
-            Model.ConventionalCommitMessage(Feature, Model.Message(4)),
-            Model.ConventionalCommitMessage(PerformanceImprovement, Model.Message(5)),
-            Model.ConventionalCommitMessage(Bugfix, Model.Message(6)),
+            Feature.CommitWithDescription(1),
+            Bugfix.CommitWithDescription(2),
+            PerformanceImprovement.CommitWithDescription(3),
+            Feature.CommitWithDescription(4),
+            PerformanceImprovement.CommitWithDescription(5),
+            Bugfix.CommitWithDescription(6),
         };
 
         var changelog = Changelog.From(messages);
 
         changelog.Should().Be(_changelog
             .WithGroup(Feature.Header)
-                .WithBullet(Model.Message(1))
-                .WithBullet(Model.Message(4))
+                .WithBullet(Model.Description(1))
+                .WithBullet(Model.Description(4))
             .WithGroup(Bugfix.Header)
-                .WithBullet(Model.Message(2))
-                .WithBullet(Model.Message(6))
+                .WithBullet(Model.Description(2))
+                .WithBullet(Model.Description(6))
             .WithGroup(PerformanceImprovement.Header)
-                .WithBullet(Model.Message(3))
-                .WithBullet(Model.Message(5)));
+                .WithBullet(Model.Description(3))
+                .WithBullet(Model.Description(5)));
     }
 
     [Fact]
     public void with_breaking_change_indicator_contains_message_within_special_breaking_changes_group()
     {
         const string breakingChangeIndicator = "!";
-        var breakingChange = Model.ConventionalCommitMessage(Feature.Indicator + breakingChangeIndicator, Model.Message(1));
+        var breakingChange = Model.ConventionalCommitMessage(Feature.Indicator + breakingChangeIndicator, Model.Description(1));
 
         var changelog = Changelog.From(breakingChange);
 
         changelog.Should().Be(_changelog
             .WithGroup("Breaking Changes")
-            .WithBullet(Model.Message(1)));
+            .WithBullet(Model.Description(1)));
     }
 }
