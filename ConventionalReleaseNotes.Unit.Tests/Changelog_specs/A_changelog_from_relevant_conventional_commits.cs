@@ -69,4 +69,16 @@ public class A_changelog_from_relevant_conventional_commits
                 .WithBullet(Model.Message(3))
                 .WithBullet(Model.Message(5)));
     }
+
+    [Fact]
+    public void with_breaking_change_indicator_contains_message_within_special_breaking_changes_group()
+    {
+        var breakingChange = Model.ConventionalCommitMessage(Feature.Indicator + "!", Model.Message(1));
+
+        var changelog = Changelog.From(breakingChange);
+
+        changelog.Should().Be(_changelog
+            .WithGroup("Breaking Changes")
+            .WithBullet(Model.Message(1)));
+    }
 }
