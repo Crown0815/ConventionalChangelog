@@ -34,7 +34,7 @@ public class A_changelog_from_relevant_conventional_commits
     public void and_irrelevant_commits_contains_all_relevant_entries()
     {
         var message1 = Feature.CommitWithDescription(1);
-        var message2 = Model.ConventionalCommitMessage("chore", Model.Description(2));
+        var message2 = "chore".ToCommitType().CommitWith(Model.Description(2));
 
         var changelog = Changelog.From(message1, message2);
 
@@ -71,10 +71,9 @@ public class A_changelog_from_relevant_conventional_commits
     }
 
     [Fact]
-    public void with_breaking_change_indicator_contains_message_within_special_breaking_changes_group()
+    public void with_breaking_change_contains_message_within_special_breaking_changes_group()
     {
-        const string breakingChangeIndicator = "!";
-        var breakingChange = Model.ConventionalCommitMessage(Feature.Indicator + breakingChangeIndicator, Model.Description(1));
+        var breakingChange = Breaking(Feature).CommitWith(Model.Description(1));
 
         var changelog = Changelog.From(breakingChange);
 

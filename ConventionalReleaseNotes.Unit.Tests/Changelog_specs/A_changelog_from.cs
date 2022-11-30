@@ -46,8 +46,9 @@ public class A_changelog_from
     [InlineData("test")]
     public void changelog_irrelevant_conventional_commits_contains_general_code_improvements_message(string indicator)
     {
-        var conventionalCommit1 = Model.ConventionalCommitMessage(indicator, "unused");
-        var conventionalCommit2 = Model.ConventionalCommitMessage(indicator, "unused");
+        var type = indicator.ToCommitType();
+        var conventionalCommit1 = type.CommitWith("unused description");
+        var conventionalCommit2 = type.CommitWith("unused description");
         var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
         changelog.Should().Be(Model.Changelog.Empty.WithGeneralCodeImprovementsMessage());
     }

@@ -33,13 +33,10 @@ internal static class Model
     }
 
     public static string CommitWithDescription(this ConventionalCommitType type, int seed) =>
-        ConventionalCommitMessage(type.Indicator, Description(seed));
+        type.CommitWith(Description(seed));
 
     public static string CommitWith(this ConventionalCommitType type, string description) =>
-        ConventionalCommitMessage(type.Indicator, description);
-
-    public static string ConventionalCommitMessage(string typeIndicator, string summary) =>
-        $"{typeIndicator}: {summary}";
+        $"{type.Indicator}: {description}";
 
     public static string Description(int seed) => $"Some Description {seed}";
 }
