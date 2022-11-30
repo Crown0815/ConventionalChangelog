@@ -73,7 +73,8 @@ public class A_changelog_from_relevant_conventional_commits
     [Fact]
     public void with_breaking_change_indicator_contains_message_within_special_breaking_changes_group()
     {
-        var breakingChange = Model.ConventionalCommitMessage(Feature.Indicator + "!", Model.Message(1));
+        const string breakingChangeIndicator = "!";
+        var breakingChange = Model.ConventionalCommitMessage(Feature.Indicator + breakingChangeIndicator, Model.Message(1));
 
         var changelog = Changelog.From(breakingChange);
 
