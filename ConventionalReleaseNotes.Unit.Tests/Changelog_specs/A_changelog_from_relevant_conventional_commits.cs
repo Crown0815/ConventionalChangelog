@@ -73,12 +73,13 @@ public class A_changelog_from_relevant_conventional_commits
     [Fact]
     public void with_breaking_change_contains_message_within_special_breaking_changes_group()
     {
+        const string breakingChangesHeader = "Breaking Changes";
         var breakingChange = Breaking(Feature).CommitWith(Model.Description(1));
 
         var changelog = Changelog.From(breakingChange);
 
         changelog.Should().Be(_changelog
-            .WithGroup("Breaking Changes")
+            .WithGroup(breakingChangesHeader)
             .WithBullet(Model.Description(1)));
     }
 }
