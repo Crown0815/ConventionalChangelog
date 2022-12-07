@@ -4,11 +4,18 @@ namespace ConventionalReleaseNotes;
 
 public record ConventionalCommitMessage(string Type, string Description, string Body, IReadOnlyCollection<ConventionalCommitFooter> Footers)
 {
+    private static readonly ConventionalCommitMessage None = new("", "", "", Array.Empty<ConventionalCommitFooter>());
+
     public static ConventionalCommitMessage Parse(string rawMessage)
     {
+        if (rawMessage is null) throw new ArgumentNullException(nameof(rawMessage));
+        if (rawMessage is "") return None;
+
         using var reader = new StringReader(rawMessage);
         var header = reader.ReadLine()!;
         var parts = header.Split(": ");
+
+        if (parts is not [_, _]) return None;
         var type = parts.First();
         var description = header.Replace(type+": ", "");
 
@@ -84,7 +91,6 @@ public record ConventionalCommitMessage(string Type, string Description, string 
         var value = line.Replace(match.Value, "");
         return new ConventionalCommitFooter(token, value);
     }
-
 }
 
 public record ConventionalCommitFooter(string Token, string Value);
