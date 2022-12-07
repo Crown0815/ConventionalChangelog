@@ -8,15 +8,6 @@ public static class Changelog
 {
     private const string VersionTagPrefix = "v";
 
-    private static readonly CommitType[] CommitTypes =
-    {
-        new("[a-z]+!", "Breaking Changes"),
-        new("feat", "Features"),
-        new("fix", "Bug Fixes"),
-        new("perf", "Performance Improvements"),
-        new("[a-z]+", "", true),
-    };
-
     public static string From(params string[] commitMessages)
     {
         var messages = commitMessages.Select(CommitMessage.Parse).ToList();
@@ -28,7 +19,7 @@ public static class Changelog
                 log.AddBullet("Breaking Changes", footer.Value);
         }
 
-        foreach (var type in CommitTypes)
+        foreach (var type in Configuration.CommitTypes)
         foreach (var message in messages.Where(x => type.Matches(x.Type)))
         {
             if (type.HideFromChangelog)
