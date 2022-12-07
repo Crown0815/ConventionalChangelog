@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Xunit;
+using static System.Environment;
 using static ConventionalReleaseNotes.Unit.Tests.CommitType;
 
 namespace ConventionalReleaseNotes.Unit.Tests.Changelog_specs;
@@ -71,7 +72,7 @@ public class A_changelog_from_relevant_conventional_commits
     }
 
     [Fact]
-    public void with_breaking_change_contains_message_within_special_breaking_changes_group()
+    public void with_breaking_change_type_contains_message_within_special_breaking_changes_group()
     {
         const string breakingChangesHeader = "Breaking Changes";
         var breakingChange = Breaking(Feature).CommitWith(Model.Description(1));
@@ -81,5 +82,23 @@ public class A_changelog_from_relevant_conventional_commits
         changelog.Should().Be(_changelog
             .WithGroup(breakingChangesHeader)
             .WithBullet(Model.Description(1)));
+    }
+
+    [Theory]
+    [InlineData("BREAKING CHANGE")]
+    [InlineData("BREAKING-CHANGE")]
+    public void with_breaking_changes_description_followed_by_commit_description_for(string breakingChangeFooterToken)
+    {
+        const string breakingChangesHeader = "Breaking Changes";
+        var breakingChange = Feature.CommitWithDescription(1);
+        breakingChange += NewLine + NewLine + breakingChangeFooterToken + ": " + Model.Description(2);
+
+        var changelog = Changelog.From(breakingChange);
+
+        changelog.Should().Be(_changelog
+            .WithGroup(breakingChangesHeader)
+                .WithBullet(Model.Description(2))
+            .WithGroup(Feature.Header)
+                .WithBullet(Model.Description(1)));
     }
 }

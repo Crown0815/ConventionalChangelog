@@ -21,6 +21,12 @@ public static class Changelog
         var messages = commitMessages.Select(ConventionalCommitMessage.Parse).ToList();
         var log = new LogAggregate();
 
+        foreach (var footer in messages.SelectMany(x => x.Footers))
+        {
+            if (footer.Token is "BREAKING CHANGE" or "BREAKING-CHANGE")
+                log.AddBullet("Breaking Changes", footer.Value);
+        }
+
         foreach (var type in CommitTypes)
         foreach (var message in messages.Where(x => type.Matches(x.Type)))
         {
