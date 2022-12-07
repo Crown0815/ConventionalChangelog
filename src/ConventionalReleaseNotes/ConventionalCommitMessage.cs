@@ -4,25 +4,34 @@ namespace ConventionalReleaseNotes;
 
 public record ConventionalCommitMessage(string Type, string Description, string Body, IReadOnlyCollection<ConventionalCommitFooter> Footers)
 {
+    private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
+
     private static readonly ConventionalCommitMessage None = new("", "", "", Array.Empty<ConventionalCommitFooter>());
 
-    public static ConventionalCommitMessage Parse(string rawMessage)
+    public static ConventionalCommitMessage Parse(string rawMessage) => rawMessage switch
     {
-        if (rawMessage is null) throw new ArgumentNullException(nameof(rawMessage));
-        if (rawMessage is "") return None;
+        null => throw new ArgumentNullException(nameof(rawMessage)),
+        "" => None,
+        _ => Parsed(rawMessage),
+    };
 
-        using var reader = new StringReader(rawMessage);
-        var header = reader.ReadLine()!;
-        var parts = header.Split(": ");
-
-        if (parts is not [_, _]) return None;
-        var type = parts.First();
-        var description = header.Replace(type+": ", "");
-
-        var (body, footers) = BodyFrom(reader);
-
-        return new ConventionalCommitMessage(type, description.Trim(), body, footers.ToList());
+    private static ConventionalCommitMessage Parsed(string rawMessage)
+    {
+        using var lines = new StringReader(rawMessage);
+        return Read(lines);
     }
+
+    private static ConventionalCommitMessage Read(TextReader lines)
+    {
+        var (type, description) = HeaderFrom(lines.ReadLine()!);
+        var (body, footers) = BodyFrom(lines);
+
+        return new ConventionalCommitMessage(type, description, body, footers);
+    }
+
+    private static (string, string) HeaderFrom(string header) => header.Split(Separator) is [_, _] twoParts
+        ? (twoParts.First(),twoParts.Last().Trim())
+        : ("", "");
 
     private static IEnumerable<string> LinesFrom(TextReader reader)
     {
@@ -52,7 +61,7 @@ public record ConventionalCommitMessage(string Type, string Description, string 
             yield return buffer with {Value = buffer.Value.Trim()};
     }
 
-    private static (string, IEnumerable<ConventionalCommitFooter>) BodyFrom(TextReader reader)
+    private static (string, IReadOnlyCollection<ConventionalCommitFooter>) BodyFrom(TextReader reader)
     {
         var bodyParts = new List<string>();
         var footers = Enumerable.Empty<ConventionalCommitFooter>();
@@ -66,7 +75,7 @@ public record ConventionalCommitMessage(string Type, string Description, string 
             bodyParts.Add(line);
         }
 
-        return (string.Join(Environment.NewLine, bodyParts).Trim(), footers);
+        return (string.Join(Environment.NewLine, bodyParts).Trim(), footers.ToList());
     }
 
     private static bool IsFooter(string line)
