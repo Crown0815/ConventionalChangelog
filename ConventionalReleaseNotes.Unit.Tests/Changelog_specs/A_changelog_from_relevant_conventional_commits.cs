@@ -5,7 +5,7 @@ using static ConventionalReleaseNotes.Unit.Tests.CommitType;
 
 namespace ConventionalReleaseNotes.Unit.Tests.Changelog_specs;
 
-public class A_changelog_from_relevant_conventional_commits
+public class A_changelog_from_changelog_relevant_conventional_commits
 {
     public static readonly object[][] ChangelogRelevantCommitTypes =
     {
