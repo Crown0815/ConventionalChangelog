@@ -9,10 +9,10 @@ public static class Changelog
 
     private static readonly ConventionalCommitType[] CommitTypes =
     {
+        new("[a-z]+!", "Breaking Changes"),
         new("feat", "Features"),
         new("fix", "Bug Fixes"),
         new("perf", "Performance Improvements"),
-        new("[a-z]+!", "Breaking Changes"),
         new("[a-z]+", "", true),
     };
 
