@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ConventionalReleaseNotes.Conventional;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 
@@ -36,10 +37,10 @@ internal static class Model
         public static implicit operator string(Changelog x) => x._text;
     }
 
-    public static string CommitWithDescription(this ConventionalCommitType type, int seed) =>
+    public static string CommitWithDescription(this CommitType type, int seed) =>
         type.CommitWith(Description(seed));
 
-    public static string CommitWith(this ConventionalCommitType type, string description) =>
+    public static string CommitWith(this CommitType type, string description) =>
         $"{type.Indicator}: {description}";
 
     public static string Description(int seed) => $"Some Description {seed}";

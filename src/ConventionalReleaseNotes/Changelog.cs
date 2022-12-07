@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using ConventionalReleaseNotes.Conventional;
 using LibGit2Sharp;
 
 namespace ConventionalReleaseNotes;
@@ -7,7 +8,7 @@ public static class Changelog
 {
     private const string VersionTagPrefix = "v";
 
-    private static readonly ConventionalCommitType[] CommitTypes =
+    private static readonly CommitType[] CommitTypes =
     {
         new("[a-z]+!", "Breaking Changes"),
         new("feat", "Features"),
@@ -18,7 +19,7 @@ public static class Changelog
 
     public static string From(params string[] commitMessages)
     {
-        var messages = commitMessages.Select(ConventionalCommitMessage.Parse).ToList();
+        var messages = commitMessages.Select(CommitMessage.Parse).ToList();
         var log = new LogAggregate();
 
         foreach (var footer in messages.SelectMany(x => x.Footers))
@@ -39,7 +40,7 @@ public static class Changelog
         return log.ToString();
     }
 
-    private static bool Matches(this ConventionalCommitType t, string m) => Regex.IsMatch(m, $"^{t.Indicator}$");
+    private static bool Matches(this CommitType t, string m) => Regex.IsMatch(m, $"^{t.Indicator}$");
 
     public static string FromRepository(string path)
     {

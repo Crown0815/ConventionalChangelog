@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using ConventionalReleaseNotes.Conventional;
 using FluentAssertions;
 using Xunit;
-using static ConventionalReleaseNotes.ConventionalCommitMessage;
+using static ConventionalReleaseNotes.Conventional.CommitMessage;
 
 namespace ConventionalReleaseNotes.Unit.Tests.Changelog_specs;
 
@@ -39,7 +40,7 @@ public class Conventional_commit_parsing_specs
             """ ;
     }
 
-    private readonly ConventionalCommitMessage _parsed;
+    private readonly CommitMessage _parsed;
 
     public Conventional_commit_parsing_specs()
     {

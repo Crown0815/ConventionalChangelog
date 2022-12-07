@@ -3,7 +3,7 @@ using System.IO;
 using FluentAssertions;
 using LibGit2Sharp;
 using Xunit;
-using static ConventionalReleaseNotes.Unit.Tests.CommitType;
+using static ConventionalReleaseNotes.Unit.Tests.CommitTypeFor;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 

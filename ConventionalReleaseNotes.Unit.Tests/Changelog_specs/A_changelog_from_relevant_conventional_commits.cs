@@ -1,7 +1,8 @@
-﻿using FluentAssertions;
+﻿using ConventionalReleaseNotes.Conventional;
+using FluentAssertions;
 using Xunit;
 using static System.Environment;
-using static ConventionalReleaseNotes.Unit.Tests.CommitType;
+using static ConventionalReleaseNotes.Unit.Tests.CommitTypeFor;
 
 namespace ConventionalReleaseNotes.Unit.Tests.Changelog_specs;
 
@@ -18,7 +19,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
     [Theory]
     [MemberData(nameof(ChangelogRelevantCommitTypes))]
-    public void is_the_changelog_header_plus_a_group_containing_the_descriptions(ConventionalCommitType type)
+    public void is_the_changelog_header_plus_a_group_containing_the_descriptions(CommitType type)
     {
         var message1 = type.CommitWithDescription(1);
         var message2 = type.CommitWithDescription(2);
