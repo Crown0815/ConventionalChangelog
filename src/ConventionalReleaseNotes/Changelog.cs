@@ -23,9 +23,9 @@ public static class Changelog
         foreach (var message in messages.Where(x => type.Matches(x.Type)))
         {
             if (type.HideFromChangelog)
-                log.AddHidden(type.Header, message.Description);
+                log.AddHidden(type.ChangelogGroupHeader, message.Description);
             else
-                log.AddBullet(type.Header, message.Description);
+                log.AddBullet(type.ChangelogGroupHeader, message.Description);
         }
 
         return log.ToString();
