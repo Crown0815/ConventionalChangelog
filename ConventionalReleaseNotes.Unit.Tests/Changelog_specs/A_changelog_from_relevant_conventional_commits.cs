@@ -60,61 +60,69 @@ public class A_changelog_from_changelog_relevant_conventional_commits
             .WithGroup(PerformanceImprovement.Header, 3, 5));
     }
 
-    [Fact]
-    public void with_breaking_change_type_contains_message_within_special_breaking_changes_group()
+    public class With_breaking_change
     {
-        const string breakingChangesHeader = "Breaking Changes";
-        var breakingChange = Breaking(Feature).CommitWithDescription(1);
+        private readonly Model.Changelog _changelog =
+            new A_changelog_from_changelog_relevant_conventional_commits()._changelog;
 
-        var changelog = Changelog.From(breakingChange);
+        private const string BreakingChangesHeader = "Breaking Changes";
 
-        changelog.Should().Be(_changelog
-            .WithGroup(breakingChangesHeader, 1));
-    }
+        [Fact]
+        public void commit_type_contains_message_within_special_breaking_changes_group()
+        {
+            var breakingChange = Breaking(Feature).CommitWithDescription(1);
 
-    [Fact]
-    public void with_breaking_and_other_change_types_contains_breaking_changes_as_first_group()
-    {
-        const string breakingChangesHeader = "Breaking Changes";
-        var breakingChange = Breaking(Feature).CommitWithDescription(1);
-        var anotherChange = Feature.CommitWithDescription(2);
+            var changelog = Changelog.From(breakingChange);
 
-        var changelog = Changelog.From(breakingChange, anotherChange);
+            changelog.Should().Be(_changelog
+                .WithGroup(BreakingChangesHeader, 1));
+        }
 
-        changelog.Should().Be(_changelog
-            .WithGroup(breakingChangesHeader, 1)
-            .WithGroup(Feature.Header, 2));
-    }
+        [Fact]
+        public void commit_type_and_non_breaking_commit_type_contains_breaking_changes_as_first_group()
+        {
+            var breakingChange = Breaking(Feature).CommitWithDescription(1);
+            var anotherChange = Feature.CommitWithDescription(2);
 
-    [Theory]
-    [InlineData("BREAKING CHANGE")]
-    [InlineData("BREAKING-CHANGE")]
-    public void contains_the_breaking_change_description_followed_by_the_commit_description_when_containing_a(string breakingChangeFooterToken)
-    {
-        const string breakingChangesHeader = "Breaking Changes";
-        var breakingChange = Feature.CommitWithDescription(1);
-        breakingChange += NewLine + NewLine + breakingChangeFooterToken + ": " + Model.Description(2);
+            var changelog = Changelog.From(breakingChange, anotherChange);
 
-        var changelog = Changelog.From(breakingChange);
+            changelog.Should().Be(_changelog
+                .WithGroup(BreakingChangesHeader, 1)
+                .WithGroup(Feature.Header, 2));
+        }
 
-        changelog.Should().Be(_changelog
-            .WithGroup(breakingChangesHeader, 2)
-            .WithGroup(Feature.Header, 1));
-    }
+        public static readonly object[][] BreakingChangeFooterTokens =
+        {
+            new object[] {"BREAKING CHANGE" },
+            new object[] {"BREAKING-CHANGE" },
+        };
 
-    [Theory]
-    [InlineData("BREAKING CHANGE")]
-    [InlineData("BREAKING-CHANGE")]
-    public void contains_the_breaking_change_description_followed_by_the_commit_description_when_containing_a_breaking_change_type_and_a(string breakingChangeFooterToken)
-    {
-        const string breakingChangesHeader = "Breaking Changes";
-        var breakingChange = Breaking(Feature).CommitWithDescription(1);
-        breakingChange += NewLine + NewLine + breakingChangeFooterToken + ": " + Model.Description(2);
+        [Theory]
+        [MemberData(nameof(BreakingChangeFooterTokens))]
+        public void footer_contains_the_breaking_change_description_followed_by_the_commit_description_for(string footerToken)
+        {
+            var breakingChange = Feature.CommitWithDescription(1);
+            breakingChange += NewLine + NewLine + footerToken + ": " + Model.Description(2);
 
-        var changelog = Changelog.From(breakingChange);
+            var changelog = Changelog.From(breakingChange);
 
-        changelog.Should().Be(_changelog
-            .WithGroup(breakingChangesHeader, 2)
-            .WithGroup(Feature.Header, 1));
+            changelog.Should().Be(_changelog
+                .WithGroup(BreakingChangesHeader, 2)
+                .WithGroup(Feature.Header, 1));
+        }
+
+        [Theory]
+        [MemberData(nameof(BreakingChangeFooterTokens))]
+        public void footer_and_breaking_type_contains_the_breaking_change_description_followed_by_the_commit_description_for(string footerToken)
+        {
+            var breakingChange = Breaking(Feature).CommitWithDescription(1);
+            breakingChange += NewLine + NewLine + footerToken + ": " + Model.Description(2);
+
+            var changelog = Changelog.From(breakingChange);
+
+            changelog.Should().Be(_changelog
+                .WithGroup(BreakingChangesHeader, 2)
+                .WithGroup(Feature.Header, 1));
+        }
     }
 }
