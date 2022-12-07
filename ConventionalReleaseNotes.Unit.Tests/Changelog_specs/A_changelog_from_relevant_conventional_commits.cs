@@ -25,10 +25,7 @@ public class A_changelog_from_relevant_conventional_commits
 
         var changelog = Changelog.From(message1, message2);
 
-        changelog.Should().Be(_changelog
-            .WithGroup(type.Header)
-                .WithBullet(Model.Description(1))
-                .WithBullet(Model.Description(2)));
+        changelog.Should().Be(_changelog.WithGroup(type.Header, 1, 2));
     }
 
     [Fact]
@@ -39,9 +36,7 @@ public class A_changelog_from_relevant_conventional_commits
 
         var changelog = Changelog.From(message1, message2);
 
-        changelog.Should().Be(_changelog
-            .WithGroup(Feature.Header)
-                .WithBullet(Model.Description(1)));
+        changelog.Should().Be(_changelog.WithGroup(Feature.Header, 1));
     }
 
     [Fact]
@@ -60,44 +55,35 @@ public class A_changelog_from_relevant_conventional_commits
         var changelog = Changelog.From(messages);
 
         changelog.Should().Be(_changelog
-            .WithGroup(Feature.Header)
-                .WithBullet(Model.Description(1))
-                .WithBullet(Model.Description(4))
-            .WithGroup(Bugfix.Header)
-                .WithBullet(Model.Description(2))
-                .WithBullet(Model.Description(6))
-            .WithGroup(PerformanceImprovement.Header)
-                .WithBullet(Model.Description(3))
-                .WithBullet(Model.Description(5)));
+            .WithGroup(Feature.Header, 1, 4)
+            .WithGroup(Bugfix.Header, 2, 6)
+            .WithGroup(PerformanceImprovement.Header, 3, 5));
     }
 
     [Fact]
     public void with_breaking_change_type_contains_message_within_special_breaking_changes_group()
     {
         const string breakingChangesHeader = "Breaking Changes";
-        var breakingChange = Breaking(Feature).CommitWith(Model.Description(1));
+        var breakingChange = Breaking(Feature).CommitWithDescription(1);
 
         var changelog = Changelog.From(breakingChange);
 
         changelog.Should().Be(_changelog
-            .WithGroup(breakingChangesHeader)
-            .WithBullet(Model.Description(1)));
+            .WithGroup(breakingChangesHeader, 1));
     }
 
     [Fact]
     public void with_breaking_and_other_change_types_contains_breaking_changes_as_first_group()
     {
         const string breakingChangesHeader = "Breaking Changes";
-        var breakingChange = Breaking(Feature).CommitWith(Model.Description(1));
-        var anotherChange = Feature.CommitWith(Model.Description(2));
+        var breakingChange = Breaking(Feature).CommitWithDescription(1);
+        var anotherChange = Feature.CommitWithDescription(2);
 
         var changelog = Changelog.From(breakingChange, anotherChange);
 
         changelog.Should().Be(_changelog
-            .WithGroup(breakingChangesHeader)
-            .WithBullet(Model.Description(1))
-            .WithGroup(Feature.Header)
-            .WithBullet(Model.Description(2)));
+            .WithGroup(breakingChangesHeader, 1)
+            .WithGroup(Feature.Header, 2));
     }
 
     [Theory]
@@ -112,10 +98,8 @@ public class A_changelog_from_relevant_conventional_commits
         var changelog = Changelog.From(breakingChange);
 
         changelog.Should().Be(_changelog
-            .WithGroup(breakingChangesHeader)
-                .WithBullet(Model.Description(2))
-            .WithGroup(Feature.Header)
-                .WithBullet(Model.Description(1)));
+            .WithGroup(breakingChangesHeader, 2)
+            .WithGroup(Feature.Header, 1));
     }
 
     [Theory]
@@ -130,9 +114,7 @@ public class A_changelog_from_relevant_conventional_commits
         var changelog = Changelog.From(breakingChange);
 
         changelog.Should().Be(_changelog
-            .WithGroup(breakingChangesHeader)
-                .WithBullet(Model.Description(2))
-            .WithGroup(Feature.Header)
-                .WithBullet(Model.Description(1)));
+            .WithGroup(breakingChangesHeader, 2)
+            .WithGroup(Feature.Header, 1));
     }
 }

@@ -33,13 +33,11 @@ public class Git_specs : IDisposable
         _repository.Commit(Bugfix, Model.Description(2));
         _repository.Commit(PerformanceImprovement, Model.Description(3));
 
-        Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
-            .WithGroup(Feature.Header)
-                .WithBullet(Model.Description(1))
-            .WithGroup(Bugfix.Header)
-                .WithBullet(Model.Description(2))
-            .WithGroup(PerformanceImprovement.Header)
-                .WithBullet(Model.Description(3)));
+        Changelog.FromRepository(_repository.Path())
+            .Should().Be(Model.Changelog.Empty
+                .WithGroup(Feature.Header, 1)
+                .WithGroup(Bugfix.Header, 2)
+                .WithGroup(PerformanceImprovement.Header, 3));
     }
 
     [Fact]
@@ -47,11 +45,9 @@ public class Git_specs : IDisposable
     {
         3.Times(i => _repository.Commit(Feature, Model.Description(i)));
 
-        Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
-            .WithGroup(Feature.Header)
-                .WithBullet(Model.Description(2))
-                .WithBullet(Model.Description(1))
-                .WithBullet(Model.Description(0)));
+        Changelog.FromRepository(_repository.Path())
+            .Should().Be(Model.Changelog.Empty
+                .WithGroup(Feature.Header, 2, 1, 0));
     }
 
     [Theory]
@@ -70,11 +66,9 @@ public class Git_specs : IDisposable
 
         3.Times(i => _repository.Commit(Feature, Model.Description(i)));
 
-        Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
-            .WithGroup(Feature.Header)
-                .WithBullet(Model.Description(2))
-                .WithBullet(Model.Description(1))
-                .WithBullet(Model.Description(0)));
+        Changelog.FromRepository(_repository.Path())
+            .Should().Be(Model.Changelog.Empty
+                .WithGroup(Feature.Header, 2, 1, 0));
     }
 
     [Fact]
@@ -88,11 +82,9 @@ public class Git_specs : IDisposable
 
         3.Times(i => _repository.Commit(Feature, Model.Description(i)));
 
-        Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
-            .WithGroup(Feature.Header)
-                .WithBullet(Model.Description(2))
-                .WithBullet(Model.Description(1))
-                .WithBullet(Model.Description(0)));
+        Changelog.FromRepository(_repository.Path())
+            .Should().Be(Model.Changelog.Empty
+                .WithGroup(Feature.Header, 2, 1, 0));
     }
 
     [Fact]
@@ -102,9 +94,7 @@ public class Git_specs : IDisposable
         _repository.Commit(Feature, Model.Description(2)).Tag("b");
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
-            .WithGroup(Feature.Header)
-                .WithBullet(Model.Description(2))
-                .WithBullet(Model.Description(1)));
+            .WithGroup(Feature.Header, 2, 1));
     }
 
     public void Dispose() => _repository.Delete();

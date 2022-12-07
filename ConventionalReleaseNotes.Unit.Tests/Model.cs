@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 
@@ -17,9 +18,12 @@ internal static class Model
 
         public static Changelog Empty => new Changelog().With(ChangelogTitle + Environment.NewLine);
 
-        public Changelog WithGroup(string header) => With(Environment.NewLine + Group(header) + HeaderSeparator);
+        public Changelog WithGroup(string header, params int[] seeds) =>
+            seeds.Aggregate(WithGroup(header), (x, y) => x.WithBullet(Description(y)));
 
-        public Changelog WithBullet(string content) => With($"- {content}{Environment.NewLine}");
+        private Changelog WithGroup(string header) => With(Environment.NewLine + Group(header) + HeaderSeparator);
+
+        private Changelog WithBullet(string content) => With($"- {content}{Environment.NewLine}");
 
         public string WithGeneralCodeImprovementsMessage() => With(Environment.NewLine + GeneralCodeImprovementsMessage);
 
