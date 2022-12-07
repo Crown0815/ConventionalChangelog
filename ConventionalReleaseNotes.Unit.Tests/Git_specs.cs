@@ -35,9 +35,9 @@ public class Git_specs : IDisposable
 
         Changelog.FromRepository(_repository.Path())
             .Should().Be(Model.Changelog.Empty
-                .WithGroup(Feature.ChangelogGroupHeader, 1)
-                .WithGroup(Bugfix.ChangelogGroupHeader, 2)
-                .WithGroup(PerformanceImprovement.ChangelogGroupHeader, 3));
+                .WithGroup(Feature, 1)
+                .WithGroup(Bugfix, 2)
+                .WithGroup(PerformanceImprovement, 3));
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class Git_specs : IDisposable
 
         Changelog.FromRepository(_repository.Path())
             .Should().Be(Model.Changelog.Empty
-                .WithGroup(Feature.ChangelogGroupHeader, 2, 1, 0));
+                .WithGroup(Feature, 2, 1, 0));
     }
 
     [Theory]
@@ -68,7 +68,7 @@ public class Git_specs : IDisposable
 
         Changelog.FromRepository(_repository.Path())
             .Should().Be(Model.Changelog.Empty
-                .WithGroup(Feature.ChangelogGroupHeader, 2, 1, 0));
+                .WithGroup(Feature, 2, 1, 0));
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class Git_specs : IDisposable
 
         Changelog.FromRepository(_repository.Path())
             .Should().Be(Model.Changelog.Empty
-                .WithGroup(Feature.ChangelogGroupHeader, 2, 1, 0));
+                .WithGroup(Feature, 2, 1, 0));
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class Git_specs : IDisposable
         _repository.Commit(Feature, Model.Description(2)).Tag("b");
 
         Changelog.FromRepository(_repository.Path()).Should().Be(Model.Changelog.Empty
-            .WithGroup(Feature.ChangelogGroupHeader, 2, 1));
+            .WithGroup(Feature, 2, 1));
     }
 
     public void Dispose() => _repository.Delete();

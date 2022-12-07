@@ -1,6 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using ConventionalReleaseNotes.Conventional;
+using static System.Environment;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 
@@ -11,22 +11,25 @@ internal static class Model
         private const string ChangelogTitle = "# Changelog";
         private const string GeneralCodeImprovementsMessage = "*General Code Improvements*";
 
-        private static readonly string HeaderSeparator = Environment.NewLine + Environment.NewLine;
+        private static readonly string HeaderSeparator = NewLine + NewLine;
 
         private string _text = "";
 
-        private static string Group(string header) => $"## {header}";
+        public static Changelog Empty => new Changelog().With(ChangelogTitle + NewLine);
 
-        public static Changelog Empty => new Changelog().With(ChangelogTitle + Environment.NewLine);
+        public Changelog WithGroup(CommitType type, params int[] seeds) =>
+            seeds.Aggregate(WithGroup(type), AddBulletPoint);
 
-        public Changelog WithGroup(string header, params int[] seeds) =>
-            seeds.Aggregate(WithGroup(header), (x, y) => x.WithBullet(Description(y)));
+        private Changelog WithGroup(CommitType type) =>
+            With(NewLine + Group(type) + HeaderSeparator);
 
-        private Changelog WithGroup(string header) => With(Environment.NewLine + Group(header) + HeaderSeparator);
+        private static string Group(CommitType type) => $"## {type.ChangelogGroupHeader}";
 
-        private Changelog WithBullet(string content) => With($"- {content}{Environment.NewLine}");
+        private static Changelog AddBulletPoint(Changelog c, int seed) =>
+            c.With($"- {Description(seed)}{NewLine}");
 
-        public string WithGeneralCodeImprovementsMessage() => With(Environment.NewLine + GeneralCodeImprovementsMessage);
+        public string WithGeneralCodeImprovementsMessage() =>
+            With(NewLine + GeneralCodeImprovementsMessage);
 
         private Changelog With(string text)
         {
