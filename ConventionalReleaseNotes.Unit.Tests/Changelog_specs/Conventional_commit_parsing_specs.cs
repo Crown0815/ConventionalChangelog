@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
+using static ConventionalReleaseNotes.ConventionalCommitMessage;
 
 namespace ConventionalReleaseNotes.Unit.Tests.Changelog_specs;
 
@@ -42,7 +43,7 @@ public class Conventional_commit_parsing_specs
 
     public Conventional_commit_parsing_specs()
     {
-        _parsed = ConventionalCommitMessage.Parse(ConventionalCommit.Message);
+        _parsed = Parse(ConventionalCommit.Message);
     }
 
     [Fact]
@@ -66,7 +67,7 @@ public class Conventional_commit_parsing_specs
     [Fact]
     public void The_parser_extracts_the_footer_from_a_conventional_commit()
     {
-        _parsed.Footers.Should().BeEquivalentTo(new ConventionalCommitFooter[]
+        _parsed.Footers.Should().BeEquivalentTo(new Footer[]
         {
             new(ConventionalCommit.FooterToken, ConventionalCommit.FooterValue),
         });
@@ -119,9 +120,9 @@ public class Conventional_commit_parsing_specs
     public void The_parser_extracts_the_specific(string footer, string expectedToken, string expectedValue)
     {
         var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, footer);
-        var parsed = ConventionalCommitMessage.Parse(messageWithSpecificFooter);
+        var parsed = Parse(messageWithSpecificFooter);
 
-        parsed.Footers.Should().BeEquivalentTo(new ConventionalCommitFooter[]
+        parsed.Footers.Should().BeEquivalentTo(new Footer[]
         {
             new(expectedToken, expectedValue),
         });
@@ -144,9 +145,9 @@ public class Conventional_commit_parsing_specs
                       """;
 
         var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, footers);
-        var parsed = ConventionalCommitMessage.Parse(messageWithSpecificFooter);
+        var parsed = Parse(messageWithSpecificFooter);
 
-        parsed.Footers.Should().BeEquivalentTo(new ConventionalCommitFooter[]
+        parsed.Footers.Should().BeEquivalentTo(new Footer[]
         {
             new("token1", "value1"),
             new("token-2", "value 2"),

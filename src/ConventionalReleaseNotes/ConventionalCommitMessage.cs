@@ -1,12 +1,13 @@
 ﻿using System.Text.RegularExpressions;
+using static ConventionalReleaseNotes.ConventionalCommitMessage;
 
 namespace ConventionalReleaseNotes;
 
-public record ConventionalCommitMessage(string Type, string Description, string Body, IReadOnlyCollection<ConventionalCommitFooter> Footers)
+public record ConventionalCommitMessage(string Type, string Description, string Body, IReadOnlyCollection<Footer> Footers)
 {
     private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
-    private static readonly ConventionalCommitMessage None = new("", "", "", Array.Empty<ConventionalCommitFooter>());
+    private static readonly ConventionalCommitMessage None = new("", "", "", Array.Empty<Footer>());
 
     public static ConventionalCommitMessage Parse(string rawMessage) => rawMessage switch
     {
@@ -42,9 +43,9 @@ public record ConventionalCommitMessage(string Type, string Description, string 
             yield return line;
     }
 
-    private static IEnumerable<ConventionalCommitFooter> FootersFrom(IEnumerable<string> lines)
+    private static IEnumerable<Footer> FootersFrom(IEnumerable<string> lines)
     {
-        ConventionalCommitFooter? buffer = null;
+        Footer? buffer = null;
         foreach (var line in lines)
         {
             if (buffer is not null && IsFooter(line))
@@ -64,10 +65,10 @@ public record ConventionalCommitMessage(string Type, string Description, string 
             yield return buffer with {Value = buffer.Value.Trim()};
     }
 
-    private static (string, IReadOnlyCollection<ConventionalCommitFooter>) BodyFrom(TextReader reader)
+    private static (string, IReadOnlyCollection<Footer>) BodyFrom(TextReader reader)
     {
         var bodyParts = new List<string>();
-        var footers = Enumerable.Empty<ConventionalCommitFooter>();
+        var footers = Enumerable.Empty<Footer>();
         while (reader.ReadLine() is { } line)
         {
             if (IsFooter(line))
@@ -87,22 +88,22 @@ public record ConventionalCommitMessage(string Type, string Description, string 
         return Regex.IsMatch(line, @"^(?<token>[\w\-]+|BREAKING[ -]CHANGE)(?<separator>: | #)");
     }
 
-    private static ConventionalCommitFooter FooterFrom(string line)
+    private static Footer FooterFrom(string line)
     {
         if (Regex.IsMatch(line, @"^#\w+-\d+"))
         {
             var x = line.Split(" ");
             var token1 = x.First().Replace("#", "");
             var value1 = line.Replace("#"+token1, "").Trim();
-            return new ConventionalCommitFooter(token1, value1);
+            return new Footer(token1, value1);
         }
 
         var match = Regex.Match(line, @"^(?<token>[\w\-]+|BREAKING[ -]CHANGE)(?<separator>: | #)");
 
         var token = match.Groups["token"].Value;
         var value = line.Replace(match.Value, "");
-        return new ConventionalCommitFooter(token, value);
+        return new Footer(token, value);
     }
-}
 
-public record ConventionalCommitFooter(string Token, string Value);
+    public record Footer(string Token, string Value);
+}
