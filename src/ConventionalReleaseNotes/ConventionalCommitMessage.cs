@@ -26,6 +26,9 @@ public record ConventionalCommitMessage(string Type, string Description, string 
         var (type, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines);
 
+        if (footers.Any(x => x.Token is "BREAKING CHANGE" or "BREAKING-CHANGE"))
+            type = type.Replace("!", "");
+
         return new ConventionalCommitMessage(type, description, body, footers);
     }
 

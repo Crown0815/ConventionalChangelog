@@ -87,10 +87,28 @@ public class A_changelog_from_relevant_conventional_commits
     [Theory]
     [InlineData("BREAKING CHANGE")]
     [InlineData("BREAKING-CHANGE")]
-    public void with_breaking_changes_description_followed_by_commit_description_for(string breakingChangeFooterToken)
+    public void contains_the_breaking_change_description_followed_by_the_commit_description_when_containing_a(string breakingChangeFooterToken)
     {
         const string breakingChangesHeader = "Breaking Changes";
         var breakingChange = Feature.CommitWithDescription(1);
+        breakingChange += NewLine + NewLine + breakingChangeFooterToken + ": " + Model.Description(2);
+
+        var changelog = Changelog.From(breakingChange);
+
+        changelog.Should().Be(_changelog
+            .WithGroup(breakingChangesHeader)
+                .WithBullet(Model.Description(2))
+            .WithGroup(Feature.Header)
+                .WithBullet(Model.Description(1)));
+    }
+
+    [Theory]
+    [InlineData("BREAKING CHANGE")]
+    [InlineData("BREAKING-CHANGE")]
+    public void contains_the_breaking_change_description_followed_by_the_commit_description_when_containing_a_breaking_change_type_and_a(string breakingChangeFooterToken)
+    {
+        const string breakingChangesHeader = "Breaking Changes";
+        var breakingChange = Breaking(Feature).CommitWithDescription(1);
         breakingChange += NewLine + NewLine + breakingChangeFooterToken + ": " + Model.Description(2);
 
         var changelog = Changelog.From(breakingChange);
