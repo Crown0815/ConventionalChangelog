@@ -1,3 +1,5 @@
+using ConventionalReleaseNotes.Conventional;
+
 namespace ConventionalReleaseNotes;
 
 internal class LogAggregate
@@ -14,7 +16,7 @@ internal class LogAggregate
 
     private bool IsEmpty => _text == EmptyChangelog;
 
-    public void AddBullet(string header, string text)
+    private void AddBullet(string header, string text)
     {
         if (!_text.Contains(header))
         {
@@ -34,5 +36,21 @@ internal class LogAggregate
         return _text;
     }
 
-    public void AddHidden(string _, string __) => _hasGeneralCodeImprovements = true;
+    private void AddHidden() => _hasGeneralCodeImprovements = true;
+
+    public void Add(CommitType type, string description)
+    {
+        switch (type.Relevance)
+        {
+            case Relevance.Show:
+                AddBullet(type.ChangelogGroupHeader, description);
+                break;
+            case Relevance.Hide:
+                AddHidden();
+                break;
+            case Relevance.Ignore:
+            default:
+                return;
+        }
+    }
 }

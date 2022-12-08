@@ -15,22 +15,12 @@ public static class Changelog
         foreach (var footer in messages.SelectMany(x => x.Footers))
         {
             if (footer.Token is "BREAKING CHANGE" or "BREAKING-CHANGE")
-                log.AddBullet("Breaking Changes", footer.Value);
+                log.Add(Configuration.BreakingChange, footer.Value);
         }
 
         foreach (var (type, description) in messages.OrderBy(x=> x.Type).Select(x => (x.Type, x.Description)))
         {
-            switch (type.Relevance)
-            {
-                case Relevance.Ignore:
-                    continue;
-                case Relevance.Hide:
-                    log.AddHidden(type.ChangelogGroupHeader, description);
-                    break;
-                default:
-                    log.AddBullet(type.ChangelogGroupHeader, description);
-                    break;
-            }
+            log.Add(type, description);
         }
 
         return log.ToString();

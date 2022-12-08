@@ -5,9 +5,11 @@ namespace ConventionalReleaseNotes;
 
 internal static class Configuration
 {
+    public static readonly CommitType BreakingChange = new OrderedCommitType(1, "[a-z]+!", "Breaking Changes");
+
     public static readonly CommitType[] CommitTypes =
     {
-        new OrderedCommitType(1, "[a-z]+!", "Breaking Changes"),
+        BreakingChange,
         new OrderedCommitType(2, "feat", "Features"),
         new OrderedCommitType(3, "fix", "Bug Fixes"),
         new OrderedCommitType(4, "perf", "Performance Improvements"),
