@@ -14,7 +14,7 @@ public class Conventional_commit_parsing_specs
 
     private static class ConventionalCommit
     {
-        public const string Type = "type";
+        public const string Type = "feat";
         public const string Description = "description";
 
         public const string Body = """
@@ -50,7 +50,7 @@ public class Conventional_commit_parsing_specs
     [Fact]
     public void The_parser_extracts_the_type_indicator_from_a_conventional_commit()
     {
-        _parsed.Type.Should().Be(ConventionalCommit.Type);
+        _parsed.Type.Indicator.Should().Be(ConventionalCommit.Type);
     }
 
     [Fact]

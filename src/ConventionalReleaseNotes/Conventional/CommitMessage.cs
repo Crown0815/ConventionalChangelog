@@ -2,7 +2,7 @@
 
 namespace ConventionalReleaseNotes.Conventional;
 
-public record CommitMessage(string Type, string Description, string Body, IReadOnlyCollection<Footer> Footers)
+public record CommitMessage(CommitType Type, string Description, string Body, IReadOnlyCollection<Footer> Footers)
 {
     public static CommitMessage Parse(string rawMessage) =>
         MessageParser.Parse(rawMessage);

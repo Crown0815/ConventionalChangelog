@@ -1,4 +1,6 @@
 ﻿using System.Text.RegularExpressions;
+using static System.Array;
+using static ConventionalReleaseNotes.Conventional.CommitMessage;
 
 namespace ConventionalReleaseNotes.Conventional;
 
@@ -6,7 +8,8 @@ internal static class MessageParser
 {
     private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
-    private static readonly CommitMessage None = new("", "", "", Array.Empty<CommitMessage.Footer>());
+    private static readonly CommitType NoType = new("", "", true);
+    private static readonly CommitMessage None = new(NoType, "", "", Empty<Footer>());
 
     public static CommitMessage Parse(string rawMessage) => rawMessage switch
     {
@@ -23,14 +26,18 @@ internal static class MessageParser
 
     private static CommitMessage Read(TextReader lines)
     {
-        var (type, description) = HeaderFrom(lines.ReadLine()!);
+        var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines);
 
         if (footers.Any(x => x.Token is "BREAKING CHANGE" or "BREAKING-CHANGE"))
-            type = type.Replace("!", "");
+            typeIndicator = typeIndicator.Replace("!", "");
+
+        var type = Configuration.CommitTypes.SingleOrDefault(x => x.Matches(typeIndicator)) ?? NoType;
 
         return new CommitMessage(type, description, body, footers);
     }
+
+    private static bool Matches(this CommitType t, string m) => Regex.IsMatch(m, $"^{t.Indicator}$");
 
     private static (string, string) HeaderFrom(string header) => header.Split(Separator) is [_, _] twoParts
         ? (twoParts.First(),twoParts.Last().Trim())
@@ -42,9 +49,9 @@ internal static class MessageParser
             yield return line;
     }
 
-    private static IEnumerable<CommitMessage.Footer> FootersFrom(IEnumerable<string> lines)
+    private static IEnumerable<Footer> FootersFrom(IEnumerable<string> lines)
     {
-        CommitMessage.Footer? buffer = null;
+        Footer? buffer = null;
         foreach (var line in lines)
         {
             if (buffer is not null && IsFooter(line))
@@ -64,10 +71,10 @@ internal static class MessageParser
             yield return buffer with {Value = buffer.Value.Trim()};
     }
 
-    private static (string, IReadOnlyCollection<CommitMessage.Footer>) BodyFrom(TextReader reader)
+    private static (string, IReadOnlyCollection<Footer>) BodyFrom(TextReader reader)
     {
         var bodyParts = new List<string>();
-        var footers = Enumerable.Empty<CommitMessage.Footer>();
+        var footers = Enumerable.Empty<Footer>();
         while (reader.ReadLine() is { } line)
         {
             if (IsFooter(line))
@@ -87,20 +94,20 @@ internal static class MessageParser
         return Regex.IsMatch(line, @"^(?<token>[\w\-]+|BREAKING[ -]CHANGE)(?<separator>: | #)");
     }
 
-    private static CommitMessage.Footer FooterFrom(string line)
+    private static Footer FooterFrom(string line)
     {
         if (Regex.IsMatch(line, @"^#\w+-\d+"))
         {
             var x = line.Split(" ");
             var token1 = x.First().Replace("#", "");
             var value1 = line.Replace("#"+token1, "").Trim();
-            return new CommitMessage.Footer(token1, value1);
+            return new Footer(token1, value1);
         }
 
         var match = Regex.Match(line, @"^(?<token>[\w\-]+|BREAKING[ -]CHANGE)(?<separator>: | #)");
 
         var token = match.Groups["token"].Value;
         var value = line.Replace(match.Value, "");
-        return new CommitMessage.Footer(token, value);
+        return new Footer(token, value);
     }
 }

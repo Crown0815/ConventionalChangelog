@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using ConventionalReleaseNotes.Conventional;
 using LibGit2Sharp;
 
@@ -20,7 +19,7 @@ public static class Changelog
         }
 
         foreach (var type in Configuration.CommitTypes)
-        foreach (var message in messages.Where(x => type.Matches(x.Type)))
+        foreach (var message in messages.Where(x => type == x.Type))
         {
             if (type.HideFromChangelog)
                 log.AddHidden(type.ChangelogGroupHeader, message.Description);
@@ -30,8 +29,6 @@ public static class Changelog
 
         return log.ToString();
     }
-
-    private static bool Matches(this CommitType t, string m) => Regex.IsMatch(m, $"^{t.Indicator}$");
 
     public static string FromRepository(string path)
     {

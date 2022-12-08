@@ -2,7 +2,7 @@
 
 namespace ConventionalReleaseNotes;
 
-public static class Configuration
+internal static class Configuration
 {
     public static readonly CommitType[] CommitTypes =
     {
