@@ -3,4 +3,4 @@
 public record CommitType(
     string Indicator,
     string ChangelogGroupHeader,
-    bool HideFromChangelog = false);
+    Relevance Relevance = Relevance.Show);

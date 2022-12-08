@@ -18,13 +18,19 @@ public static class Changelog
                 log.AddBullet("Breaking Changes", footer.Value);
         }
 
-        foreach (var type in Configuration.CommitTypes)
-        foreach (var message in messages.Where(x => type == x.Type))
+        foreach (var (type, description) in messages.OrderBy(x=> x.Type).Select(x => (x.Type, x.Description)))
         {
-            if (type.HideFromChangelog)
-                log.AddHidden(type.ChangelogGroupHeader, message.Description);
-            else
-                log.AddBullet(type.ChangelogGroupHeader, message.Description);
+            switch (type.Relevance)
+            {
+                case Relevance.Ignore:
+                    continue;
+                case Relevance.Hide:
+                    log.AddHidden(type.ChangelogGroupHeader, description);
+                    break;
+                default:
+                    log.AddBullet(type.ChangelogGroupHeader, description);
+                    break;
+            }
         }
 
         return log.ToString();
