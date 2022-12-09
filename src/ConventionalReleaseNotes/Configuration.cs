@@ -5,28 +5,39 @@ namespace ConventionalReleaseNotes;
 
 internal static class Configuration
 {
-    public static readonly CommitType BreakingChange = new OrderedCommitType(1, "[a-z]+!", "Breaking Changes");
+    private static readonly List<CommitType> Groups = new();
 
-    public static readonly CommitType[] CommitTypes =
+    static Configuration()
     {
-        BreakingChange,
-        new OrderedCommitType(2, "feat", "Features"),
-        new OrderedCommitType(3, "fix", "Bug Fixes"),
-        new OrderedCommitType(4, "perf", "Performance Improvements"),
-        new OrderedCommitType(5, "build", "", Hide),
-        new OrderedCommitType(6, "chore", "", Hide),
-        new OrderedCommitType(7, "ci", "", Hide),
-        new OrderedCommitType(8, "docs", "", Hide),
-        new OrderedCommitType(9, "style", "", Hide),
-        new OrderedCommitType(10, "refactor", "", Hide),
-        new OrderedCommitType(11, "test", "", Hide),
-    };
+        Configure("[a-z]+!", "Breaking Changes", Show);
+        Configure("feat", "Features", Show);
+        Configure("fix", "Bug Fixes", Show);
+        Configure("perf", "Performance Improvements", Show);
+        Configure("build", "", Hide);
+        Configure("chore", "", Hide);
+        Configure("ci", "", Hide);
+        Configure("docs", "", Hide);
+        Configure("style", "", Hide);
+        Configure("refactor", "", Hide);
+        Configure("test", "", Hide);
+    }
 
-    private record OrderedCommitType(int Index, string Indicator, string ChangelogGroupHeader, Relevance Relevance = Show)
-        : CommitType(Indicator, ChangelogGroupHeader, Relevance), IComparable
+    private static void Configure(string indicator, string header, Relevance relevance)
     {
-        public int CompareTo(object? other) => other is OrderedCommitType o
-            ? Index.CompareTo(o.Index)
-            : 1;
+        Groups.Add(new CommitType(indicator, header, relevance));
+    }
+
+    public static CommitType BreakingChange => Groups[0];
+    public static IReadOnlyCollection<CommitType> CommitTypes => Groups;
+    public static IComparer<CommitType> Comparer { get; } = new CommitTypeComparer();
+
+    private class CommitTypeComparer : IComparer<CommitType>
+    {
+        public int Compare(CommitType? x, CommitType? y) =>
+            IndexOf(x).CompareTo(IndexOf(y));
+
+        private static int IndexOf(CommitType? c) => c is not null
+            ? Groups.IndexOf(c)
+            : 0;
     }
 }

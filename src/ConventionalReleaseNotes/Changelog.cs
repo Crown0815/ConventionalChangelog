@@ -18,7 +18,9 @@ public static class Changelog
                 log.Add(Configuration.BreakingChange, footer.Value);
         }
 
-        foreach (var (type, description) in messages.OrderBy(x=> x.Type).Select(x => (x.Type, x.Description)))
+        foreach (var (type, description) in messages
+                     .OrderBy(x=> x.Type, Configuration.Comparer)
+                     .Select(x => (x.Type, x.Description)))
         {
             log.Add(type, description);
         }
