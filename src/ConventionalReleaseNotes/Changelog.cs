@@ -7,17 +7,15 @@ public static class Changelog
 {
     private const string VersionTagPrefix = "v";
 
-    public static string From(params string[] commitMessages)
-    {
-        var messages = commitMessages.Select(CommitMessage.Parse);
-        var logEntries = messages.SelectMany(LogEntries);
-        var ordered = logEntries.OrderBy(x => x.Type, Configuration.Comparer);
-        var aggregate = ordered.Aggregate(new LogAggregate(), Add);
-
-        return aggregate.ToString();
-    }
+    public static string From(params string[] commitMessages) => commitMessages
+        .SelectMany(LogEntries)
+        .OrderBy(x => x.Type, Configuration.Comparer)
+        .Aggregate(new LogAggregate(), Add).ToString();
 
     private static LogAggregate Add(LogAggregate a, LogEntry l) => a.Add(l.Type, l.Description);
+
+    private static IEnumerable<LogEntry> LogEntries(string rawMessage) =>
+        LogEntries(CommitMessage.Parse(rawMessage));
 
     private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage)
     {
