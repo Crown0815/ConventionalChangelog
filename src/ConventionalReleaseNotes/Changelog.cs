@@ -9,23 +9,22 @@ public static class Changelog
 
     public static string From(params string[] commitMessages)
     {
-        var messages = commitMessages.Select(CommitMessage.Parse).ToList();
+        var messages = commitMessages.Select(CommitMessage.Parse);
         var log = new LogAggregate();
 
-        foreach (var footer in messages.SelectMany(x => x.Footers))
-        {
-            if (footer.Token is "BREAKING CHANGE" or "BREAKING-CHANGE")
-                log.Add(Configuration.BreakingChange, footer.Value);
-        }
-
-        foreach (var (type, description) in messages
-                     .OrderBy(x=> x.Type, Configuration.Comparer)
-                     .Select(x => (x.Type, x.Description)))
-        {
+        foreach (var (type, description) in messages.SelectMany(LogEntries).OrderBy(x=> x.Type, Configuration.Comparer))
             log.Add(type, description);
-        }
 
         return log.ToString();
+    }
+
+    private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage)
+    {
+        foreach (var footer in commitMessage.Footers)
+            if (footer.Token is "BREAKING CHANGE" or "BREAKING-CHANGE")
+                yield return new LogEntry(Configuration.BreakingChange, footer.Value);
+
+        yield return new LogEntry(commitMessage.Type, commitMessage.Description);
     }
 
     public static string FromRepository(string path)
@@ -45,4 +44,6 @@ public static class Changelog
         var tagNameWithoutVersionPrefix = tag.FriendlyName.Replace(VersionTagPrefix, "");
         return tagNameWithoutVersionPrefix.IsSemanticVersion();
     }
+
+    private record LogEntry(CommitType Type, string Description);
 }
