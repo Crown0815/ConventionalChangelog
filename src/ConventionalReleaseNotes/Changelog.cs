@@ -10,13 +10,14 @@ public static class Changelog
     public static string From(params string[] commitMessages)
     {
         var messages = commitMessages.Select(CommitMessage.Parse);
-        var log = new LogAggregate();
+        var logEntries = messages.SelectMany(LogEntries);
+        var ordered = logEntries.OrderBy(x => x.Type, Configuration.Comparer);
+        var aggregate = ordered.Aggregate(new LogAggregate(), Add);
 
-        foreach (var (type, description) in messages.SelectMany(LogEntries).OrderBy(x=> x.Type, Configuration.Comparer))
-            log.Add(type, description);
-
-        return log.ToString();
+        return aggregate.ToString();
     }
+
+    private static LogAggregate Add(LogAggregate a, LogEntry l) => a.Add(l.Type, l.Description);
 
     private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage)
     {

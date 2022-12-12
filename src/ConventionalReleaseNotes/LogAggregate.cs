@@ -38,19 +38,19 @@ internal class LogAggregate
 
     private void AddHidden() => _hasGeneralCodeImprovements = true;
 
-    public void Add(CommitType type, string description)
+    public LogAggregate Add(CommitType type, string description)
     {
         switch (type.Relevance)
         {
             case Relevance.Show:
                 AddBullet(type.ChangelogGroupHeader, description);
-                break;
+                return this;
             case Relevance.Hide:
                 AddHidden();
-                break;
+                return this;
             case Relevance.Ignore:
             default:
-                return;
+                return this;
         }
     }
 }
