@@ -21,7 +21,7 @@ public static class Changelog
     private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage)
     {
         foreach (var footer in commitMessage.Footers)
-            if (Regex.IsMatch(footer.Token, Pattern.BreakingChange))
+            if (Regex.IsMatch(footer.Token, BreakingChange.FooterPattern))
                 yield return new LogEntry(Configuration.BreakingChange, footer.Value);
 
         yield return new LogEntry(commitMessage.Type, commitMessage.Description);

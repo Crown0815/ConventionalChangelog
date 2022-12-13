@@ -8,7 +8,7 @@ internal static class MessageParser
 {
     private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
-    private const string FooterPattern = $@"^(?<token>{Pattern.FooterToken}|{Pattern.BreakingChange})(?<separator>: | #)";
+    private const string FooterPattern = $@"^(?<token>{Pattern.FooterToken}|{BreakingChange.FooterPattern})(?<separator>: | #)";
 
     private static readonly CommitType NoType = new("", "", Relevance.Ignore);
     private static readonly CommitMessage None = new(NoType, "", "", Empty<Footer>());
@@ -31,8 +31,8 @@ internal static class MessageParser
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines);
 
-        if (footers.Any(x => Regex.IsMatch(x.Token, Pattern.BreakingChange)))
-            typeIndicator = typeIndicator.Replace("!", "");
+        if (footers.Any(x => Regex.IsMatch(x.Token, BreakingChange.FooterPattern)))
+            typeIndicator = typeIndicator.Replace(BreakingChange.IndicatorExtension, "");
 
         var type = Configuration.CommitTypes.SingleOrDefault(x => x.Matches(typeIndicator)) ?? NoType;
 
