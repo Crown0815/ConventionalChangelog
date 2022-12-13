@@ -6,7 +6,7 @@ namespace ConventionalReleaseNotes;
 
 public static class Changelog
 {
-    private const string VersionTagPrefix = "v";
+    private const string VersionTagPrefix = "[pv]";
 
     public static string From(params string[] commitMessages) => commitMessages
         .SelectMany(LogEntries)
@@ -56,11 +56,7 @@ public static class Changelog
         return From(repo.Commits.QueryBy(filter).Select(c => c.MessageShort).ToArray());
     }
 
-    private static bool IsVersionTag(Tag tag)
-    {
-        var tagNameWithoutVersionPrefix = tag.FriendlyName.Replace(VersionTagPrefix, "");
-        return tagNameWithoutVersionPrefix.IsSemanticVersion();
-    }
+    private static bool IsVersionTag(Tag tag) => tag.FriendlyName.IsSemanticVersion(VersionTagPrefix);
 
     private record LogEntry(CommitType Type, string Description);
 }
