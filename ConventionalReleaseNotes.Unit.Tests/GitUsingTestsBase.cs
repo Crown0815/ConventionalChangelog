@@ -10,10 +10,9 @@ public abstract class GitUsingTestsBase : IDisposable
 
     protected GitUsingTestsBase()
     {
-        var path = Path.Combine(Path.GetTempPath(), TestDirectoryName);
+        var path = Path.Combine(Path.GetTempPath(), GetType().FullName!);
         Repository = new Repository(Repository.Init(path));
     }
 
-    private const string TestDirectoryName = "unittest";
     public void Dispose() => Repository.Delete();
 }
