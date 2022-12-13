@@ -8,15 +8,12 @@ namespace ConventionalReleaseNotes.Unit.Tests;
 
 public class Command_line_interface_specs : GitUsingTestsBase
 {
-    [Fact]
-    public void f()
+    private static string ChangelogFrom(string repositoryPath)
     {
-        Repository.Commit(Feature, Model.Description(1));
-
         using var process = new Process();
 
         process.StartInfo.FileName = @$".\{nameof(ConventionalReleaseNotes)}.exe";
-        process.StartInfo.Arguments = Repository.Path();
+        process.StartInfo.Arguments = repositoryPath;
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardOutput = true;
         process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -25,6 +22,16 @@ public class Command_line_interface_specs : GitUsingTestsBase
         var output = process.StandardOutput.ReadToEnd();
         process.WaitForExit();
 
-        output.Should().Be(Model.Changelog.Empty.WithGroup(Feature, 1) + NewLine);
+        return output;
+    }
+
+    [Fact]
+    public void The_program_can_generate_a_changelog_from_a_given_repository()
+    {
+        Repository.Commit(Feature, Model.Description(1));
+
+        var changelog = ChangelogFrom(Repository.Path());
+
+        changelog.Should().Be(Model.Changelog.Empty.WithGroup(Feature, 1) + NewLine);
     }
 }
