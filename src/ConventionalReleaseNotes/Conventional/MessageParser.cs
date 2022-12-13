@@ -8,6 +8,8 @@ internal static class MessageParser
 {
     private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
+    private const string FooterPattern = $@"^(?<token>{Pattern.FooterToken}|{Pattern.BreakingChange})(?<separator>: | #)";
+
     private static readonly CommitType NoType = new("", "", Relevance.Ignore);
     private static readonly CommitMessage None = new(NoType, "", "", Empty<Footer>());
 
@@ -29,7 +31,7 @@ internal static class MessageParser
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines);
 
-        if (footers.Any(x => x.Token is "BREAKING CHANGE" or "BREAKING-CHANGE"))
+        if (footers.Any(x => Regex.IsMatch(x.Token, Pattern.BreakingChange)))
             typeIndicator = typeIndicator.Replace("!", "");
 
         var type = Configuration.CommitTypes.SingleOrDefault(x => x.Matches(typeIndicator)) ?? NoType;
@@ -90,13 +92,13 @@ internal static class MessageParser
 
     private static bool IsFooter(string line)
     {
-        if (Regex.IsMatch(line, @"^#\w+-\d+")) return true;
-        return Regex.IsMatch(line, @"^(?<token>[\w\-]+|BREAKING[ -]CHANGE)(?<separator>: | #)");
+        if (Regex.IsMatch(line, Pattern.YouTrackCommand)) return true;
+        return Regex.IsMatch(line, FooterPattern);
     }
 
     private static Footer FooterFrom(string line)
     {
-        if (Regex.IsMatch(line, @"^#\w+-\d+"))
+        if (Regex.IsMatch(line, Pattern.YouTrackCommand))
         {
             var x = line.Split(" ");
             var token1 = x.First().Replace("#", "");
@@ -104,7 +106,7 @@ internal static class MessageParser
             return new Footer(token1, value1);
         }
 
-        var match = Regex.Match(line, @"^(?<token>[\w\-]+|BREAKING[ -]CHANGE)(?<separator>: | #)");
+        var match = Regex.Match(line, FooterPattern);
 
         var token = match.Groups["token"].Value;
         var value = line.Replace(match.Value, "");
