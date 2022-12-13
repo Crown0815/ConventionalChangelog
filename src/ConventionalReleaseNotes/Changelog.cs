@@ -30,7 +30,24 @@ public static class Changelog
     public static string FromRepository(string path)
     {
         using var repo = new Repository(path);
-        var tag = repo.Tags.Where(IsVersionTag).LastOrDefault();
+        var dict = repo.Tags.GroupBy(x=> x.Target).ToDictionary(x => x.Key, x => x.ToList());
+
+        var tag = (object)null!;
+
+
+        var filter0 = new CommitFilter {
+            SortBy = CommitSortStrategies.Topological,
+            IncludeReachableFrom = repo.Head,
+        };
+
+        foreach (var commit in repo.Commits.QueryBy(filter0))
+        {
+            if (!dict.TryGetValue(commit, out var t) || !t.Any(IsVersionTag))
+                continue;
+            tag = commit;
+            break;
+        }
+
         var filter = new CommitFilter {
             SortBy = CommitSortStrategies.Topological,
             ExcludeReachableFrom = tag,

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using LibGit2Sharp;
 using Xunit;
 using static ConventionalReleaseNotes.Unit.Tests.CommitTypeFor;
 
@@ -82,5 +83,40 @@ public class Git_specs : GitUsingTestsBase
 
         Changelog.FromRepository(Repository.Path()).Should().Be(Model.Changelog.Empty
             .WithGroup(Feature, 2, 1));
+    }
+
+    [Fact]
+    public void Changelog_from_branched_conventional_commits_contains_messages_from_all_commits_since_last_tag_on_current_branch()
+    {
+        var root = Repository.Commit("chore: Initial Commit");
+        Repository.CreateBranch("develop");
+        Repository.Commit(Feature, Model.Description(3)).Tag("v0.9.0-alpha.1");
+        Repository.Commit(Feature, Model.Description(4));
+        var end = Repository.Commit(Feature, Model.Description(5));
+
+        Commands.Checkout(Repository, root);
+        Repository.CreateBranch("release/1.0.0", root);
+        Repository.Commit(Feature, Model.Description(1)).Tag("v1.0.0-beta.1");
+        Repository.Commit(Feature, Model.Description(2));
+
+        Commands.Checkout(Repository, end);
+
+        Changelog.FromRepository(Repository.Path()).Should().Be(Model.Changelog.Empty
+            .WithGroup(Feature, 5, 4));
+    }
+
+    [Fact]
+    public void Changelog_from_conventional_commits_and_a_multiple_tags_on_same_commit_contains_all_commits_after_the_tags()
+    {
+        Repository.Commit(Feature, "Before tags");
+        var commit = Repository.Commit(Feature, "Multi-tagged commit");
+        commit.Tag("v1.0.0");
+        commit.Tag("v1.0.1");
+
+        3.Times(i => Repository.Commit(Feature, Model.Description(i)));
+
+        Changelog.FromRepository(Repository.Path())
+            .Should().Be(Model.Changelog.Empty
+                .WithGroup(Feature, 2, 1, 0));
     }
 }
