@@ -129,28 +129,55 @@ public class A_changelog_from_changelog_relevant_conventional_commits
         }
     }
 
-    [Fact]
-    public void with_fixup_commits_excludes_them_if_the_commit_they_fix_is_contained_in_the_changelog()
+    public class With_fix_up_commits
     {
-        var original = new CommitMessage(Feature, Model.Description(1), "", Array.Empty<CommitMessage.Footer>());
-        var fixup1 = new CommitMessage(Feature, Model.Description(2), "", new []{new CommitMessage.Footer(@"fixup", original.Hash)});
-        var fixup2 = new CommitMessage(Feature, Model.Description(3), "", new []{new CommitMessage.Footer(@"fixup", fixup1.Hash)});
+        private const string FixUpToken = @"fixup";
+        private readonly Model.Changelog _changelog = Model.Changelog.Empty;
+        private readonly CommitMessage _target;
+        private readonly CommitMessage _fixUp;
 
-        var changelog = Changelog.From(original, fixup1, fixup2);
+        public With_fix_up_commits()
+        {
+            _target = new CommitMessage(Feature, Model.Description(1), "", Array.Empty<CommitMessage.Footer>());
+            _fixUp = new CommitMessage(Feature, Model.Description(2), "", new []{new CommitMessage.Footer(FixUpToken, _target.Hash)});
+        }
 
-        changelog.Should().Be(_changelog
-            .WithGroup(Feature, 1));
-    }
+        [Fact]
+        public void when_the_fixed_up_commit_is_part_of_the_changelog_excludes_the_fix_up_commit_from_the_changelog()
+        {
+            var changelog = Changelog.From(_fixUp, _target);
 
-    [Fact]
-    public void with_fixup_commits_includes_them_if_the_commit_they_fix_is_not_contained_in_the_changelog()
-    {
-        var original = new CommitMessage(Feature, Model.Description(1), "", Array.Empty<CommitMessage.Footer>());
-        var fixup = new CommitMessage(Feature, Model.Description(2), "", new []{new CommitMessage.Footer(@"fixup", "randomHash")});
+            changelog.Should().Be(_changelog.WithGroup(Feature, 1));
+        }
 
-        var changelog = Changelog.From(original, fixup);
+        [Fact]
+        public void when_a_fixed_up_fix_up_commit_is_part_of_the_changelog_excludes_the_fix_up_commit_from_the_changelog()
+        {
+            var fixUp2 = new CommitMessage(Feature, Model.Description(3), "", new []{new CommitMessage.Footer(FixUpToken, _fixUp.Hash)});
 
-        changelog.Should().Be(_changelog
-            .WithGroup(Feature, 1, 2));
+            var changelog = Changelog.From(fixUp2, _fixUp, _target);
+
+            changelog.Should().Be(_changelog.WithGroup(Feature, 1));
+        }
+
+        [Fact]
+        public void when_multiple_fix_up_commits_target_a_single_commit_that_is_part_of_the_changelog_excludes_all_the_fix_up_commits_from_the_changelog()
+        {
+            var fixUp2 = new CommitMessage(Feature, Model.Description(3), "", new []{new CommitMessage.Footer(FixUpToken, _target.Hash)});
+
+            var changelog = Changelog.From(fixUp2, _fixUp, _target);
+
+            changelog.Should().Be(_changelog.WithGroup(Feature, 1));
+        }
+
+        [Fact]
+        public void when_the_fixed_up_commit_is_not_part_of_the_changelog_includes_fix_up_commit_in_the_changelog()
+        {
+            var fixUp2 = new CommitMessage(Feature, Model.Description(3), "", new []{new CommitMessage.Footer(FixUpToken, "randomHash")});
+
+            var changelog = Changelog.From(fixUp2, _fixUp, _target);
+
+            changelog.Should().Be(_changelog.WithGroup(Feature, 3, 1));
+        }
     }
 }
