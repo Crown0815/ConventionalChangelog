@@ -8,4 +8,6 @@ public record CommitMessage(CommitType Type, string Description, string Body, IR
         MessageParser.Parse(rawMessage);
 
     public record Footer(string Token, string Value);
+
+    public string Hash { get; } = Guid.NewGuid().ToString();
 }

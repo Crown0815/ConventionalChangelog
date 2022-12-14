@@ -1,4 +1,5 @@
-﻿using ConventionalReleaseNotes.Conventional;
+﻿    using System;
+    using ConventionalReleaseNotes.Conventional;
 using FluentAssertions;
 using Xunit;
 using static System.Environment;
@@ -126,5 +127,30 @@ public class A_changelog_from_changelog_relevant_conventional_commits
                 .WithGroup(BreakingChange, 2)
                 .WithGroup(Feature, 1));
         }
+    }
+
+    [Fact]
+    public void with_fixup_commits_excludes_them_if_the_commit_they_fix_is_contained_in_the_changelog()
+    {
+        var original = new CommitMessage(Feature, Model.Description(1), "", Array.Empty<CommitMessage.Footer>());
+        var fixup1 = new CommitMessage(Feature, Model.Description(2), "", new []{new CommitMessage.Footer(@"fixup", original.Hash)});
+        var fixup2 = new CommitMessage(Feature, Model.Description(3), "", new []{new CommitMessage.Footer(@"fixup", fixup1.Hash)});
+
+        var changelog = Changelog.From(original, fixup1, fixup2);
+
+        changelog.Should().Be(_changelog
+            .WithGroup(Feature, 1));
+    }
+
+    [Fact]
+    public void with_fixup_commits_includes_them_if_the_commit_they_fix_is_not_contained_in_the_changelog()
+    {
+        var original = new CommitMessage(Feature, Model.Description(1), "", Array.Empty<CommitMessage.Footer>());
+        var fixup = new CommitMessage(Feature, Model.Description(2), "", new []{new CommitMessage.Footer(@"fixup", "randomHash")});
+
+        var changelog = Changelog.From(original, fixup);
+
+        changelog.Should().Be(_changelog
+            .WithGroup(Feature, 1, 2));
     }
 }

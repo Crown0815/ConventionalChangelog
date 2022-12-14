@@ -10,10 +10,24 @@ public static class Changelog
 
     public static string From(params string[] messages) => From(messages.Select(CommitMessage.Parse));
 
-    private static string From(IEnumerable<CommitMessage> messages) => messages
-        .SelectMany(LogEntries)
-        .OrderBy(x => x.Type, Configuration.Comparer)
-        .Aggregate(new LogAggregate(), Add).ToString();
+    public static string From(params CommitMessage[] messages) => From((IReadOnlyCollection<CommitMessage>)messages);
+
+    private static string From(IEnumerable<CommitMessage> messages)
+    {
+        var reduced = new List<CommitMessage>();
+        var hashes = messages.Select(x => x.Hash).ToList();
+        foreach (var message in messages)
+        {
+            var fixup = message.Footers.Where(x => x.Token == @"fixup").Select(x => x.Value);
+            if (hashes.Intersect(fixup).Any()) continue;
+            reduced.Add(message);
+        }
+
+        return reduced
+            .SelectMany(LogEntries)
+            .OrderBy(x => x.Type, Configuration.Comparer)
+            .Aggregate(new LogAggregate(), Add).ToString();
+    }
 
     private static LogAggregate Add(LogAggregate a, LogEntry l) => a.Add(l.Type, l.Description);
 
