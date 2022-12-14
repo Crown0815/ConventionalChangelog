@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Xunit;
 
-namespace ConventionalReleaseNotes.Unit.Tests;
+namespace ConventionalReleaseNotes.Unit.Tests.BuildSystem;
 
 public class TeamCity_interaction_specs
 {

@@ -1,7 +1,7 @@
 using System;
 using LibGit2Sharp;
 
-namespace ConventionalReleaseNotes.Unit.Tests;
+namespace ConventionalReleaseNotes.Unit.Tests.Integration;
 
 internal static class RepositoryInteractionExtensions
 {

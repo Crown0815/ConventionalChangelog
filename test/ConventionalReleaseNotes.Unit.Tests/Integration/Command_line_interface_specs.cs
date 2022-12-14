@@ -1,10 +1,10 @@
-﻿using Xunit;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using FluentAssertions;
+using Xunit;
 using static System.Environment;
 using static ConventionalReleaseNotes.Unit.Tests.CommitTypeFor;
 
-namespace ConventionalReleaseNotes.Unit.Tests;
+namespace ConventionalReleaseNotes.Unit.Tests.Integration;
 
 public class Command_line_interface_specs : GitUsingTestsBase
 {

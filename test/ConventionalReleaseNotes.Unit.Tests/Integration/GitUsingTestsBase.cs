@@ -2,7 +2,7 @@
 using System.IO;
 using LibGit2Sharp;
 
-namespace ConventionalReleaseNotes.Unit.Tests;
+namespace ConventionalReleaseNotes.Unit.Tests.Integration;
 
 public abstract class GitUsingTestsBase : IDisposable
 {

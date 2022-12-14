@@ -3,7 +3,7 @@ using LibGit2Sharp;
 using Xunit;
 using static ConventionalReleaseNotes.Unit.Tests.CommitTypeFor;
 
-namespace ConventionalReleaseNotes.Unit.Tests;
+namespace ConventionalReleaseNotes.Unit.Tests.Integration;
 
 public class Git_specs : GitUsingTestsBase
 {
