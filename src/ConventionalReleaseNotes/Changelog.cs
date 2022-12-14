@@ -14,19 +14,32 @@ public static class Changelog
 
     private static string From(IEnumerable<CommitMessage> messages)
     {
-        var reduced = new List<CommitMessage>();
-        var hashes = messages.Select(x => x.Hash).ToList();
-        foreach (var message in messages)
-        {
-            var fixup = message.Footers.Where(x => x.Token == @"fixup").Select(x => x.Value);
-            if (hashes.Intersect(fixup).Any()) continue;
-            reduced.Add(message);
-        }
-
-        return reduced
+        return messages
+            .Reduce()
             .SelectMany(LogEntries)
             .OrderBy(x => x.Type, Configuration.Comparer)
             .Aggregate(new LogAggregate(), Add).ToString();
+    }
+
+    private static IEnumerable<CommitMessage> Reduce(this IEnumerable<CommitMessage> messages)
+    {
+        var relevant = new List<CommitMessage>();
+        var fixUps = new Dictionary<string, List<CommitMessage>>();
+        foreach (var message in messages)
+        {
+            relevant.Add(message);
+            foreach (var target in message.Footers.Where(x => x.Token == @"fixup").Select(x => x.Value))
+            {
+                if (!fixUps.ContainsKey(target))
+                    fixUps.Add(target, new List<CommitMessage>());
+                fixUps[target].Add(message);
+            }
+
+            if (fixUps.TryGetValue(message.Hash, out var ms))
+                relevant.RemoveAll(ms.Contains);
+        }
+
+        return relevant;
     }
 
     private static LogAggregate Add(LogAggregate a, LogEntry l) => a.Add(l.Type, l.Description);
