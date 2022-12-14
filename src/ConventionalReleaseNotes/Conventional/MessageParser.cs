@@ -61,8 +61,6 @@ internal static class MessageParser
                 yield return buffer with {Value = buffer.Value.Trim()};
                 buffer = null;
             }
-            if (buffer is null && string.IsNullOrWhiteSpace(line))
-                continue;
             if (buffer is not null)
                 buffer = buffer with { Value = buffer.Value + Environment.NewLine + line};
             else
