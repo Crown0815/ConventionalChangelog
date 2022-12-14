@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\ConventionalReleaseNotes\ConventionalReleaseNotes.csproj" />
+        <ProjectReference Include="..\..\src\ConventionalReleaseNotes\ConventionalReleaseNotes.csproj" />
     </ItemGroup>
 
     <ItemGroup>
