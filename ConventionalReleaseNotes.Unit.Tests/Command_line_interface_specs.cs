@@ -8,7 +8,7 @@ namespace ConventionalReleaseNotes.Unit.Tests;
 
 public class Command_line_interface_specs : GitUsingTestsBase
 {
-    private static string ChangelogFrom(string repositoryPath)
+    private static string OutputWithInput(string repositoryPath)
     {
         using var process = new Process();
 
@@ -26,12 +26,23 @@ public class Command_line_interface_specs : GitUsingTestsBase
     }
 
     [Fact]
-    public void The_program_can_generate_a_changelog_from_a_given_repository()
+    public void The_program_prints_the_changelog_from_a_given_repository()
     {
         Repository.Commit(Feature, Model.Description(1));
 
-        var changelog = ChangelogFrom(Repository.Path());
+        var output = OutputWithInput(Repository.Path());
 
-        changelog.Should().Be(Model.Changelog.Empty.WithGroup(Feature, 1) + NewLine);
+        output.Should().Be(Model.Changelog.Empty.WithGroup(Feature, 1) + NewLine);
+    }
+
+    [Fact]
+    public void The_program_run_from_teamcity_prints_a_service_message_setting_a_parameter_to_the_changelog()
+    {
+        Repository.Commit(Feature, Model.Description(1));
+        SetEnvironmentVariable(TeamCity.EnvironmentVariable, "whatever");
+
+        var output = OutputWithInput(Repository.Path());
+
+        output.Should().Be(TeamCity.SetParameterCommand("CRN.Changelog", Model.Changelog.Empty.WithGroup(Feature, 1)) + NewLine);
     }
 }

@@ -4,8 +4,11 @@ namespace ConventionalReleaseNotes;
 
 public static class TeamCity
 {
-    // see https://www.jetbrains.com/help/teamcity/service-messages.html for details
+    // see https://www.jetbrains.com/help/teamcity/predefined-build-parameters.html#Predefined+Server+Build+Parameters
+    // [...] This property can be used to determine if the build is run within TeamCity.
+    public const string EnvironmentVariable = "TEAMCITY_VERSION";
 
+    // see https://www.jetbrains.com/help/teamcity/service-messages.html for details
     public static string SetParameterCommand(string name, string value)
     {
         return $"##teamcity[setParameter name='{name}' value='{Escaped(value)}']";
