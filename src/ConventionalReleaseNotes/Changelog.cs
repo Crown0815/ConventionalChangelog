@@ -8,15 +8,14 @@ public static class Changelog
 {
     private const string VersionTagPrefix = "[pv]";
 
-    public static string From(params string[] commitMessages) => commitMessages
+    public static string From(params string[] messages) => From(messages.Select(CommitMessage.Parse));
+
+    private static string From(IEnumerable<CommitMessage> messages) => messages
         .SelectMany(LogEntries)
         .OrderBy(x => x.Type, Configuration.Comparer)
         .Aggregate(new LogAggregate(), Add).ToString();
 
     private static LogAggregate Add(LogAggregate a, LogEntry l) => a.Add(l.Type, l.Description);
-
-    private static IEnumerable<LogEntry> LogEntries(string rawMessage) =>
-        LogEntries(CommitMessage.Parse(rawMessage));
 
     private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage)
     {
