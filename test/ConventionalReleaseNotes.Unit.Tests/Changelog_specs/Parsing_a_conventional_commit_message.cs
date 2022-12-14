@@ -7,7 +7,7 @@ using static ConventionalReleaseNotes.Conventional.CommitMessage;
 
 namespace ConventionalReleaseNotes.Unit.Tests.Changelog_specs;
 
-public class Conventional_commit_parsing_specs
+public class Parsing_a_conventional_commit_message
 {
     // Conventional commit specification:
     // https://www.conventionalcommits.org/en/v1.0.0/#specification
@@ -42,35 +42,64 @@ public class Conventional_commit_parsing_specs
 
     private readonly CommitMessage _parsed;
 
-    public Conventional_commit_parsing_specs()
+    public Parsing_a_conventional_commit_message()
     {
         _parsed = Parse(ConventionalCommit.Message);
     }
 
     [Fact]
-    public void The_parser_extracts_the_type_indicator_from_a_conventional_commit()
+    public void extracts_its_type_indicator()
     {
         _parsed.Type.Indicator.Should().Be(ConventionalCommit.Type);
     }
 
     [Fact]
-    public void The_parser_extracts_the_description_from_a_conventional_commit()
+    public void extracts_its_description()
     {
         _parsed.Description.Should().Be(ConventionalCommit.Description);
     }
 
     [Fact]
-    public void The_parser_extracts_the_body_from_a_conventional_commit()
+    public void extracts_its_body()
     {
         _parsed.Body.Should().Be(ConventionalCommit.Body);
     }
 
     [Fact]
-    public void The_parser_extracts_the_footer_from_a_conventional_commit()
+    public void with_a_single_footer_extracts_its_footer()
     {
         _parsed.Footers.Should().BeEquivalentTo(new Footer[]
         {
             new(ConventionalCommit.FooterToken, ConventionalCommit.FooterValue),
+        });
+    }
+
+    [Fact]
+    public void with_multiple_footers_extracts_all_footers()
+    {
+        const string footers = """
+                      token1: value1
+                      token-2: value 2
+
+                      token3 #value 3
+                      token-4 #value
+                      with extra line
+
+                      token-5: value
+
+                      with blank line
+                      """;
+
+        var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, footers);
+        var parsed = Parse(messageWithSpecificFooter);
+
+        parsed.Footers.Should().BeEquivalentTo(new Footer[]
+        {
+            new("token1", "value1"),
+            new("token-2", "value 2"),
+            new("token3", "value 3"),
+            new("token-4", $"value{Environment.NewLine}with extra line"),
+            new("token-5", $"value{Environment.NewLine}{Environment.NewLine}with blank line"),
         });
     }
 
@@ -118,43 +147,11 @@ public class Conventional_commit_parsing_specs
     [Theory]
     [MemberData(nameof(GitTrailerConventionFooters))]
     [MemberData(nameof(YouTrackConventionFooters))]
-    public void The_parser_extracts_the_specific(string footer, string expectedToken, string expectedValue)
+    public void extracts_from_a(string formattedFooter, string theToken, string andTheValue)
     {
-        var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, footer);
+        var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, formattedFooter);
         var parsed = Parse(messageWithSpecificFooter);
 
-        parsed.Footers.Should().BeEquivalentTo(new Footer[]
-        {
-            new(expectedToken, expectedValue),
-        });
-    }
-
-    [Fact]
-    public void The_parser_extracts_multiple_footers()
-    {
-        const string footers = """
-                      token1: value1
-                      token-2: value 2
-
-                      token3 #value 3
-                      token-4 #value
-                      with extra line
-
-                      token-5: value
-
-                      with blank line
-                      """;
-
-        var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, footers);
-        var parsed = Parse(messageWithSpecificFooter);
-
-        parsed.Footers.Should().BeEquivalentTo(new Footer[]
-        {
-            new("token1", "value1"),
-            new("token-2", "value 2"),
-            new("token3", "value 3"),
-            new("token-4", $"value{Environment.NewLine}with extra line"),
-            new("token-5", $"value{Environment.NewLine}{Environment.NewLine}with blank line"),
-        });
+        parsed.Footers.Should().BeEquivalentTo(new Footer[] { new(theToken, andTheValue) });
     }
 }
