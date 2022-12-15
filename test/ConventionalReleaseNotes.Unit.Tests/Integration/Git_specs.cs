@@ -17,9 +17,9 @@ public class Git_specs : GitUsingTestsBase
     public void A_repository_with_conventional_commits_produces_changelog_with_all_conventional_commit_messages()
     {
         Repository.Commit("non conventional commit message should not appear in changelog");
-        Repository.CommitWithDescription(Feature, 1);
-        Repository.CommitWithDescription(Bugfix, 2);
-        Repository.CommitWithDescription(PerformanceImprovement, 3);
+        Repository.Commit(Feature, 1);
+        Repository.Commit(Bugfix, 2);
+        Repository.Commit(PerformanceImprovement, 3);
 
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog
@@ -31,7 +31,7 @@ public class Git_specs : GitUsingTestsBase
     [Fact]
     public void Changelog_from_only_conventional_commits_contains_messages_from_newest_to_oldest_commit()
     {
-        3.Times(i => Repository.CommitWithDescription(Feature, i));
+        3.Times(i => Repository.Commit(Feature, i));
 
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
@@ -51,7 +51,7 @@ public class Git_specs : GitUsingTestsBase
         Repository.Commit(Feature, "Before tag");
         Repository.Commit(Feature, "Tagged commit").Tag($"v{version}");
 
-        3.Times(i => Repository.CommitWithDescription(Feature, i));
+        3.Times(i => Repository.Commit(Feature, i));
 
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
@@ -66,7 +66,7 @@ public class Git_specs : GitUsingTestsBase
         Repository.Commit(Feature, "Before tag 2");
         Repository.Commit(Feature, "Tagged commit 2").Tag("v2.0.0");
 
-        3.Times(i => Repository.CommitWithDescription(Feature, i));
+        3.Times(i => Repository.Commit(Feature, i));
 
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
@@ -75,8 +75,8 @@ public class Git_specs : GitUsingTestsBase
     [Fact]
     public void Changelog_from_conventional_commits_and_non_version_tags_should_contain_all_commits()
     {
-        Repository.CommitWithDescription(Feature, 1).Tag("a");
-        Repository.CommitWithDescription(Feature, 2).Tag("b");
+        Repository.Commit(Feature, 1).Tag("a");
+        Repository.Commit(Feature, 2).Tag("b");
 
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 2, 1));
@@ -87,14 +87,14 @@ public class Git_specs : GitUsingTestsBase
     {
         var root = Repository.Commit("chore: Initial Commit");
         Repository.CreateBranch("develop");
-        Repository.CommitWithDescription(Feature, 3).Tag("v0.9.0-alpha.1");
-        Repository.CommitWithDescription(Feature, 4);
-        var end = Repository.CommitWithDescription(Feature, 5);
+        Repository.Commit(Feature, 3).Tag("v0.9.0-alpha.1");
+        Repository.Commit(Feature, 4);
+        var end = Repository.Commit(Feature, 5);
 
         Commands.Checkout(Repository, root);
         Repository.CreateBranch("release/1.0.0", root);
-        Repository.CommitWithDescription(Feature, 1).Tag("v1.0.0-beta.1");
-        Repository.CommitWithDescription(Feature, 2);
+        Repository.Commit(Feature, 1).Tag("v1.0.0-beta.1");
+        Repository.Commit(Feature, 2);
 
         Commands.Checkout(Repository, end);
 
@@ -110,7 +110,7 @@ public class Git_specs : GitUsingTestsBase
         commit.Tag("v1.0.0");
         commit.Tag("v1.0.1");
 
-        3.Times(i => Repository.CommitWithDescription(Feature, i));
+        3.Times(i => Repository.Commit(Feature, i));
 
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));

@@ -28,7 +28,7 @@ public class Command_line_interface_specs : GitUsingTestsBase
     [Fact]
     public void The_program_prints_the_changelog_from_a_given_repository()
     {
-        Repository.CommitWithDescription(Feature, 1);
+        Repository.Commit(Feature, 1);
 
         var output = OutputWithInput(Repository.Path());
 
@@ -38,7 +38,7 @@ public class Command_line_interface_specs : GitUsingTestsBase
     [Fact]
     public void The_program_run_from_teamcity_prints_a_service_message_setting_a_parameter_to_the_changelog()
     {
-        Repository.CommitWithDescription(Feature, 1);
+        Repository.Commit(Feature, 1);
         SetEnvironmentVariable(TeamCity.EnvironmentVariable, "whatever");
 
         var output = OutputWithInput(Repository.Path());

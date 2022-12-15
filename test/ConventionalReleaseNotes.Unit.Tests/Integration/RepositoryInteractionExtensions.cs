@@ -10,14 +10,14 @@ internal static class RepositoryInteractionExtensions
     private static readonly Identity TestIdentity = new("unit test", "unit@test.email");
     private static readonly Signature Signature = new(TestIdentity, DateTimeOffset.Now);
 
+    public static GitCommit Commit(this Repository r, Conventional.CommitType type, int seed)
+    {
+        return r.Commit(type, A.Description(seed));
+    }
+
     public static GitCommit Commit(this Repository r, Conventional.CommitType type, string message)
     {
         return r.Commit(type.CommitWith(message));
-    }
-
-    public static GitCommit CommitWithDescription(this Repository r, Conventional.CommitType type, int seed)
-    {
-        return r.Commit(type, A.Description(seed));
     }
 
     public static GitCommit Commit(this Repository r, string message)
