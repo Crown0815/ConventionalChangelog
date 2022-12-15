@@ -15,6 +15,11 @@ internal static class RepositoryInteractionExtensions
         return r.Commit(type.CommitWith(message));
     }
 
+    public static GitCommit CommitWithDescription(this Repository r, Conventional.CommitType type, int seed)
+    {
+        return r.Commit(type, Model.Description(seed));
+    }
+
     public static GitCommit Commit(this Repository r, string message)
     {
         return r.Commit(message, Signature, Signature, CommitOptions);

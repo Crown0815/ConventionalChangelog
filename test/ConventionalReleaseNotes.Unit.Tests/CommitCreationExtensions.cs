@@ -13,4 +13,7 @@ internal static class CommitCreationExtensions
 
     public static string WithFooter(this string commitMessage, string token, string value) =>
         commitMessage + Environment.NewLine + Environment.NewLine + $"{token}: {value}";
+
+    public static string WithFooter(this string commitMessage, string token, int seed) =>
+        commitMessage.WithFooter(token, Model.Description(seed));
 }
