@@ -1,8 +1,6 @@
-﻿    using System;
-    using ConventionalReleaseNotes.Conventional;
+﻿using ConventionalReleaseNotes.Conventional;
 using FluentAssertions;
 using Xunit;
-using static System.Environment;
 using static ConventionalReleaseNotes.Unit.Tests.CommitTypeFor;
 
 namespace ConventionalReleaseNotes.Unit.Tests.Changelog_specs;
@@ -133,13 +131,13 @@ public class A_changelog_from_changelog_relevant_conventional_commits
     {
         private const string FixUpToken = @"fixup";
         private readonly Model.Changelog _changelog = Model.Changelog.Empty;
-        private readonly CommitMessage _target;
-        private readonly CommitMessage _fixUp;
+        private readonly Commit _target;
+        private readonly Commit _fixUp;
 
         public With_fix_up_commits()
         {
-            _target = new CommitMessage(Feature, Model.Description(1), "", Array.Empty<CommitMessage.Footer>());
-            _fixUp = new CommitMessage(Feature, Model.Description(2), "", new []{new CommitMessage.Footer(FixUpToken, _target.Hash)});
+            _target = new Commit(Feature.CommitWithDescription(1));
+            _fixUp = new Commit(Feature.CommitWithDescription(2).WithFooter(FixUpToken, _target.Hash));
         }
 
         [Fact]
@@ -153,7 +151,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
         [Fact]
         public void when_a_fixed_up_fix_up_commit_is_part_of_the_changelog_excludes_the_fix_up_commit_from_the_changelog()
         {
-            var fixUp2 = new CommitMessage(Feature, Model.Description(3), "", new []{new CommitMessage.Footer(FixUpToken, _fixUp.Hash)});
+            var fixUp2 = new Commit(Feature.CommitWithDescription(3).WithFooter(FixUpToken, _fixUp.Hash));
 
             var changelog = Changelog.From(fixUp2, _fixUp, _target);
 
@@ -163,7 +161,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
         [Fact]
         public void when_multiple_fix_up_commits_target_a_single_commit_that_is_part_of_the_changelog_excludes_all_the_fix_up_commits_from_the_changelog()
         {
-            var fixUp2 = new CommitMessage(Feature, Model.Description(3), "", new []{new CommitMessage.Footer(FixUpToken, _target.Hash)});
+            var fixUp2 = new Commit(Feature.CommitWithDescription(3).WithFooter(FixUpToken, _target.Hash));
 
             var changelog = Changelog.From(fixUp2, _fixUp, _target);
 
@@ -173,7 +171,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
         [Fact]
         public void when_the_fixed_up_commit_is_not_part_of_the_changelog_includes_fix_up_commit_in_the_changelog()
         {
-            var fixUp2 = new CommitMessage(Feature, Model.Description(3), "", new []{new CommitMessage.Footer(FixUpToken, "randomHash")});
+            var fixUp2 = new Commit(Feature.CommitWithDescription(3).WithFooter(FixUpToken, "randomHash"));
 
             var changelog = Changelog.From(fixUp2, _fixUp, _target);
 

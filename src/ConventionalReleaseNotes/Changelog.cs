@@ -10,7 +10,7 @@ public static class Changelog
 
     public static string From(params string[] messages) => From(messages.Select(CommitMessage.Parse));
 
-    public static string From(params CommitMessage[] messages) => From((IReadOnlyCollection<CommitMessage>)messages);
+    public static string From(params Commit[] messages) => From(messages.Select(CommitMessage.Parse));
 
     private static string From(IEnumerable<CommitMessage> messages)
     {
