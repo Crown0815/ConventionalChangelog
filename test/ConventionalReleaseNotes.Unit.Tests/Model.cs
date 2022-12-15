@@ -46,5 +46,8 @@ internal static class Model
     public static string CommitWith(this CommitType type, string description) =>
         $"{type.Indicator}: {description}";
 
+    public static string WithFooter(this string commitMessage, string token, string value) =>
+        commitMessage + NewLine + NewLine + $"{token}: {value}";
+
     public static string Description(int seed) => $"Some Description {seed}";
 }

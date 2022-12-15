@@ -102,10 +102,10 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
         [Theory]
         [MemberData(nameof(BreakingChangeFooterTokens))]
-        public void footer_contains_the_breaking_change_description_followed_by_the_commit_description_for(string footerToken)
+        public void footer_contains_the_breaking_change_description_followed_by_the_commit_description_for_footer(string token)
         {
-            var breakingChange = Feature.CommitWithDescription(1);
-            breakingChange += NewLine + NewLine + footerToken + ": " + Model.Description(2);
+            var breakingChange = Feature.CommitWithDescription(1)
+                .WithFooter(token, Model.Description(2));
 
             var changelog = Changelog.From(breakingChange);
 
@@ -116,10 +116,10 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
         [Theory]
         [MemberData(nameof(BreakingChangeFooterTokens))]
-        public void footer_and_breaking_type_contains_the_breaking_change_description_followed_by_the_commit_description_for(string footerToken)
+        public void footer_and_breaking_type_contains_the_breaking_change_description_followed_by_the_commit_description_for_footer(string token)
         {
-            var breakingChange = Breaking(Feature).CommitWithDescription(1);
-            breakingChange += NewLine + NewLine + footerToken + ": " + Model.Description(2);
+            var breakingChange = Breaking(Feature).CommitWithDescription(1)
+                .WithFooter(token, Model.Description(2));
 
             var changelog = Changelog.From(breakingChange);
 
