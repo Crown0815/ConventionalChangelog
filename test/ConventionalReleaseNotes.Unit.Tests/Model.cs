@@ -17,6 +17,9 @@ internal static class Model
 
         public static Changelog Empty => new Changelog().With(ChangelogTitle + NewLine);
 
+        public static string WithGeneralCodeImprovementsMessage() =>
+            Empty.With(NewLine + GeneralCodeImprovementsMessage);
+
         public Changelog WithGroup(CommitType type, params int[] seeds) =>
             seeds.Aggregate(WithGroup(type), AddBulletPoint);
 
@@ -27,9 +30,6 @@ internal static class Model
 
         private static Changelog AddBulletPoint(Changelog c, int seed) =>
             c.With($"- {Description(seed)}{NewLine}");
-
-        public string WithGeneralCodeImprovementsMessage() =>
-            With(NewLine + GeneralCodeImprovementsMessage);
 
         private Changelog With(string text)
         {

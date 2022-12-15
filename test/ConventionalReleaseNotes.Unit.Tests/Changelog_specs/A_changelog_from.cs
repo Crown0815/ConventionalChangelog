@@ -50,6 +50,6 @@ public class A_changelog_from
         var conventionalCommit1 = type.CommitWith("unused description");
         var conventionalCommit2 = type.CommitWith("unused description");
         var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
-        changelog.Should().Be(Model.Changelog.Empty.WithGeneralCodeImprovementsMessage());
+        changelog.Should().Be(Model.Changelog.WithGeneralCodeImprovementsMessage());
     }
 }
