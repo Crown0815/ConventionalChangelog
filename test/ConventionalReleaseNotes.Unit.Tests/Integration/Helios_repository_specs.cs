@@ -14,7 +14,6 @@ public class Helios_repository_specs : GitUsingTestsBase
         3.Times(i => Repository.Commit(CommitTypeFor.Feature, Model.Description(i)));
 
         Changelog.FromRepository(Repository.Path())
-            .Should().Be(Model.Changelog.Empty
-                .WithGroup(CommitTypeFor.Feature, 2, 1, 0));
+            .Should().Be(Model.Changelog.WithGroup(CommitTypeFor.Feature, 2, 1, 0));
     }
 }

@@ -20,7 +20,10 @@ internal static class Model
         public static string WithGeneralCodeImprovementsMessage() =>
             Empty.With(NewLine + GeneralCodeImprovementsMessage);
 
-        public Changelog WithGroup(CommitType type, params int[] seeds) =>
+        public static Changelog WithGroup(CommitType type, params int[] seeds) =>
+            seeds.Aggregate(Empty.WithGroup(type), AddBulletPoint);
+
+        public Changelog And(CommitType type, params int[] seeds) =>
             seeds.Aggregate(WithGroup(type), AddBulletPoint);
 
         private Changelog WithGroup(CommitType type) =>

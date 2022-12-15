@@ -32,7 +32,7 @@ public class Command_line_interface_specs : GitUsingTestsBase
 
         var output = OutputWithInput(Repository.Path());
 
-        output.Should().Be(Model.Changelog.Empty.WithGroup(Feature, 1) + NewLine);
+        output.Should().Be(Model.Changelog.WithGroup(Feature, 1) + NewLine);
     }
 
     [Fact]
@@ -43,6 +43,6 @@ public class Command_line_interface_specs : GitUsingTestsBase
 
         var output = OutputWithInput(Repository.Path());
 
-        output.Should().Be(TeamCity.SetParameterCommand("CRN.Changelog", Model.Changelog.Empty.WithGroup(Feature, 1)) + NewLine);
+        output.Should().Be(TeamCity.SetParameterCommand("CRN.Changelog", Model.Changelog.WithGroup(Feature, 1)) + NewLine);
     }
 }

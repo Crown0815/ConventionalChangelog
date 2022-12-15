@@ -14,8 +14,6 @@ public class A_changelog_from_changelog_relevant_conventional_commits
         new object[] { PerformanceImprovement },
     };
 
-    private readonly Model.Changelog _changelog = Model.Changelog.Empty;
-
     [Theory]
     [MemberData(nameof(ChangelogRelevantCommitTypes))]
     public void is_the_changelog_header_plus_a_group_containing_the_descriptions(CommitType type)
@@ -25,7 +23,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
         var changelog = Changelog.From(message1, message2);
 
-        changelog.Should().Be(_changelog.WithGroup(type, 1, 2));
+        changelog.Should().Be(Model.Changelog.WithGroup(type, 1, 2));
     }
 
     [Fact]
@@ -36,7 +34,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
         var changelog = Changelog.From(message1, message2);
 
-        changelog.Should().Be(_changelog.WithGroup(Feature, 1));
+        changelog.Should().Be(Model.Changelog.WithGroup(Feature, 1));
     }
 
     [Fact]
@@ -54,17 +52,14 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
         var changelog = Changelog.From(messages);
 
-        changelog.Should().Be(_changelog
+        changelog.Should().Be(Model.Changelog
             .WithGroup(Feature, 1, 4)
-            .WithGroup(Bugfix, 2, 6)
-            .WithGroup(PerformanceImprovement, 3, 5));
+            .And(Bugfix, 2, 6)
+            .And(PerformanceImprovement, 3, 5));
     }
 
     public class With_breaking_change
     {
-        private readonly Model.Changelog _changelog =
-            new A_changelog_from_changelog_relevant_conventional_commits()._changelog;
-
         private const string BreakingChangesHeader = "Breaking Changes";
         private static readonly CommitType BreakingChange = new("", BreakingChangesHeader);
 
@@ -75,7 +70,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
             var changelog = Changelog.From(breakingChange);
 
-            changelog.Should().Be(_changelog
+            changelog.Should().Be(Model.Changelog
                 .WithGroup(BreakingChange, 1));
         }
 
@@ -87,9 +82,9 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
             var changelog = Changelog.From(breakingChange, anotherChange);
 
-            changelog.Should().Be(_changelog
+            changelog.Should().Be(Model.Changelog
                 .WithGroup(BreakingChange, 1)
-                .WithGroup(Feature, 2));
+                .And(Feature, 2));
         }
 
         public static readonly object[][] BreakingChangeFooterTokens =
@@ -107,9 +102,9 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
             var changelog = Changelog.From(breakingChange);
 
-            changelog.Should().Be(_changelog
+            changelog.Should().Be(Model.Changelog
                 .WithGroup(BreakingChange, 2)
-                .WithGroup(Feature, 1));
+                .And(Feature, 1));
         }
 
         [Theory]
@@ -121,16 +116,15 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
             var changelog = Changelog.From(breakingChange);
 
-            changelog.Should().Be(_changelog
+            changelog.Should().Be(Model.Changelog
                 .WithGroup(BreakingChange, 2)
-                .WithGroup(Feature, 1));
+                .And(Feature, 1));
         }
     }
 
     public class With_fix_up_commits
     {
         private const string FixUpToken = @"fixup";
-        private readonly Model.Changelog _changelog = Model.Changelog.Empty;
         private readonly Commit _target;
         private readonly Commit _fixUp;
 
@@ -145,7 +139,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
         {
             var changelog = Changelog.From(_fixUp, _target);
 
-            changelog.Should().Be(_changelog.WithGroup(Feature, 1));
+            changelog.Should().Be(Model.Changelog.WithGroup(Feature, 1));
         }
 
         [Fact]
@@ -155,7 +149,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
             var changelog = Changelog.From(fixUp2, _fixUp, _target);
 
-            changelog.Should().Be(_changelog.WithGroup(Feature, 1));
+            changelog.Should().Be(Model.Changelog.WithGroup(Feature, 1));
         }
 
         [Fact]
@@ -165,7 +159,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
             var changelog = Changelog.From(fixUp2, _fixUp, _target);
 
-            changelog.Should().Be(_changelog.WithGroup(Feature, 1));
+            changelog.Should().Be(Model.Changelog.WithGroup(Feature, 1));
         }
 
         [Fact]
@@ -175,7 +169,7 @@ public class A_changelog_from_changelog_relevant_conventional_commits
 
             var changelog = Changelog.From(fixUp2, _fixUp, _target);
 
-            changelog.Should().Be(_changelog.WithGroup(Feature, 3, 1));
+            changelog.Should().Be(Model.Changelog.WithGroup(Feature, 3, 1));
         }
     }
 }
