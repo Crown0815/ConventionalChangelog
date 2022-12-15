@@ -1,5 +1,6 @@
 using System;
 using LibGit2Sharp;
+using ConventionalReleaseNotes.Conventional;
 using GitCommit = LibGit2Sharp.Commit;
 
 namespace ConventionalReleaseNotes.Unit.Tests.Integration;
@@ -10,12 +11,12 @@ internal static class RepositoryInteractionExtensions
     private static readonly Identity TestIdentity = new("unit test", "unit@test.email");
     private static readonly Signature Signature = new(TestIdentity, DateTimeOffset.Now);
 
-    public static GitCommit Commit(this Repository r, Conventional.CommitType type, int seed)
+    public static GitCommit Commit(this Repository r, CommitType type, int seed)
     {
         return r.Commit(type, A.Description(seed));
     }
 
-    public static GitCommit Commit(this Repository r, Conventional.CommitType type, string message)
+    public static GitCommit Commit(this Repository r, CommitType type, string message)
     {
         return r.Commit(type.CommitWith(message));
     }
