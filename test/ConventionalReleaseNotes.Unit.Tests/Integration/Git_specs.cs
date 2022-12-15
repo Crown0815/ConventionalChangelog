@@ -115,4 +115,14 @@ public class Git_specs : GitUsingTestsBase
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
+
+    [Fact]
+    public void Changelog_from_conventional_commits_with_fix_up_commits_excludes_those_fix_ups_with_their_target_in_the_changelog()
+    {
+        var after = Repository.Commit(Feature.CommitWithDescription(1));
+        Repository.Commit(Feature.CommitWithDescription(2).WithFooter(@"fixup", after.Sha));
+
+        Changelog.FromRepository(Repository.Path())
+            .Should().Be(A.Changelog.WithGroup(Feature, 1));
+    }
 }

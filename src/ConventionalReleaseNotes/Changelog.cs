@@ -58,8 +58,10 @@ public static class Changelog
             ExcludeReachableFrom = tag,
         };
 
-        return From(repo.Commits.QueryBy(filter).Select(c => c.MessageShort).ToArray());
+        return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray());
     }
+
+    private static Commit AsCommit(LibGit2Sharp.Commit c) => new(c.Message, c.Sha);
 
     private static bool IsVersionTag(Tag tag) => tag.FriendlyName.IsSemanticVersion(VersionTagPrefix);
 
