@@ -14,5 +14,21 @@ public abstract class GitUsingTestsBase : IDisposable
         Repository = new Repository(Repository.Init(path));
     }
 
-    public void Dispose() => Repository.Delete();
+    public void Dispose()
+    {
+        Repository.Dispose();
+        ForceDelete(new DirectoryInfo(Repository.Path()));
+    }
+
+    private static void ForceDelete(DirectoryInfo directory)
+    {
+        RemoveReadOnlyAttributeFromFilesIn(directory);
+        directory.Delete(true);
+    }
+
+    private static void RemoveReadOnlyAttributeFromFilesIn(DirectoryInfo directory)
+    {
+        foreach (var info in directory.GetFileSystemInfos("*", SearchOption.AllDirectories))
+            info.Attributes = FileAttributes.Normal;
+    }
 }
