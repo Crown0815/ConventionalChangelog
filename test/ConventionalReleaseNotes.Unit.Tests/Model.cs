@@ -13,15 +13,15 @@ internal static class Model
 
         private static readonly string HeaderSeparator = NewLine + NewLine;
 
-        private string _text = "";
+        private string _text = ChangelogTitle + NewLine;
 
-        public static Changelog Empty => new Changelog().With(ChangelogTitle + NewLine);
+        public static Changelog Empty => new();
 
         public static string WithGeneralCodeImprovementsMessage() =>
-            Empty.With(NewLine + GeneralCodeImprovementsMessage);
+            new Changelog().With(NewLine + GeneralCodeImprovementsMessage);
 
         public static Changelog WithGroup(CommitType type, params int[] seeds) =>
-            seeds.Aggregate(Empty.WithGroup(type), AddBulletPoint);
+            new Changelog().And(type, seeds);
 
         public Changelog And(CommitType type, params int[] seeds) =>
             seeds.Aggregate(WithGroup(type), AddBulletPoint);
