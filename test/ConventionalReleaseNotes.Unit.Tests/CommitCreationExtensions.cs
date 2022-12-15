@@ -6,7 +6,7 @@ namespace ConventionalReleaseNotes.Unit.Tests;
 internal static class CommitCreationExtensions
 {
     public static string CommitWithDescription(this CommitType type, int seed) =>
-        type.CommitWith(Model.Description(seed));
+        type.CommitWith(A.Description(seed));
 
     public static string CommitWith(this CommitType type, string description) =>
         $"{type.Indicator}: {description}";
@@ -15,5 +15,5 @@ internal static class CommitCreationExtensions
         commitMessage + Environment.NewLine + Environment.NewLine + $"{token}: {value}";
 
     public static string WithFooter(this string commitMessage, string token, int seed) =>
-        commitMessage.WithFooter(token, Model.Description(seed));
+        commitMessage.WithFooter(token, A.Description(seed));
 }

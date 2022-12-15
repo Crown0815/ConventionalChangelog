@@ -4,7 +4,7 @@ using static System.Environment;
 
 namespace ConventionalReleaseNotes.Unit.Tests;
 
-internal static class Model
+internal static class A
 {
     internal class Changelog
     {

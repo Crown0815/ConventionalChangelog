@@ -24,7 +24,7 @@ public class A_changelog_from
     public void empty_changes_is_empty(params string[] noChanges)
     {
         var changelog = Changelog.From(noChanges);
-        changelog.Should().Be(Model.Changelog.Empty);
+        changelog.Should().Be(A.Changelog.Empty);
     }
 
     [Theory]
@@ -33,7 +33,7 @@ public class A_changelog_from
     public void non_conventional_commits_is_empty(string nonConventionalCommits)
     {
         var changelog = Changelog.From(nonConventionalCommits);
-        changelog.Should().Be(Model.Changelog.Empty);
+        changelog.Should().Be(A.Changelog.Empty);
     }
 
     [Theory]
@@ -50,6 +50,6 @@ public class A_changelog_from
         var conventionalCommit1 = type.CommitWith("unused description");
         var conventionalCommit2 = type.CommitWith("unused description");
         var changelog = Changelog.From(conventionalCommit1, conventionalCommit2);
-        changelog.Should().Be(Model.Changelog.WithGeneralCodeImprovementsMessage());
+        changelog.Should().Be(A.Changelog.WithGeneralCodeImprovementsMessage());
     }
 }

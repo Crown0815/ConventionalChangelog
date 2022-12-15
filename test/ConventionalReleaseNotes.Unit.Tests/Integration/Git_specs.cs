@@ -10,7 +10,7 @@ public class Git_specs : GitUsingTestsBase
     [Fact]
     public void An_empty_repository_produces_an_empty_changelog()
     {
-        Changelog.FromRepository(Repository.Path()).Should().Be(Model.Changelog.Empty);
+        Changelog.FromRepository(Repository.Path()).Should().Be(A.Changelog.Empty);
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class Git_specs : GitUsingTestsBase
         Repository.CommitWithDescription(PerformanceImprovement, 3);
 
         Changelog.FromRepository(Repository.Path())
-            .Should().Be(Model.Changelog
+            .Should().Be(A.Changelog
                 .WithGroup(Feature, 1)
                 .And(Bugfix, 2)
                 .And(PerformanceImprovement, 3));
@@ -34,7 +34,7 @@ public class Git_specs : GitUsingTestsBase
         3.Times(i => Repository.CommitWithDescription(Feature, i));
 
         Changelog.FromRepository(Repository.Path())
-            .Should().Be(Model.Changelog.WithGroup(Feature, 2, 1, 0));
+            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
 
     [Theory]
@@ -54,7 +54,7 @@ public class Git_specs : GitUsingTestsBase
         3.Times(i => Repository.CommitWithDescription(Feature, i));
 
         Changelog.FromRepository(Repository.Path())
-            .Should().Be(Model.Changelog.WithGroup(Feature, 2, 1, 0));
+            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class Git_specs : GitUsingTestsBase
         3.Times(i => Repository.CommitWithDescription(Feature, i));
 
         Changelog.FromRepository(Repository.Path())
-            .Should().Be(Model.Changelog.WithGroup(Feature, 2, 1, 0));
+            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class Git_specs : GitUsingTestsBase
         Repository.CommitWithDescription(Feature, 2).Tag("b");
 
         Changelog.FromRepository(Repository.Path())
-            .Should().Be(Model.Changelog.WithGroup(Feature, 2, 1));
+            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1));
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class Git_specs : GitUsingTestsBase
         Commands.Checkout(Repository, end);
 
         Changelog.FromRepository(Repository.Path())
-            .Should().Be(Model.Changelog.WithGroup(Feature, 5, 4));
+            .Should().Be(A.Changelog.WithGroup(Feature, 5, 4));
     }
 
     [Fact]
@@ -113,6 +113,6 @@ public class Git_specs : GitUsingTestsBase
         3.Times(i => Repository.CommitWithDescription(Feature, i));
 
         Changelog.FromRepository(Repository.Path())
-            .Should().Be(Model.Changelog.WithGroup(Feature, 2, 1, 0));
+            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
 }
