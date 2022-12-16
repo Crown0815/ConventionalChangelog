@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using System.IO;
 using FluentAssertions;
 using Xunit;
 using static System.Environment;
@@ -13,7 +14,7 @@ public class Command_line_interface_specs : GitUsingTestsBase
     {
         using var process = new Process();
 
-        process.StartInfo.FileName = @$".\{nameof(ConventionalChangelog)}.exe";
+        process.StartInfo.FileName = Path.Join(".",nameof(ConventionalChangelog));
         process.StartInfo.Arguments = repositoryPath;
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardOutput = true;
