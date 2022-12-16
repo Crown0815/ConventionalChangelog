@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConventionalChangelog", "src\ConventionalChangelog\ConventionalChangelog.csproj", "{02C8E7A9-553B-45D9-9EFE-0DE4784531E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConventionalChangelog.Unit.Tests", "test\ConventionalChangelog.Unit.Tests\ConventionalChangelog.Unit.Tests.csproj", "{F5B60AA4-4BB8-4901-BEA7-1948C2E9BCF6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02C8E7A9-553B-45D9-9EFE-0DE4784531E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02C8E7A9-553B-45D9-9EFE-0DE4784531E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02C8E7A9-553B-45D9-9EFE-0DE4784531E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02C8E7A9-553B-45D9-9EFE-0DE4784531E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5B60AA4-4BB8-4901-BEA7-1948C2E9BCF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5B60AA4-4BB8-4901-BEA7-1948C2E9BCF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5B60AA4-4BB8-4901-BEA7-1948C2E9BCF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5B60AA4-4BB8-4901-BEA7-1948C2E9BCF6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
