@@ -35,3 +35,9 @@ jobs:
 
             - name: Publish
               run: dotnet publish src/ConventionalChangelog/ConventionalChangelog.csproj --configuration Release --output release --nologo
+
+            - name: Upload Build Artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: Application
+                  path: release
