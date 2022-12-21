@@ -38,5 +38,5 @@ jobs:
               with:
                   tag: "v${{ steps.version.outputs.nuGetVersionV2 }}"
 
-            #- name: Publish
-            #  run: dotnet nuget push "**/*.nupkg" --source nuget.org --api-key ${{ secrets.NUGET_API_KEY }}
+            - name: Publish
+              run: dotnet nuget push "**/*.nupkg" --source nuget.org --api-key ${{ secrets.NUGET_API_KEY }}
