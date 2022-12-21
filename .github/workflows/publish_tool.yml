@@ -33,5 +33,10 @@ jobs:
             - name: Package
               run: dotnet pack --configuration Release --output nuget --nologo -p:Version=${{ steps.version.outputs.nuGetVersionV2 }}
 
-            - name: Publish
-              run: dotnet nuget push "**/*.nupkg" --source nuget.org --api-key ${{ secrets.NUGET_API_KEY }}
+            - name: Tag Repository
+              uses: rickstaa/action-create-tag@v1
+              with:
+                  tag: "v${{ steps.version.outputs.nuGetVersionV2 }}"
+
+            #- name: Publish
+            #  run: dotnet nuget push "**/*.nupkg" --source nuget.org --api-key ${{ secrets.NUGET_API_KEY }}
