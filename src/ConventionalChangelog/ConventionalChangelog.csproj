@@ -8,7 +8,7 @@
         <ToolCommandName>changelog</ToolCommandName>
         <PackageOutputPath>./nupkg</PackageOutputPath>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-        <PackageReadmeFile>LICENSE.md</PackageReadmeFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
 
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
