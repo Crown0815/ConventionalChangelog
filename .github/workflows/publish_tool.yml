@@ -1,7 +1,7 @@
 ﻿name: publish tool
 
 on:
-    push:
+    workflow_dispatch:
 
 jobs:
     publish_tool:
