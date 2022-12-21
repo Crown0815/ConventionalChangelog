@@ -36,7 +36,7 @@ jobs:
             - name: Tag Repository
               uses: rickstaa/action-create-tag@v1
               with:
-                  tag: "v${{ steps.version.outputs.nuGetVersionV2 }}"
+                  tag: "v${{ steps.version.outputs.semVer }}"
 
             - name: Publish
               run: dotnet nuget push "**/*.nupkg" --source nuget.org --api-key ${{ secrets.NUGET_API_KEY }}
