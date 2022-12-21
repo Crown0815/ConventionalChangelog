@@ -7,6 +7,7 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>changelog</ToolCommandName>
         <PackageOutputPath>./nupkg</PackageOutputPath>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -14,6 +15,10 @@
 
     <ItemGroup>
         <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include=".\LICENSE.md" Pack="true" PackagePath=""/>
     </ItemGroup>
 
 </Project>
