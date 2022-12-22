@@ -7,10 +7,11 @@ namespace ConventionalChangelog.Unit.Tests.Integration;
 public abstract class GitUsingTestsBase : IDisposable
 {
     protected readonly Repository Repository;
+    private readonly string _randomDirectoryName = Guid.NewGuid().ToString();
 
     protected GitUsingTestsBase()
     {
-        var path = Path.Combine(Path.GetTempPath(), GetType().FullName!);
+        var path = Path.Combine(Path.GetTempPath(), _randomDirectoryName);
         Repository = new Repository(Repository.Init(path));
     }
 

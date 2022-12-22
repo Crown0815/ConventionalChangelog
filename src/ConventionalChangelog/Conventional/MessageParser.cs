@@ -41,9 +41,19 @@ internal static class MessageParser
 
     private static bool Matches(this CommitType t, string m) => Regex.IsMatch(m, $"^{t.Indicator}$");
 
+#if NET6_0
+    private static (string, string) HeaderFrom(string header)
+    {
+        var twoParts = header.Split(Separator);
+        return twoParts.Length == 2
+            ? (twoParts.First(), twoParts.Last().Trim())
+            : ("", "");
+    }
+#elif NET7_0_OR_GREATER
     private static (string, string) HeaderFrom(string header) => header.Split(Separator) is [_, _] twoParts
         ? (twoParts.First(),twoParts.Last().Trim())
         : ("", "");
+#endif
 
     private static IEnumerable<string> LinesFrom(TextReader reader)
     {
