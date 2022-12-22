@@ -9,6 +9,9 @@ namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public class Parsing_a_conventional_commit_message
 {
+    // Lb = Linebreak. The abbreviation was chosen to keep string definitions short
+    private static readonly string Lb = Environment.NewLine;
+
     // Conventional commit specification:
     // https://www.conventionalcommits.org/en/v1.0.0/#specification
 
@@ -17,19 +20,19 @@ public class Parsing_a_conventional_commit_message
         public const string Type = "feat";
         public const string Description = "description";
 
+#if NET6_0
+        public static readonly string Body = $"Body with{Lb}newlines \t tabs{Lb}{Lb}   and some spaces{Lb}{Lb}{Lb}and multiple blank lines";
+        public static readonly string Message = $"{Type}: {Description}{Lb}{Lb}{Body}{Lb}{Lb}{Footer}" ;
+#elif NET7_0_OR_GREATER
         public const string Body = """
-                                   Body with
-                                   newlines 	 tabs
+            Body with
+            newlines 	 tabs
 
-                                      and some spaces
+               and some spaces
 
 
-                                   and multiple blank lines
-                                   """;
-
-        public const string FooterToken = "token";
-        public const string FooterValue = "value";
-        public const string Footer = $"{FooterToken}: {FooterValue}";
+            and multiple blank lines
+            """;
 
         public const string Message = $"""
             {Type}: {Description}
@@ -38,6 +41,11 @@ public class Parsing_a_conventional_commit_message
 
             {Footer}
             """ ;
+#endif
+
+        public const string FooterToken = "token";
+        public const string FooterValue = "value";
+        public const string Footer = $"{FooterToken}: {FooterValue}";
     }
 
     private readonly CommitMessage _parsed;
@@ -77,18 +85,9 @@ public class Parsing_a_conventional_commit_message
     [Fact]
     public void with_multiple_footers_extracts_all_footers()
     {
-        const string footers = """
-                      token1: value1
-                      token-2: value 2
-
-                      token3 #value 3
-                      token-4 #value
-                      with extra line
-
-                      token-5: value
-
-                      with blank line
-                      """;
+        var footers = $"token1: value1{Lb}token-2: value 2{Lb}{Lb}token3 " +
+                      $"#value 3{Lb}token-4 #value{Lb}with extra line{Lb}{Lb}" +
+                      $"token-5: value{Lb}{Lb}with blank line";
 
         var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, footers);
         var parsed = Parse(messageWithSpecificFooter);
@@ -98,8 +97,8 @@ public class Parsing_a_conventional_commit_message
             new("token1", "value1"),
             new("token-2", "value 2"),
             new("token3", "value 3"),
-            new("token-4", $"value{Environment.NewLine}with extra line"),
-            new("token-5", $"value{Environment.NewLine}{Environment.NewLine}with blank line"),
+            new("token-4", $"value{Lb}with extra line"),
+            new("token-5", $"value{Lb}{Lb}with blank line"),
         });
     }
 
@@ -118,15 +117,8 @@ public class Parsing_a_conventional_commit_message
         "value",
         "value with spaces",
         "value	with	tabs",
-        """
-        value with
-        linebreak
-        """,
-        """
-        value with
-
-        blank line
-        """,
+        $"value with{Lb}linebreak",
+        $"value with{Lb}{Lb}blank line",
     };
 
     public static IEnumerable<object[]> GitTrailerConventionFooters()
