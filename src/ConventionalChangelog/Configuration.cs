@@ -5,6 +5,7 @@ namespace ConventionalChangelog;
 
 internal static class Configuration
 {
+    public const string VersionTagPrefix = "[pv]";
     private static readonly List<CommitType> Groups = new();
 
     static Configuration()
