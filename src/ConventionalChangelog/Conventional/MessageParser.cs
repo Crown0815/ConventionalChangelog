@@ -32,7 +32,7 @@ internal static class MessageParser
         var (body, footers) = BodyFrom(lines);
 
         if (footers.Any(x => Regex.IsMatch(x.Token, BreakingChange.FooterPattern)))
-            typeIndicator = typeIndicator.Replace(BreakingChange.IndicatorExtension, "");
+            typeIndicator = typeIndicator.Replace(BreakingChange.Indicator, "");
 
         var type = Configuration.CommitTypes.SingleOrDefault(x => x.Matches(typeIndicator)) ?? NoType;
 
