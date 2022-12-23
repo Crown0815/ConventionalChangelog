@@ -50,8 +50,8 @@ internal static class MessageParser
             : ("", "");
     }
 #elif NET7_0_OR_GREATER
-    private static (string, string) HeaderFrom(string header) => header.Split(Separator) is [_, _] twoParts
-        ? (twoParts.First(),twoParts.Last().Trim())
+    private static (string, string) HeaderFrom(string header) => header.Split(Separator) is [var first, var second]
+        ? (first,second.Trim())
         : ("", "");
 #endif
 
