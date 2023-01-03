@@ -4,6 +4,8 @@ namespace ConventionalChangelog;
 
 internal static class MessageLinq
 {
+    private record Strategy(string Token, bool Remove, bool Add, bool Register);
+
     private static readonly Strategy FixUp = new(@"fixup", true, true, true);
     private static readonly Strategy Revert = new("revert", true, false, false);
     private static readonly Strategy Override = new("override", false, false, true);
@@ -13,34 +15,46 @@ internal static class MessageLinq
         .Resolve(Revert)
         .Resolve(Override);
 
-    private static IEnumerable<CommitMessage> Resolve(this IEnumerable<CommitMessage> messages, Strategy strategy)
+    private static IEnumerable<CommitMessage> Resolve(this IEnumerable<CommitMessage> messages, Strategy strategy) =>
+        messages.Aggregate(new Reducer(strategy), (c, m) => c.Add(m)).Messages;
+
+    private class Reducer
     {
-        var resolved = new List<CommitMessage>();
-        var references = new Dictionary<string, List<CommitMessage>>();
-        foreach (var message in messages) Reduce(strategy, references, message, resolved);
+        private readonly Strategy _strategy;
+        private readonly List<CommitMessage> _messages = new();
+        private readonly Dictionary<string, List<CommitMessage>> _references = new();
 
-        return resolved;
-    }
+        public Reducer(Strategy strategy) => _strategy = strategy;
 
-    private static void Reduce(Strategy strategy, IDictionary<string, List<CommitMessage>> references, CommitMessage message,
-        List<CommitMessage> relevant)
-    {
-        var found = references.TryGetValue(message.Hash, out var ms);
-
-        if (!found || strategy.Add) relevant.Add(message);
-        if (!found || strategy.Register) Register(references, message, strategy.Token);
-        if (found && strategy.Remove) relevant.RemoveAll(ms!.Contains);
-    }
-
-    private static void Register(IDictionary<string, List<CommitMessage>> fixUps, CommitMessage message, string token)
-    {
-        foreach (var target in message.Footers.Where(x => x.Token == token).Select(x => x.Value))
+        public Reducer Add(CommitMessage message)
         {
-            if (!fixUps.ContainsKey(target))
-                fixUps.Add(target, new List<CommitMessage>());
-            fixUps[target].Add(message);
-        }
-    }
+            var found = _references.TryGetValue(message.Hash, out var ms);
 
-    private record Strategy(string Token, bool Remove, bool Add, bool Register);
+            if (!found || _strategy.Add) _messages.Add(message);
+            if (!found || _strategy.Register) CacheReferences(message);
+            if (found && _strategy.Remove) _messages.RemoveAll(ms!.Contains);
+            return this;
+        }
+
+        private void CacheReferences(CommitMessage source)
+        {
+            foreach (var target in TargetsFrom(source))
+                CacheReference(source, target);
+        }
+
+        private IEnumerable<string> TargetsFrom(CommitMessage source) =>
+            source.Footers.Where(IsReference).Select(Target);
+
+        private bool IsReference(CommitMessage.Footer f) => f.Token == _strategy.Token;
+        private static string Target(CommitMessage.Footer f) => f.Value;
+
+        private void CacheReference(CommitMessage source, string target)
+        {
+            if (!_references.ContainsKey(target))
+                _references.Add(target, new List<CommitMessage>());
+            _references[target].Add(source);
+        }
+
+        public IEnumerable<CommitMessage> Messages => _messages;
+    }
 }
