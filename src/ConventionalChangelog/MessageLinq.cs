@@ -4,13 +4,13 @@ namespace ConventionalChangelog;
 
 internal static class MessageLinq
 {
-    private readonly record struct Strategy(string Token, bool Remove, bool Add, bool Register);
+    private readonly record struct Strategy(string Token, bool Add, bool Register, bool Remove);
 
     private static readonly Strategy[] Strategies =
     {
         new(@"fixup", true, true, true),
-        new("revert", true, false, false),
-        new("override", false, false, true),
+        new("revert", false, false, true),
+        new("override", false, true, false),
     };
 
     public static IEnumerable<CommitMessage> Reduce(this IEnumerable<CommitMessage> messages) =>
