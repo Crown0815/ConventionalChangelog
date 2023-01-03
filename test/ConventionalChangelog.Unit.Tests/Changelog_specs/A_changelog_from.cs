@@ -6,22 +6,31 @@ namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public class A_changelog_from
 {
-    [Theory]
-    [InlineData(null)]
-    [InlineData(new object[] { new string[] { null! } })]
-    [InlineData(new object[] { new string[] { null!, null! } })]
-    [InlineData(new object[] { new[] { "", null!, "" } })]
-    public void null_throws_null_exception(string[] @null)
+    public static readonly object[][] NullCases =
     {
-        Action fromNull = () => Changelog.From(@null);
+        new object[] { null! },
+        new object[] { null!, null! },
+        new object[] { new Commit(""), null!, new Commit("") },
+    };
+
+    [Theory]
+    [MemberData(nameof(NullCases))]
+    public void null_throws_null_exception(params Commit[] nullCase)
+    {
+        Action fromNull = () => Changelog.From(nullCase);
         fromNull.Should().Throw<Exception>();
     }
 
+    public static readonly object[][] EmptyCases =
+    {
+        new object[] {  },
+        new object[] { new Commit("") },
+        new object[] { new Commit(""), new Commit("") },
+    };
+
     [Theory]
-    [InlineData]
-    [InlineData("")]
-    [InlineData("", "")]
-    public void empty_changes_is_empty(params string[] noChanges)
+    [MemberData(nameof(EmptyCases))]
+    public void empty_changes_is_empty(params Commit[] noChanges)
     {
         var changelog = Changelog.From(noChanges);
         changelog.Should().Be(A.Changelog.Empty);
@@ -30,9 +39,9 @@ public class A_changelog_from
     [Theory]
     [InlineData("some message")]
     [InlineData("1234: abc")]
-    public void non_conventional_commits_is_empty(string nonConventionalCommits)
+    public void non_conventional_commits_is_empty(string nonConventionalCommitMessage)
     {
-        var changelog = Changelog.From(nonConventionalCommits);
+        var changelog = Changelog.From(new Commit(nonConventionalCommitMessage));
         changelog.Should().Be(A.Changelog.Empty);
     }
 

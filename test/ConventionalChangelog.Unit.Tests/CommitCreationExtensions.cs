@@ -5,15 +5,15 @@ namespace ConventionalChangelog.Unit.Tests;
 
 internal static class CommitCreationExtensions
 {
-    public static string CommitWithDescription(this CommitType type, int seed) =>
+    public static Commit CommitWithDescription(this CommitType type, int seed) =>
         type.CommitWith(A.Description(seed));
 
-    public static string CommitWith(this CommitType type, string description) =>
-        $"{type.Indicator}: {description}";
+    public static Commit CommitWith(this CommitType type, string description) =>
+        new($"{type.Indicator}: {description}");
 
-    public static string WithFooter(this string commitMessage, string token, int seed) =>
+    public static Commit WithFooter(this Commit commitMessage, string token, int seed) =>
         commitMessage.WithFooter(token, A.Description(seed));
 
-    public static string WithFooter(this string commitMessage, string token, string value) =>
-        commitMessage + Environment.NewLine + Environment.NewLine + $"{token}: {value}";
+    public static Commit WithFooter(this Commit commitMessage, string token, string value) =>
+        commitMessage with {Message = commitMessage.Message + Environment.NewLine + Environment.NewLine + $"{token}: {value}"};
 }

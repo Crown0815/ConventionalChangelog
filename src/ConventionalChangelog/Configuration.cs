@@ -5,11 +5,13 @@ namespace ConventionalChangelog;
 
 internal static class Configuration
 {
+    public const string VersionTagPrefix = "[pv]";
     private static readonly List<CommitType> Groups = new();
 
     static Configuration()
     {
-        Configure("[a-z]+!", "Breaking Changes", Show);
+        Groups.Add(BreakingChange.Type);
+
         Configure("feat", "Features", Show);
         Configure("fix", "Bug Fixes", Show);
         Configure("perf", "Performance Improvements", Show);
@@ -27,7 +29,6 @@ internal static class Configuration
         Groups.Add(new CommitType(indicator, header, relevance));
     }
 
-    public static CommitType BreakingChange => Groups[0];
     public static IReadOnlyCollection<CommitType> CommitTypes => Groups;
     public static IComparer<CommitType> Comparer { get; } = new CommitTypeComparer();
 

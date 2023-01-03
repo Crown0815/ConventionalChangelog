@@ -1,15 +1,12 @@
 using System.Text.RegularExpressions;
 using ConventionalChangelog.Conventional;
 using LibGit2Sharp;
+using static ConventionalChangelog.Configuration;
 
 namespace ConventionalChangelog;
 
 public static class Changelog
 {
-    private const string VersionTagPrefix = "[pv]";
-
-    public static string From(params string[] messages) => From(messages.Select(CommitMessage.Parse));
-
     public static string From(params Commit[] messages) => From(messages.Select(CommitMessage.Parse));
 
     private static string From(IEnumerable<CommitMessage> messages)
@@ -17,7 +14,7 @@ public static class Changelog
         return messages
             .Reduce()
             .SelectMany(LogEntries)
-            .OrderBy(x => x.Type, Configuration.Comparer)
+            .OrderBy(x => x.Type, Comparer)
             .Aggregate(new LogAggregate(), Add).ToString();
     }
 
@@ -27,7 +24,7 @@ public static class Changelog
     {
         foreach (var footer in commitMessage.Footers)
             if (Regex.IsMatch(footer.Token, BreakingChange.FooterPattern))
-                yield return new LogEntry(Configuration.BreakingChange, footer.Value);
+                yield return new LogEntry(BreakingChange.Type, footer.Value);
 
         yield return new LogEntry(commitMessage.Type, commitMessage.Description);
     }
