@@ -4,7 +4,10 @@ namespace ConventionalChangelog;
 
 internal static class MessageLinq
 {
-    public static IEnumerable<CommitMessage> Reduce(this IEnumerable<CommitMessage> messages)
+    public static IEnumerable<CommitMessage> Reduce(this IEnumerable<CommitMessage> m) => m
+        .ResolveFixUps();
+
+    private static IEnumerable<CommitMessage> ResolveFixUps(this IEnumerable<CommitMessage> messages)
     {
         var relevant = new List<CommitMessage>();
         var fixUps = new Dictionary<string, List<CommitMessage>>();
