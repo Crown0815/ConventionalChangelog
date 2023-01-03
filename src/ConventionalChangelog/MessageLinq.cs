@@ -52,4 +52,29 @@ internal static class MessageLinq
 
         return relevant;
     }
+
+    private static IEnumerable<CommitMessage> ResolveOverrides(this IEnumerable<CommitMessage> messages)
+    {
+        var relevant = new List<CommitMessage>();
+        var reverts = new Dictionary<string, List<CommitMessage>>();
+        foreach (var message in messages)
+        {
+
+            relevant.Add(message);
+
+            if (reverts.TryGetValue(message.Hash, out _))
+            {
+                relevant.Remove(message);
+            }
+
+            foreach (var target in message.Footers.Where(x => x.Token == @"override").Select(x => x.Value))
+            {
+                if (!reverts.ContainsKey(target))
+                    reverts.Add(target, new List<CommitMessage>());
+                reverts[target].Add(message);
+            }
+        }
+
+        return relevant;
+    }
 }
