@@ -4,19 +4,21 @@ namespace ConventionalChangelog;
 
 internal static class MessageLinq
 {
-    private record Strategy(string Token, bool Remove, bool Add, bool Register);
+    private readonly record struct Strategy(string Token, bool Remove, bool Add, bool Register);
 
-    private static readonly Strategy FixUp = new(@"fixup", true, true, true);
-    private static readonly Strategy Revert = new("revert", true, false, false);
-    private static readonly Strategy Override = new("override", false, false, true);
+    private static readonly Strategy[] Strategies =
+    {
+        new(@"fixup", true, true, true),
+        new("revert", true, false, false),
+        new("override", false, false, true),
+    };
 
-    public static IEnumerable<CommitMessage> Reduce(this IEnumerable<CommitMessage> m) => m
-        .Resolve(FixUp)
-        .Resolve(Revert)
-        .Resolve(Override);
+    public static IEnumerable<CommitMessage> Reduce(this IEnumerable<CommitMessage> messages) =>
+        Strategies.Aggregate(messages, Reduce);
 
-    private static IEnumerable<CommitMessage> Resolve(this IEnumerable<CommitMessage> messages, Strategy strategy) =>
+    private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Strategy strategy) =>
         messages.Aggregate(new Reducer(strategy), (c, m) => c.Add(m)).Messages;
+
 
     private class Reducer
     {
