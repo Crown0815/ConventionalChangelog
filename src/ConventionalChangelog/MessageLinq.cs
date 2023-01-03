@@ -14,6 +14,9 @@ internal static class MessageLinq
         var fixUps = new Dictionary<string, List<CommitMessage>>();
         foreach (var message in messages)
         {
+            if (fixUps.TryGetValue(message.Hash, out var ms))
+                relevant.RemoveAll(ms.Contains);
+
             relevant.Add(message);
             foreach (var target in message.Footers.Where(x => x.Token == @"fixup").Select(x => x.Value))
             {
@@ -21,9 +24,6 @@ internal static class MessageLinq
                     fixUps.Add(target, new List<CommitMessage>());
                 fixUps[target].Add(message);
             }
-
-            if (fixUps.TryGetValue(message.Hash, out var ms))
-                relevant.RemoveAll(ms.Contains);
         }
 
         return relevant;
