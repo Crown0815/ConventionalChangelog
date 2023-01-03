@@ -85,7 +85,7 @@ public class Git_specs : GitUsingTestsBase
     [Fact]
     public void Changelog_from_branched_conventional_commits_contains_messages_from_all_commits_since_last_tag_on_current_branch()
     {
-        var root = Repository.Commit("chore: Initial Commit");
+        var root = Repository.Commit(Irrelevant, "Initial Commit");
         Repository.CreateBranch("develop");
         Repository.Commit(Feature, 3).Tag("v0.9.0-alpha.1");
         Repository.Commit(Feature, 4);
