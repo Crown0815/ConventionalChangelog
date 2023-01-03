@@ -11,7 +11,4 @@ internal static class CommitTypeFor
     public static readonly CommitType Irrelevant = new("chore", "", Relevance.Hide);
 
     public static CommitType ToCommitType(this string indicator) => new(indicator, "");
-
-    private const string BreakingChangeIndicator = "!";
-    public static CommitType Breaking(CommitType t) => new(t.Indicator + BreakingChangeIndicator, "");
 }
