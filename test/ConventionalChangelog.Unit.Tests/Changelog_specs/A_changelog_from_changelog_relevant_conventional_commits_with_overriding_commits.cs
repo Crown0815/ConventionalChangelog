@@ -51,9 +51,9 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         [Fact]
         public void when_multiple_overriding_commits_target_a_single_commit_that_is_part_of_the_changelog_shows_all_overriding_commits()
         {
-            var reverting2 = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(OverrideToken, _overridden.Hash);
+            var overriding2 = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(OverrideToken, _overridden.Hash);
 
-            var changelog = Changelog.From(reverting2, _overriding, _overridden);
+            var changelog = Changelog.From(overriding2, _overriding, _overridden);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 3, 2));
         }
