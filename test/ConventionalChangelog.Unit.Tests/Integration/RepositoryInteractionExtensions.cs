@@ -36,6 +36,16 @@ internal static class RepositoryInteractionExtensions
         target.Repository().Tags.Add(name, target);
     }
 
+    public static void Checkout(this IRepository r, string id)
+    {
+        Commands.Checkout(r, id);
+    }
+
+    public static void Checkout(this IRepository r, GitCommit commit)
+    {
+        Commands.Checkout(r, commit);
+    }
+
     private static IRepository Repository(this IBelongToARepository x) => x.Repository;
 
     public static string Path(this Repository r) => r.Info.Path;

@@ -87,16 +87,18 @@ public class Git_specs : GitUsingTestsBase
     {
         var root = Repository.Commit(Irrelevant, "Initial Commit");
         Repository.CreateBranch("develop");
+        Repository.Checkout("develop");
         Repository.Commit(Feature, 3).Tag("v0.9.0-alpha.1");
         Repository.Commit(Feature, 4);
         var end = Repository.Commit(Feature, 5);
 
-        Commands.Checkout(Repository, root);
+        Repository.Checkout(root);
         Repository.CreateBranch("release/1.0.0", root);
+        Repository.Checkout("release/1.0.0");
         Repository.Commit(Feature, 1).Tag("v1.0.0-beta.1");
         Repository.Commit(Feature, 2);
 
-        Commands.Checkout(Repository, end);
+        Repository.Checkout(end);
 
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 5, 4));
