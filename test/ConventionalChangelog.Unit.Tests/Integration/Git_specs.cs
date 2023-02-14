@@ -141,4 +141,38 @@ public class Git_specs : GitUsingTestsBase
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 5, 4));
     }
+
+    [Fact]
+    public void Changelog_from_merged_conventional_commits_contains_messages_from_all_commits_since_last_tag_on_first_parent()
+    {
+        Repository.Commit(Irrelevant, "Initial Commit");
+        var develop = Repository.CreateBranch("develop");
+        Repository.Checkout("develop");
+        Repository.Commit(Feature, 1).Tag("v0.1.0-alpha.1");
+        Repository.Commit(Feature, 2).Tag("v0.1.0-alpha.2");
+        Repository.Checkout("master");
+        Repository.Merge(develop);
+
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1));
+    }
+
+    [Fact]
+    public void Changelog_from_merged_conventional_commits_contains_messages_from_all_commits_since_last_tag_on_first_parent1()
+    {
+        Repository.Commit(Irrelevant, "Initial Commit");
+        var develop = Repository.CreateBranch("develop");
+        Repository.Checkout("develop");
+        Repository.Commit(Feature, 1).Tag("v0.1.0-alpha.1");
+        Repository.Commit(Feature, 2).Tag("v0.1.0-alpha.2");
+        Repository.Checkout("master");
+        Repository.Merge(develop).Tag("v0.1.0");
+
+        Repository.Checkout("develop");
+        Repository.Commit(Feature, 3).Tag("v0.2.0-alpha.1");
+        Repository.Commit(Feature, 4).Tag("v0.2.0-alpha.2");
+        Repository.Checkout("master");
+        Repository.Merge(develop);
+
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 4, 3));
+    }
 }

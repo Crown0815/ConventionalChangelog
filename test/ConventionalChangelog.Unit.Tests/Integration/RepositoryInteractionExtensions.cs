@@ -46,6 +46,11 @@ internal static class RepositoryInteractionExtensions
         Commands.Checkout(r, commit);
     }
 
+    public static GitCommit Merge(this Repository r, Branch branch)
+    {
+        return r.Merge(branch, Signature, new MergeOptions {FastForwardStrategy = FastForwardStrategy.NoFastForward}).Commit;
+    }
+
     private static IRepository Repository(this IBelongToARepository x) => x.Repository;
 
     public static string Path(this Repository r) => r.Info.Path;
