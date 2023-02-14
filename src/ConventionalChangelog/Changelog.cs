@@ -39,6 +39,7 @@ public static class Changelog
 
         var filter0 = new CommitFilter {
             SortBy = CommitSortStrategies.Topological,
+            FirstParentOnly = true,
             IncludeReachableFrom = repo.Head,
         };
 
