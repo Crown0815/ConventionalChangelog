@@ -7,14 +7,14 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
 {
     public class With_overriding_commits
     {
-        private const string OverrideToken = @"override";
+        private const string DefaultOverrideToken = @"Overrides";
         private readonly Commit _overridden;
         private readonly Commit _overriding;
 
         public With_overriding_commits()
         {
             _overridden = CommitTypeFor.Feature.CommitWithDescription(1);
-            _overriding = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(OverrideToken, _overridden.Hash);
+            _overriding = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(DefaultOverrideToken, _overridden.Hash);
         }
 
         [Fact]
@@ -41,7 +41,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         [Fact]
         public void when_a_overridden_overriding_commit_is_part_of_the_changelog_shows_the_overriding_overriding_commit()
         {
-            var overridingOverriding = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(OverrideToken, _overriding.Hash);
+            var overridingOverriding = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(DefaultOverrideToken, _overriding.Hash);
 
             var changelog = Changelog.From(overridingOverriding, _overriding, _overridden);
 
@@ -51,11 +51,38 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         [Fact]
         public void when_multiple_overriding_commits_target_a_single_commit_that_is_part_of_the_changelog_shows_all_overriding_commits()
         {
-            var overriding2 = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(OverrideToken, _overridden.Hash);
+            var overriding2 = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(DefaultOverrideToken, _overridden.Hash);
 
             var changelog = Changelog.From(overriding2, _overriding, _overridden);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 3, 2));
+        }
+
+        [Theory]
+        [InlineData(DefaultOverrideToken)]
+        [InlineData(@"override")]
+        [InlineData("overrides")]
+        [InlineData("Override")]
+        [InlineData(@"oVERRIDES")]
+        public void recognizes_overriding_commits_by_the(string footer)
+        {
+            var overridingOverriding = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(footer, _overridden.Hash);
+            var changelog = Changelog.From(overridingOverriding, _overridden);
+
+            changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 2));
+        }
+
+        [Theory]
+        [InlineData(@"hoverride")]
+        [InlineData(@"coverride")]
+        [InlineData("overwrite")]
+        [InlineData("overrider")]
+        public void does_not_commits_as_overriding_if_they_contain_(string footer)
+        {
+            var overridingOverriding = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(footer, _overridden.Hash);
+            var changelog = Changelog.From(overridingOverriding, _overridden);
+
+            changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 2, 1));
         }
     }
 }

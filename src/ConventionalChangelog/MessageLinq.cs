@@ -12,7 +12,7 @@ internal static class MessageLinq
     {
         new(@"fix(es|up)", true, true, true),
         new("revert", false, false, true),
-        new("override", false, true, false),
+        new("overrides?", false, true, false),
     };
 
     public static IEnumerable<CommitMessage> Reduce(this IEnumerable<CommitMessage> messages) =>
@@ -49,7 +49,7 @@ internal static class MessageLinq
         private IEnumerable<string> TargetsFrom(CommitMessage source) =>
             source.Footers.Where(IsReference).Select(Target);
 
-        private bool IsReference(CommitMessage.Footer f) => Regex.IsMatch(f.Token, _strategy.Token, IgnoreCase);
+        private bool IsReference(CommitMessage.Footer f) => Regex.IsMatch(f.Token, $"^{_strategy.Token}$", IgnoreCase);
         private static string Target(CommitMessage.Footer f) => f.Value;
 
         private void CacheReference(CommitMessage source, string target)
