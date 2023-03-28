@@ -1,4 +1,6 @@
-﻿using ConventionalChangelog.Conventional;
+﻿using System.Text.RegularExpressions;
+using ConventionalChangelog.Conventional;
+using static System.Text.RegularExpressions.RegexOptions;
 
 namespace ConventionalChangelog;
 
@@ -8,7 +10,7 @@ internal static class MessageLinq
 
     private static readonly Strategy[] Strategies =
     {
-        new(@"fixup", true, true, true),
+        new(@"fix(es|up)", true, true, true),
         new("revert", false, false, true),
         new("override", false, true, false),
     };
@@ -47,7 +49,7 @@ internal static class MessageLinq
         private IEnumerable<string> TargetsFrom(CommitMessage source) =>
             source.Footers.Where(IsReference).Select(Target);
 
-        private bool IsReference(CommitMessage.Footer f) => f.Token == _strategy.Token;
+        private bool IsReference(CommitMessage.Footer f) => Regex.IsMatch(f.Token, _strategy.Token, IgnoreCase);
         private static string Target(CommitMessage.Footer f) => f.Value;
 
         private void CacheReference(CommitMessage source, string target)
