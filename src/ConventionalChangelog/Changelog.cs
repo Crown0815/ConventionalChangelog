@@ -32,12 +32,13 @@ public static class Changelog
     public static string FromRepository(string path)
     {
         using var repo = new Repository(path);
-        var dict = repo.Tags.GroupBy(x=> x.Target).ToDictionary(x => x.Key, x => x.ToList());
+        var dict = repo.Tags.GroupBy(x => x.Target).ToDictionary(x => x.Key, x => x.ToList());
 
         var tag = (object)null!;
 
 
-        var filter0 = new CommitFilter {
+        var filter0 = new CommitFilter
+        {
             SortBy = CommitSortStrategies.Topological,
             FirstParentOnly = true,
             IncludeReachableFrom = repo.Head,
@@ -51,7 +52,8 @@ public static class Changelog
             break;
         }
 
-        var filter = new CommitFilter {
+        var filter = new CommitFilter
+        {
             SortBy = CommitSortStrategies.Topological,
             ExcludeReachableFrom = tag,
         };
