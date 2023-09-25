@@ -23,7 +23,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         [Fact]
         public void when_the_fixed_commit_is_part_of_the_changelog_excludes_the_fixing_commit_from_the_changelog()
         {
-            var changelog = Changelog.From(_fixing, _target);
+            var changelog = A.Changelog.From(_fixing, _target);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 1));
         }
@@ -35,7 +35,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         public void recognizes_fixing_commits_by_the(string footer)
         {
             var fixing = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(footer, _target.Hash);
-            var changelog = Changelog.From(fixing, _target);
+            var changelog = A.Changelog.From(fixing, _target);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 1));
         }
@@ -46,7 +46,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         {
             var fixing2 = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(DefaultFixToken, _fixing.Hash);
 
-            var changelog = Changelog.From(fixing2, _fixing, _target);
+            var changelog = A.Changelog.From(fixing2, _fixing, _target);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 1));
         }
@@ -57,7 +57,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         {
             var fixing2 = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(DefaultFixToken, _target.Hash);
 
-            var changelog = Changelog.From(fixing2, _fixing, _target);
+            var changelog = A.Changelog.From(fixing2, _fixing, _target);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 1));
         }
@@ -67,7 +67,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         {
             var fixing2 = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(DefaultFixToken, "randomHash");
 
-            var changelog = Changelog.From(fixing2, _fixing, _target);
+            var changelog = A.Changelog.From(fixing2, _fixing, _target);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 3, 1));
         }

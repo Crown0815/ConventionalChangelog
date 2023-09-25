@@ -8,25 +8,15 @@ namespace ConventionalChangelog;
 
 public static class Changelog
 {
-    public static string From(params Commit[] messages) => From(messages.Select(CommitMessage.Parse));
-
-
-    private static string From(Commit[] messages, ChangelogOrder order)
+    public static string From(IEnumerable<Commit> messages, ChangelogOrder order)
     {
-        if (order == NewestToOldest) return From(messages);
-        return messages.Select(CommitMessage.Parse)
+        var logEntries = messages.Select(CommitMessage.Parse)
             .Reduce()
-            .SelectMany(LogEntries)
-            .Reverse()
-            .OrderBy(x => x.Type, Comparer)
-            .Aggregate(new LogAggregate(), Add).ToString();
-    }
+            .SelectMany(LogEntries);
+        if (order == OldestToNewest)
+            logEntries = logEntries.Reverse();
 
-    private static string From(IEnumerable<CommitMessage> messages)
-    {
-        return messages
-            .Reduce()
-            .SelectMany(LogEntries)
+        return logEntries
             .OrderBy(x => x.Type, Comparer)
             .Aggregate(new LogAggregate(), Add).ToString();
     }
