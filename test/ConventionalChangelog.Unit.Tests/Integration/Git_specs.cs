@@ -100,7 +100,7 @@ public class Git_specs : GitUsingTestsBase
     public void Changelog_from_conventional_commits_with_fix_up_commits_excludes_those_fix_ups_with_their_target_in_the_changelog()
     {
         var after = Repository.Commit(Feature.CommitWithDescription(1));
-        Repository.Commit(Feature.CommitWithDescription(2).WithFooter(@"fixup", after.Sha));
+        Repository.Commit(Feature.CommitWithDescription(2).WithFooter("Fixes", after.Sha));
 
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 1));
@@ -113,8 +113,8 @@ public class Git_specs : GitUsingTestsBase
         Repository.Commit(Feature, "Multi-tagged commit").Tag("v1.0.0");
 
         var after = Repository.Commit(Feature.CommitWithDescription(1));
-        Repository.Commit(Feature.CommitWithDescription(2).WithFooter(@"fixup", after.Sha));
-        Repository.Commit(Feature.CommitWithDescription(3).WithFooter(@"fixup", before.Sha));
+        Repository.Commit(Feature.CommitWithDescription(2).WithFooter("Fixes", after.Sha));
+        Repository.Commit(Feature.CommitWithDescription(3).WithFooter("Fixes", before.Sha));
 
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 3, 1));
