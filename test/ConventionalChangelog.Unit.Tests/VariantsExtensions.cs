@@ -1,11 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Xunit.Sdk;
 
 namespace ConventionalChangelog.Unit.Tests;
 
-internal static class VariantsExtensions
+
+internal class CaseVariantDataAttribute: DataAttribute
 {
+    private readonly string _source;
+
+    public CaseVariantDataAttribute(string source) => _source = source;
+
+    public override IEnumerable<object[]> GetData(MethodInfo testMethod) => _source.Cases2();
+}
+
+internal static class VariantsExtensions2
+{
+    public static IEnumerable<object[]> Cases2(this string source)
+    {
+        return source.CaseVariants().Select(x => new object[] { x });
+    }
+
     public static IEnumerable<string> CaseVariants(this string original) => AllVariants(original).Distinct();
 
     private static IEnumerable<string> AllVariants(string original)

@@ -1,14 +1,20 @@
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Xunit;
 
 namespace ConventionalChangelog.Unit.Tests;
 
-public class Variants
+public class The_case_variants_attribute
 {
+    private static IEnumerable<object[]> AttributeCasesFrom(string source)
+    {
+        return new CaseVariantDataAttribute(source).GetData(default!);
+    }
+
     [Fact]
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
-    public void A()
+    public void Generates_variants_of_original_string_with_upper_lower_and_mixed_casing()
     {
         ((int)'a').Should().Be(97);
         ((int)'A').Should().Be(65);
@@ -58,5 +64,15 @@ public class Variants
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     }
 
-
+    [Fact]
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    public void Generates_xunit_cases_of_original_string_with_upper_lower_and_mixed_casing()
+    {
+        AttributeCasesFrom("test").Should().SatisfyRespectively(
+            o => o.Should().ContainSingle().Which.Should().Be("test"),
+            o => o.Should().ContainSingle().Which.Should().Be("tEsT"),
+            o => o.Should().ContainSingle().Which.Should().Be("TeSt"),
+            o => o.Should().ContainSingle().Which.Should().Be("TEST")
+            );
+    }
 }
