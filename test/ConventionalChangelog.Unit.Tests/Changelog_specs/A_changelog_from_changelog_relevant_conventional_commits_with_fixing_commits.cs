@@ -10,6 +10,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
     {
         private const string DefaultFixToken = "Fixes";
         private const string LegacyFixToken = "FixUp";
+        private const string AlternativeFixToken = "Enhances";
         private readonly Commit _target;
         private readonly Commit _fixing;
 
@@ -30,6 +31,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         [Theory]
         [CaseVariantData(DefaultFixToken)]
         [CaseVariantData(LegacyFixToken)]
+        [CaseVariantData(AlternativeFixToken)]
         public void recognizes_fixing_commits_by_the(string footer)
         {
             var fixing = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(footer, _target.Hash);
