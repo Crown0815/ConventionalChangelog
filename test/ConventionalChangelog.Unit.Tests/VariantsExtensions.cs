@@ -6,7 +6,6 @@ using Xunit.Sdk;
 
 namespace ConventionalChangelog.Unit.Tests;
 
-
 internal class CaseVariantDataAttribute: DataAttribute
 {
     private readonly string _source;
