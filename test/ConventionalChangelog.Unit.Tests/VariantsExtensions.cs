@@ -13,17 +13,18 @@ internal class CaseVariantDataAttribute: DataAttribute
 
     public CaseVariantDataAttribute(string source) => _source = source;
 
-    public override IEnumerable<object[]> GetData(MethodInfo testMethod) => _source.Cases2();
+    public override IEnumerable<object[]> GetData(MethodInfo testMethod) => _source.TestCases();
 }
 
-internal static class VariantsExtensions2
+internal static class VariantsExtensions
 {
-    public static IEnumerable<object[]> Cases2(this string source)
+    public static IEnumerable<object[]> TestCases(this string source)
     {
-        return source.CaseVariants().Select(x => new object[] { x });
+        return CaseVariantsFrom(source).Select(x => new object[] { x });
     }
 
-    public static IEnumerable<string> CaseVariants(this string original) => AllVariants(original).Distinct();
+    private static IEnumerable<string> CaseVariantsFrom(string original) =>
+        AllVariants(original).Reverse().Append(original).Distinct().Reverse();
 
     private static IEnumerable<string> AllVariants(string original)
     {
