@@ -7,7 +7,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
 {
     public class With_reverting_commits
     {
-        private const string DefaultRevertToken = @"Reverts";
+        private const string DefaultRevertToken = "Reverts";
         private readonly Commit _reverted;
         private readonly Commit _reverting;
 
@@ -61,11 +61,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         }
 
         [Theory]
-        [InlineData(DefaultRevertToken)]
-        [InlineData(@"revert")]
-        [InlineData("reverts")]
-        [InlineData("Revert")]
-        [InlineData(@"rEVERTS")]
+        [CaseVariantData(DefaultRevertToken)]
         public void recognizes_reverting_commits_by_the(string footer)
         {
             var reverting = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(footer, _reverted.Hash);

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Xunit;
 
@@ -7,7 +8,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
 {
     public class With_overriding_commits
     {
-        private const string DefaultOverrideToken = @"Overrides";
+        private const string DefaultOverrideToken = "Overrides";
         private readonly Commit _overridden;
         private readonly Commit _overriding;
 
@@ -59,11 +60,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         }
 
         [Theory]
-        [InlineData(DefaultOverrideToken)]
-        [InlineData(@"override")]
-        [InlineData("overrides")]
-        [InlineData("Override")]
-        [InlineData(@"oVERRIDES")]
+        [CaseVariantData(DefaultOverrideToken)]
         public void recognizes_overriding_commits_by_the(string footer)
         {
             var overridingOverriding = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(footer, _overridden.Hash);
@@ -72,9 +69,9 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 2));
         }
 
-        [Theory]
-        [InlineData(@"hoverride")]
-        [InlineData(@"coverride")]
+        [Theory, SuppressMessage("ReSharper", "StringLiteralTypo")]
+        [InlineData("hoverride")]
+        [InlineData("coverride")]
         [InlineData("overwrite")]
         [InlineData("overrider")]
         public void does_not_commits_as_overriding_if_they_contain_(string footer)
