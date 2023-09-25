@@ -29,12 +29,23 @@ public class Git_specs : GitUsingTestsBase
     }
 
     [Fact]
-    public void Changelog_from_only_conventional_commits_contains_messages_from_newest_to_oldest_commit()
+    public void Changelog_from_only_conventional_commits_contains_messages_by_default_from_newest_to_oldest_commit()
     {
         3.Times(i => Repository.Commit(Feature, i));
 
         Changelog.FromRepository(Repository.Path())
             .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
+    }
+
+    [Theory]
+    [InlineData(ChangelogOrder.NewestToOldest, new[]{2,1,0})]
+    [InlineData(ChangelogOrder.OldestToNewest, new[]{0,1,2})]
+    public void Changelog_from_only_conventional_commits_contains_messages_in_requested_order(ChangelogOrder order, int[] commits)
+    {
+        3.Times(i => Repository.Commit(Feature, i));
+
+        Changelog.FromRepository(Repository.Path(), order)
+            .Should().Be(A.Changelog.WithGroup(Feature, commits));
     }
 
     [Theory]
