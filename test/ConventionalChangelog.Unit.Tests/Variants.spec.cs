@@ -16,15 +16,6 @@ public class The_case_variants_attribute
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public void Generates_variants_of_original_string_with_upper_lower_and_mixed_casing()
     {
-        ((int)'a').Should().Be(97);
-        ((int)'A').Should().Be(65);
-        ((char)('z' + 1)).Should().Be('{');
-        ((char)('Z' + 1)).Should().Be('[');
-        ((char)('a' - 1)).Should().Be('`');
-        ((char)('A' - 1)).Should().Be('@');
-        ('a'-'A').Should().Be(32);
-
-
         "".CaseVariants().Should().Equal("");
         " ".CaseVariants().Should().Equal(" ");
         "  ".CaseVariants().Should().Equal("  ");
