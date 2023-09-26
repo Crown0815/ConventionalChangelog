@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Xunit;
 
@@ -7,7 +8,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
 {
     public class With_overriding_commits
     {
-        private const string DefaultOverrideToken = @"Overrides";
+        private const string DefaultOverrideToken = "Overrides";
         private readonly Commit _overridden;
         private readonly Commit _overriding;
 
@@ -20,21 +21,21 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         [Fact]
         public void when_the_overridden_commit_is_part_of_the_changelog_but_the_overriding_one_is_not_shows_the_overridden_commit()
         {
-            var changelog = Changelog.From(_overridden);
+            var changelog = A.Changelog.From(_overridden);
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 1));
         }
 
         [Fact]
         public void when_the_overridden_and_overriding_commit_are_part_of_the_changelog_shows_the_overriding_commit()
         {
-            var changelog = Changelog.From(_overriding, _overridden);
+            var changelog = A.Changelog.From(_overriding, _overridden);
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 2));
         }
 
         [Fact]
         public void when_the_overriding_commit_is_part_of_the_changelog_but_the_overridden_one_is_not_shows_the_overriding_commit()
         {
-            var changelog = Changelog.From(_overriding);
+            var changelog = A.Changelog.From(_overriding);
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 2));
         }
 
@@ -43,7 +44,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         {
             var overridingOverriding = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(DefaultOverrideToken, _overriding.Hash);
 
-            var changelog = Changelog.From(overridingOverriding, _overriding, _overridden);
+            var changelog = A.Changelog.From(overridingOverriding, _overriding, _overridden);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 3));
         }
@@ -53,34 +54,30 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         {
             var overriding2 = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(DefaultOverrideToken, _overridden.Hash);
 
-            var changelog = Changelog.From(overriding2, _overriding, _overridden);
+            var changelog = A.Changelog.From(overriding2, _overriding, _overridden);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 3, 2));
         }
 
         [Theory]
-        [InlineData(DefaultOverrideToken)]
-        [InlineData(@"override")]
-        [InlineData("overrides")]
-        [InlineData("Override")]
-        [InlineData(@"oVERRIDES")]
+        [CaseVariantData(DefaultOverrideToken)]
         public void recognizes_overriding_commits_by_the(string footer)
         {
             var overridingOverriding = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(footer, _overridden.Hash);
-            var changelog = Changelog.From(overridingOverriding, _overridden);
+            var changelog = A.Changelog.From(overridingOverriding, _overridden);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 2));
         }
 
-        [Theory]
-        [InlineData(@"hoverride")]
-        [InlineData(@"coverride")]
+        [Theory, SuppressMessage("ReSharper", "StringLiteralTypo")]
+        [InlineData("hoverride")]
+        [InlineData("coverride")]
         [InlineData("overwrite")]
         [InlineData("overrider")]
         public void does_not_commits_as_overriding_if_they_contain_(string footer)
         {
             var overridingOverriding = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(footer, _overridden.Hash);
-            var changelog = Changelog.From(overridingOverriding, _overridden);
+            var changelog = A.Changelog.From(overridingOverriding, _overridden);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 2, 1));
         }

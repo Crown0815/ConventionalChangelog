@@ -7,7 +7,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
 {
     public class With_reverting_commits
     {
-        private const string DefaultRevertToken = @"Reverts";
+        private const string DefaultRevertToken = "Reverts";
         private readonly Commit _reverted;
         private readonly Commit _reverting;
 
@@ -20,14 +20,14 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         [Fact]
         public void when_the_reverted_commit_is_part_of_the_changelog_but_the_reverting_one_is_not_shows_the_reverted_commit()
         {
-            var changelog = Changelog.From(_reverted);
+            var changelog = A.Changelog.From(_reverted);
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 1));
         }
 
         [Fact]
         public void when_the_reverted_and_reverting_commit_are_part_of_the_changelog_shows_neither()
         {
-            var changelog = Changelog.From(_reverting, _reverted);
+            var changelog = A.Changelog.From(_reverting, _reverted);
 
             changelog.Should().Be(A.Changelog.Empty);
         }
@@ -35,7 +35,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         [Fact]
         public void when_the_reverting_commit_is_part_of_the_changelog_but_the_reverted_one_is_not_shows_the_reverting_commit()
         {
-            var changelog = Changelog.From(_reverting);
+            var changelog = A.Changelog.From(_reverting);
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 2));
         }
 
@@ -45,7 +45,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             var revertingReverting =
                 CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(DefaultRevertToken, _reverting.Hash);
 
-            var changelog = Changelog.From(revertingReverting, _reverting, _reverted);
+            var changelog = A.Changelog.From(revertingReverting, _reverting, _reverted);
 
             changelog.Should().Be(A.Changelog.WithGroup(CommitTypeFor.Feature, 1));
         }
@@ -55,21 +55,17 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         {
             var reverting2 = CommitTypeFor.Feature.CommitWithDescription(3).WithFooter(DefaultRevertToken, _reverted.Hash);
 
-            var changelog = Changelog.From(reverting2, _reverting, _reverted);
+            var changelog = A.Changelog.From(reverting2, _reverting, _reverted);
 
             changelog.Should().Be(A.Changelog.Empty);
         }
 
         [Theory]
-        [InlineData(DefaultRevertToken)]
-        [InlineData(@"revert")]
-        [InlineData("reverts")]
-        [InlineData("Revert")]
-        [InlineData(@"rEVERTS")]
+        [CaseVariantData(DefaultRevertToken)]
         public void recognizes_reverting_commits_by_the(string footer)
         {
             var reverting = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(footer, _reverted.Hash);
-            var changelog = Changelog.From(reverting, _reverted);
+            var changelog = A.Changelog.From(reverting, _reverted);
 
             changelog.Should().Be(A.Changelog.Empty);
         }

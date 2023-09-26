@@ -10,7 +10,7 @@ internal static class MessageLinq
 
     private static readonly Strategy[] Strategies =
     {
-        new("fix(es|up)", true, true, true),
+        new("fix(es|up)|enhances", true, true, true),
         new("reverts?", false, false, true),
         new("overrides?", false, true, false),
     };

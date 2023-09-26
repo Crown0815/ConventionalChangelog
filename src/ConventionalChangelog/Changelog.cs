@@ -1,19 +1,22 @@
 using System.Text.RegularExpressions;
 using ConventionalChangelog.Conventional;
 using LibGit2Sharp;
+using static ConventionalChangelog.ChangelogOrder;
 using static ConventionalChangelog.Configuration;
 
 namespace ConventionalChangelog;
 
 public static class Changelog
 {
-    public static string From(params Commit[] messages) => From(messages.Select(CommitMessage.Parse));
-
-    private static string From(IEnumerable<CommitMessage> messages)
+    public static string From(IEnumerable<Commit> messages, ChangelogOrder order)
     {
-        return messages
+        var logEntries = messages.Select(CommitMessage.Parse)
             .Reduce()
-            .SelectMany(LogEntries)
+            .SelectMany(LogEntries);
+        if (order == OldestToNewest)
+            logEntries = logEntries.Reverse();
+
+        return logEntries
             .OrderBy(x => x.Type, Comparer)
             .Aggregate(new LogAggregate(), Add).ToString();
     }
@@ -29,13 +32,12 @@ public static class Changelog
         yield return new LogEntry(commitMessage.Type, commitMessage.Description);
     }
 
-    public static string FromRepository(string path)
+    public static string FromRepository(string path, ChangelogOrder order = NewestToOldest)
     {
         using var repo = new Repository(path);
         var dict = repo.Tags.GroupBy(x => x.Target).ToDictionary(x => x.Key, x => x.ToList());
 
         var tag = (object)null!;
-
 
         var filter0 = new CommitFilter
         {
@@ -58,7 +60,7 @@ public static class Changelog
             ExcludeReachableFrom = tag,
         };
 
-        return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray());
+        return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray(), order);
     }
 
     private static Commit AsCommit(LibGit2Sharp.Commit c) => new(c.Message, c.Sha);
