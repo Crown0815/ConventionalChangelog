@@ -28,7 +28,7 @@ jobs:
             - name: Setup .NET Core
               uses: actions/setup-dotnet@v3
               with:
-                  global-json-file: /global.json
+                  global-json-file: global.json
 
             - name: Package
               run: dotnet pack --configuration Release --output nuget --nologo -p:Version=${{ steps.version.outputs.nuGetVersionV2 }}
