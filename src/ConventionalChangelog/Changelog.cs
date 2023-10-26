@@ -34,32 +34,35 @@ public static class Changelog
     public static string FromRepository(string path, Configuration configuration, ChangelogOrder order = NewestToOldest)
     {
         using var repo = new Repository(path);
-        var dict = repo.Tags.GroupBy(x => x.Target).ToDictionary(x => x.Key, x => x.ToList());
 
-        var tag = (object)null!;
+        var latestVersionTag = FindLatestVersion(configuration, repo);
 
-        var filter0 = new CommitFilter
+        var filter = new CommitFilter
+        {
+            SortBy = CommitSortStrategies.Topological,
+            ExcludeReachableFrom = latestVersionTag,
+        };
+
+        return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray(), order, configuration);
+    }
+
+    private static object FindLatestVersion(Configuration configuration, IRepository repo)
+    {
+        var filter = new CommitFilter
         {
             SortBy = CommitSortStrategies.Topological,
             FirstParentOnly = true,
             IncludeReachableFrom = repo.Head,
         };
 
-        foreach (var commit in repo.Commits.QueryBy(filter0))
+        var tags = repo.Tags.GroupBy(x => x.Target).ToDictionary(x => x.Key, x => x.ToList());
+        foreach (var commit in repo.Commits.QueryBy(filter))
         {
-            if (!dict.TryGetValue(commit, out var t) || !t.Any(configuration.IsVersionTag))
-                continue;
-            tag = commit;
-            break;
+            if (tags.TryGetValue(commit, out var t) && t.Any(configuration.IsVersionTag))
+                return commit;
         }
 
-        var filter = new CommitFilter
-        {
-            SortBy = CommitSortStrategies.Topological,
-            ExcludeReachableFrom = tag,
-        };
-
-        return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray(), order, configuration);
+        return null!;
     }
 
     private static Commit AsCommit(LibGit2Sharp.Commit c) => new(c.Message, c.Sha);
