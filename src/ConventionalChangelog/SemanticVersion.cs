@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace ConventionalChangelog;
 
-public static class SemanticVersion
+internal static class SemanticVersion
 {
     private static readonly Regex Regex = new(@"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$");
 
