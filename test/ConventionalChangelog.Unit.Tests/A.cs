@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using ConventionalChangelog.Conventional;
 using static System.Environment;
-using static ConventionalChangelog.ChangelogOrder;
 
 namespace ConventionalChangelog.Unit.Tests;
 
@@ -10,7 +9,7 @@ internal static class A
     internal class Changelog
     {
         public static string From(params Commit[] messages) =>
-            ConventionalChangelog.Changelog.From(messages, NewestToOldest, Configuration.Default());
+            ConventionalChangelog.Changelog.From(messages, Configuration.Default());
 
         private const string ChangelogTitle = "# Changelog";
         private const string GeneralCodeImprovementsMessage = "*General Code Improvements*";

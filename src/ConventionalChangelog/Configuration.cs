@@ -24,16 +24,18 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
         new("test", "", Hide),
     };
 
-    public static Configuration Default() => new(DefaultCommitTypes, DefaultVersionTagPrefix);
-
+    public static Configuration Default() => With(default);
+    public static Configuration With(ChangelogOrder order) => new(DefaultCommitTypes, DefaultVersionTagPrefix, order);
 
     private readonly ImmutableArray<CommitType> _commitTypes;
     private readonly string _versionTagPrefix;
+    private readonly ChangelogOrder _order;
 
-    private Configuration(IEnumerable<CommitType> commitTypes, string versionTagPrefix)
+    private Configuration(IEnumerable<CommitType> commitTypes, string versionTagPrefix, ChangelogOrder order)
     {
-        _versionTagPrefix = versionTagPrefix;
         _commitTypes = commitTypes.ToImmutableArray();
+        _versionTagPrefix = versionTagPrefix;
+        _order = order;
     }
 
     public CommitType TypeFor(string typeIndicator)
@@ -47,8 +49,12 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
     public bool IsVersionTag(string tagName) =>
         tagName.IsSemanticVersion(_versionTagPrefix);
 
-    public IOrderedEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType =>
-        logEntries.OrderBy(x => x.Type, this);
+    public IOrderedEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType
+    {
+        if (_order == ChangelogOrder.OldestToNewest)
+            logEntries = logEntries.Reverse();
+        return logEntries.OrderBy(x => x.Type, this);
+    }
 
     public int Compare(CommitType? x, CommitType? y) =>
         IndexOf(x).CompareTo(IndexOf(y));

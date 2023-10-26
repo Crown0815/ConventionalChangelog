@@ -1,19 +1,16 @@
 using System.Text.RegularExpressions;
 using ConventionalChangelog.Conventional;
 using LibGit2Sharp;
-using static ConventionalChangelog.ChangelogOrder;
 
 namespace ConventionalChangelog;
 
 public static class Changelog
 {
-    public static string From(IEnumerable<Commit> messages, ChangelogOrder order, Configuration configuration)
+    public static string From(IEnumerable<Commit> messages, Configuration configuration)
     {
         var logEntries = messages.Select(commit => CommitMessage.Parse(commit, configuration))
             .Reduce()
             .SelectMany(LogEntries);
-        if (order == OldestToNewest)
-            logEntries = logEntries.Reverse();
 
         return configuration.Ordered(logEntries)
             .Aggregate(new LogAggregate(), Add).ToString();
@@ -30,7 +27,7 @@ public static class Changelog
         yield return new LogEntry(commitMessage.Type, commitMessage.Description);
     }
 
-    public static string FromRepository(string path, Configuration configuration, ChangelogOrder order = NewestToOldest)
+    public static string FromRepository(string path, Configuration configuration)
     {
         using var repo = new Repository(path);
 
@@ -40,7 +37,7 @@ public static class Changelog
             ExcludeReachableFrom = NewestVersionCommitIn(repo, configuration),
         };
 
-        return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray(), order, configuration);
+        return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray(), configuration);
     }
 
     private static object? NewestVersionCommitIn(IRepository repo, Configuration configuration)
