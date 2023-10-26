@@ -10,7 +10,7 @@ internal static class A
     internal class Changelog
     {
         public static string From(params Commit[] messages) =>
-            ConventionalChangelog.Changelog.From(messages, NewestToOldest);
+            ConventionalChangelog.Changelog.From(messages, NewestToOldest, new Configuration());
 
         private const string ChangelogTitle = "# Changelog";
         private const string GeneralCodeImprovementsMessage = "*General Code Improvements*";

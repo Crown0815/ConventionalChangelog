@@ -8,9 +8,9 @@ namespace ConventionalChangelog;
 
 public static class Changelog
 {
-    public static string From(IEnumerable<Commit> messages, ChangelogOrder order)
+    public static string From(IEnumerable<Commit> messages, ChangelogOrder order, Configuration configuration)
     {
-        var logEntries = messages.Select(CommitMessage.Parse)
+        var logEntries = messages.Select(commit => CommitMessage.Parse(commit, configuration))
             .Reduce()
             .SelectMany(LogEntries);
         if (order == OldestToNewest)
@@ -60,7 +60,7 @@ public static class Changelog
             ExcludeReachableFrom = tag,
         };
 
-        return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray(), order);
+        return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray(), order, configuration);
     }
 
     private static Commit AsCommit(LibGit2Sharp.Commit c) => new(c.Message, c.Sha);

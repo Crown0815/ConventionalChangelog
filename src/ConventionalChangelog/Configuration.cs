@@ -22,7 +22,7 @@ public class Configuration
         new("test", "", Hide),
     }.ToImmutableArray();
 
-    public static IReadOnlyCollection<CommitType> CommitTypes => ConfiguredCommitTypes;
+    public IReadOnlyCollection<CommitType> CommitTypes => ConfiguredCommitTypes;
     public static IComparer<CommitType> Comparer { get; } = new CommitTypeComparer();
 
     private class CommitTypeComparer : IComparer<CommitType>

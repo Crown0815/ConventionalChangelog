@@ -7,10 +7,12 @@ namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public class Parsing_a_commit_message_from
 {
+    private readonly Configuration _configuration = new();
+
     [Fact]
     public void an_empty_string_returns_an_empty_commit_message()
     {
-        var parsed = CommitMessage.Parse("");
+        var parsed = CommitMessage.Parse("", _configuration);
         parsed.Type.Should().Be(new CommitType("", "", Relevance.Ignore));
         parsed.Body.Should().BeEmpty();
         parsed.Description.Should().BeEmpty();
@@ -20,7 +22,7 @@ public class Parsing_a_commit_message_from
     [Fact]
     public void a_null_string_throws_an_argument_null_exception()
     {
-        var parsingNull = () => CommitMessage.Parse(null!);
+        var parsingNull = () => CommitMessage.Parse(null!, _configuration);
         parsingNull.Should().Throw<ArgumentNullException>();
     }
 }

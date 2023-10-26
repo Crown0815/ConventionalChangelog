@@ -9,6 +9,8 @@ namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public class Parsing_a_conventional_commit_message
 {
+    private static readonly Configuration Configuration = new();
+
     // Lb = Linebreak. The abbreviation was chosen to keep string definitions short
     private static readonly string Lb = Environment.NewLine;
 
@@ -48,12 +50,7 @@ public class Parsing_a_conventional_commit_message
         public const string Footer = $"{FooterToken}: {FooterValue}";
     }
 
-    private readonly CommitMessage _parsed;
-
-    public Parsing_a_conventional_commit_message()
-    {
-        _parsed = Parse(ConventionalCommit.Message);
-    }
+    private readonly CommitMessage _parsed = Parse(ConventionalCommit.Message, Configuration);
 
     [Fact]
     public void extracts_its_type_indicator()
@@ -90,7 +87,7 @@ public class Parsing_a_conventional_commit_message
                       $"token-5: value{Lb}{Lb}with blank line";
 
         var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, footers);
-        var parsed = Parse(messageWithSpecificFooter);
+        var parsed = Parse(messageWithSpecificFooter, Configuration);
 
         parsed.Footers.Should().BeEquivalentTo(new Footer[]
         {
@@ -142,7 +139,7 @@ public class Parsing_a_conventional_commit_message
     public void extracts_from_a(string formattedFooter, string theToken, string andTheValue)
     {
         var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, formattedFooter);
-        var parsed = Parse(messageWithSpecificFooter);
+        var parsed = Parse(messageWithSpecificFooter, Configuration);
 
         parsed.Footers.Should().BeEquivalentTo(new Footer[] { new(theToken, andTheValue) });
     }

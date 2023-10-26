@@ -13,20 +13,20 @@ internal static class MessageParser
     private static readonly CommitType NoType = new("", "", Relevance.Ignore);
     private static readonly CommitMessage None = new(NoType, "", "", Empty<Footer>());
 
-    public static CommitMessage Parse(string rawMessage) => rawMessage switch
+    public static CommitMessage Parse(string rawMessage, Configuration configuration) => rawMessage switch
     {
         null => throw new ArgumentNullException(nameof(rawMessage)),
         "" => None,
-        _ => Parsed(rawMessage),
+        _ => Parsed(rawMessage, configuration),
     };
 
-    private static CommitMessage Parsed(string rawMessage)
+    private static CommitMessage Parsed(string rawMessage, Configuration configuration)
     {
         using var lines = new StringReader(rawMessage);
-        return Read(lines);
+        return Read(lines, configuration);
     }
 
-    private static CommitMessage Read(TextReader lines)
+    private static CommitMessage Read(TextReader lines, Configuration configuration)
     {
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines);
@@ -34,7 +34,7 @@ internal static class MessageParser
         if (footers.Any(x => Regex.IsMatch(x.Token, BreakingChange.FooterPattern)))
             typeIndicator = typeIndicator.Replace(BreakingChange.Indicator, "");
 
-        var type = Configuration.CommitTypes.SingleOrDefault(x => x.Matches(typeIndicator)) ?? NoType;
+        var type = configuration.CommitTypes.SingleOrDefault(x => x.Matches(typeIndicator)) ?? NoType;
 
         return new CommitMessage(type, description, body, footers);
     }

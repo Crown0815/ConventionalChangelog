@@ -4,10 +4,10 @@ namespace ConventionalChangelog.Conventional;
 
 public record CommitMessage(CommitType Type, string Description, string Body, IReadOnlyCollection<Footer> Footers)
 {
-    public static CommitMessage Parse(string rawMessage) =>
-        MessageParser.Parse(rawMessage);
+    public static CommitMessage Parse(string rawMessage, Configuration configuration) =>
+        MessageParser.Parse(rawMessage, configuration);
 
-    internal static CommitMessage Parse(Commit commit) => Parse(commit.Message) with { Hash = commit.Hash };
+    internal static CommitMessage Parse(Commit commit, Configuration configuration) => Parse(commit.Message, configuration) with { Hash = commit.Hash };
 
     public record Footer(string Token, string Value);
 
