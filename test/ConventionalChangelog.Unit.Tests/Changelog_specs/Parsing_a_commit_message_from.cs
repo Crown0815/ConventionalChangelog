@@ -7,7 +7,7 @@ namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public class Parsing_a_commit_message_from
 {
-    private readonly Configuration _configuration = new();
+    private readonly Configuration _configuration = Configuration.Default();
 
     [Fact]
     public void an_empty_string_returns_an_empty_commit_message()

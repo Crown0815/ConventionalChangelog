@@ -6,8 +6,9 @@ namespace ConventionalChangelog;
 
 public class Configuration
 {
-    public string VersionTagPrefix => "[pv]";
-    private static readonly ImmutableArray<CommitType> DefaultCommitTypes = new[]
+    private const string DefaultVersionTagPrefix = "[pv]";
+
+    private static readonly CommitType[] DefaultCommitTypes =
     {
         BreakingChange.Type,
         new("feat", "Features", Show),
@@ -20,17 +21,20 @@ public class Configuration
         new("style", "", Hide),
         new("refactor", "", Hide),
         new("test", "", Hide),
-    }.ToImmutableArray();
+    };
 
-    public Configuration()
+    public static Configuration Default() => new(DefaultCommitTypes, DefaultVersionTagPrefix);
+
+    private Configuration(IReadOnlyCollection<CommitType> commitTypes, string versionTagPrefix)
     {
-        var commitTypes = DefaultCommitTypes;
+        VersionTagPrefix = versionTagPrefix;
         CommitTypes = commitTypes;
         Comparer = new CommitTypeComparer(commitTypes);
     }
 
     public IEnumerable<CommitType> CommitTypes { get; }
     public IComparer<CommitType> Comparer { get; }
+    public string VersionTagPrefix { get; }
 
     private class CommitTypeComparer : IComparer<CommitType>
     {
