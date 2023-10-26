@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 using ConventionalChangelog.Conventional;
 using LibGit2Sharp;
 using static ConventionalChangelog.ChangelogOrder;
-using static ConventionalChangelog.Configuration;
 
 namespace ConventionalChangelog;
 
@@ -17,7 +16,7 @@ public static class Changelog
             logEntries = logEntries.Reverse();
 
         return logEntries
-            .OrderBy(x => x.Type, Comparer)
+            .OrderBy(x => x.Type, configuration.Comparer)
             .Aggregate(new LogAggregate(), Add).ToString();
     }
 

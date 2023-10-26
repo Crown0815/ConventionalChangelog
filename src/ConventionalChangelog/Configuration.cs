@@ -23,7 +23,7 @@ public class Configuration
     }.ToImmutableArray();
 
     public IReadOnlyCollection<CommitType> CommitTypes => ConfiguredCommitTypes;
-    public static IComparer<CommitType> Comparer { get; } = new CommitTypeComparer();
+    public IComparer<CommitType> Comparer { get; } = new CommitTypeComparer();
 
     private class CommitTypeComparer : IComparer<CommitType>
     {
