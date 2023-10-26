@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using LibGit2Sharp;
+﻿using LibGit2Sharp;
 using Xunit;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
@@ -10,7 +9,7 @@ public class Git_specs : GitUsingTestsBase
     [Fact]
     public void An_empty_repository_produces_an_empty_changelog()
     {
-        Changelog.FromRepository(Repository.Path()).Should().Be(A.Changelog.Empty);
+        Repository.Should().HaveChangelogMatching(A.Changelog.Empty);
     }
 
     [Fact]
@@ -21,20 +20,17 @@ public class Git_specs : GitUsingTestsBase
         Repository.Commit(Bugfix, 2);
         Repository.Commit(PerformanceImprovement, 3);
 
-        Changelog.FromRepository(Repository.Path())
-            .Should().Be(A.Changelog
-                .WithGroup(Feature, 1)
-                .And(Bugfix, 2)
-                .And(PerformanceImprovement, 3));
+        Repository.Should().HaveChangelogMatching(A.Changelog
+            .WithGroup(Feature, 1)
+            .And(Bugfix, 2)
+            .And(PerformanceImprovement, 3));
     }
 
     [Fact]
     public void Changelog_from_only_conventional_commits_contains_messages_by_default_from_newest_to_oldest_commit()
     {
         3.Times(i => Repository.Commit(Feature, i));
-
-        Changelog.FromRepository(Repository.Path())
-            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
 
     [Theory]
@@ -43,9 +39,7 @@ public class Git_specs : GitUsingTestsBase
     public void Changelog_from_only_conventional_commits_contains_messages_in_requested_order(ChangelogOrder order, int[] commits)
     {
         3.Times(i => Repository.Commit(Feature, i));
-
-        Changelog.FromRepository(Repository.Path(), order)
-            .Should().Be(A.Changelog.WithGroup(Feature, commits));
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, commits), order);
     }
 
     [Theory]
@@ -64,8 +58,7 @@ public class Git_specs : GitUsingTestsBase
 
         3.Times(i => Repository.Commit(Feature, i));
 
-        Changelog.FromRepository(Repository.Path())
-            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
 
     [Fact]
@@ -79,8 +72,7 @@ public class Git_specs : GitUsingTestsBase
 
         3.Times(i => Repository.Commit(Feature, i));
 
-        Changelog.FromRepository(Repository.Path())
-            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
 
     [Fact]
@@ -89,8 +81,7 @@ public class Git_specs : GitUsingTestsBase
         Repository.Commit(Feature, 1).Tag("a");
         Repository.Commit(Feature, 2).Tag("b");
 
-        Changelog.FromRepository(Repository.Path())
-            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1));
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1));
     }
 
     [Fact]
@@ -103,8 +94,7 @@ public class Git_specs : GitUsingTestsBase
 
         3.Times(i => Repository.Commit(Feature, i));
 
-        Changelog.FromRepository(Repository.Path())
-            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
 
     [Fact]
@@ -113,8 +103,7 @@ public class Git_specs : GitUsingTestsBase
         var after = Repository.Commit(Feature.CommitWithDescription(1));
         Repository.Commit(Feature.CommitWithDescription(2).WithFooter("Fixes", after.Sha));
 
-        Changelog.FromRepository(Repository.Path())
-            .Should().Be(A.Changelog.WithGroup(Feature, 1));
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 1));
     }
 
     [Fact]
@@ -127,8 +116,7 @@ public class Git_specs : GitUsingTestsBase
         Repository.Commit(Feature.CommitWithDescription(2).WithFooter("Fixes", after.Sha));
         Repository.Commit(Feature.CommitWithDescription(3).WithFooter("Fixes", before.Sha));
 
-        Changelog.FromRepository(Repository.Path())
-            .Should().Be(A.Changelog.WithGroup(Feature, 3, 1));
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 3, 1));
     }
 
     [Fact]
@@ -149,8 +137,7 @@ public class Git_specs : GitUsingTestsBase
 
         Repository.Checkout(end);
 
-        Changelog.FromRepository(Repository.Path())
-            .Should().Be(A.Changelog.WithGroup(Feature, 5, 4));
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 5, 4));
     }
 
     [Fact]

@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Xunit;
+﻿using Xunit;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
 namespace ConventionalChangelog.Unit.Tests.Integration;
@@ -14,7 +13,6 @@ public class Helios_repository_specs : GitUsingTestsBase
 
         3.Times(i => Repository.Commit(Feature, i));
 
-        Changelog.FromRepository(Repository.Path())
-            .Should().Be(A.Changelog.WithGroup(Feature, 2, 1, 0));
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
 }

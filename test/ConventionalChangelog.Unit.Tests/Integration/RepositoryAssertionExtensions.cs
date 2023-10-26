@@ -29,10 +29,10 @@ internal static class RepositoryAssertionExtensions
 
         protected override string Identifier => nameof(Repository);
 
-        public void HaveChangelogMatching(string changelog)
+        public void HaveChangelogMatching(string changelog, ChangelogOrder order = default)
         {
             Execute.Assertion
-                .Given(() => Changelog.FromRepository(Subject.Path()))
+                .Given(() => Changelog.FromRepository(Subject.Path(), order))
                 .ForCondition(c => c == changelog)
                 .FailWith(ExpectedMatchingChangelogButDifferentWasFound,
                     _ => changelog, c => c, _ => Environment.NewLine + LogGraphOf(Subject));
