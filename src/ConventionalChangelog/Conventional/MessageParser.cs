@@ -10,8 +10,7 @@ internal static class MessageParser
 
     private const string FooterPattern = $"^(?<token>{Pattern.FooterToken}|{BreakingChange.FooterPattern})(?<separator>: | #)";
 
-    private static readonly CommitType NoType = new("", "", Relevance.Ignore);
-    private static readonly CommitMessage None = new(NoType, "", "", Empty<Footer>());
+    private static readonly CommitMessage None = new(CommitType.None, "", "", Empty<Footer>());
 
     public static CommitMessage Parse(string rawMessage, Configuration configuration) => rawMessage switch
     {
@@ -34,7 +33,7 @@ internal static class MessageParser
         if (footers.Any(x => Regex.IsMatch(x.Token, BreakingChange.FooterPattern)))
             typeIndicator = typeIndicator.Replace(BreakingChange.Indicator, "");
 
-        var type = configuration.CommitTypes.SingleOrDefault(x => x.Matches(typeIndicator)) ?? NoType;
+        var type = configuration.CommitTypes.SingleOrDefault(x => x.Matches(typeIndicator)) ?? CommitType.None;
 
         return new CommitMessage(type, description, body, footers);
     }
