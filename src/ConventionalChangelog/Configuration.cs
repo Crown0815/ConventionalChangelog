@@ -5,7 +5,7 @@ using static ConventionalChangelog.Conventional.Relevance;
 
 namespace ConventionalChangelog;
 
-public class Configuration
+public class Configuration : ITypeFinder
 {
     private const string DefaultVersionTagPrefix = "[pv]";
 

@@ -12,20 +12,20 @@ internal static class MessageParser
 
     private static readonly CommitMessage None = new(CommitType.None, "", "", Empty<Footer>());
 
-    public static CommitMessage Parse(string rawMessage, Configuration configuration) => rawMessage switch
+    public static CommitMessage Parse(string rawMessage, ITypeFinder configuration) => rawMessage switch
     {
         null => throw new ArgumentNullException(nameof(rawMessage)),
         "" => None,
         _ => Parsed(rawMessage, configuration),
     };
 
-    private static CommitMessage Parsed(string rawMessage, Configuration configuration)
+    private static CommitMessage Parsed(string rawMessage, ITypeFinder configuration)
     {
         using var lines = new StringReader(rawMessage);
         return Read(lines, configuration);
     }
 
-    private static CommitMessage Read(TextReader lines, Configuration configuration)
+    private static CommitMessage Read(TextReader lines, ITypeFinder configuration)
     {
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines);
