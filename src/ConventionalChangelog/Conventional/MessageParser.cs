@@ -8,7 +8,7 @@ internal static class MessageParser
 {
     private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
-    private const string FooterPattern = $@"^(?<token>{Pattern.FooterToken}|{BreakingChange.FooterPattern})(?<separator>: | #)";
+    private const string FooterPattern = $"^(?<token>{Pattern.FooterToken}|{BreakingChange.FooterPattern})(?<separator>: | #)";
 
     private static readonly CommitType NoType = new("", "", Relevance.Ignore);
     private static readonly CommitMessage None = new(NoType, "", "", Empty<Footer>());
