@@ -32,7 +32,7 @@ public static class Changelog
         yield return new LogEntry(commitMessage.Type, commitMessage.Description);
     }
 
-    public static string FromRepository(string path, ChangelogOrder order = NewestToOldest)
+    public static string FromRepository(string path, Configuration configuration, ChangelogOrder order = NewestToOldest)
     {
         using var repo = new Repository(path);
         var dict = repo.Tags.GroupBy(x => x.Target).ToDictionary(x => x.Key, x => x.ToList());
@@ -48,7 +48,7 @@ public static class Changelog
 
         foreach (var commit in repo.Commits.QueryBy(filter0))
         {
-            if (!dict.TryGetValue(commit, out var t) || !t.Any(IsVersionTag))
+            if (!dict.TryGetValue(commit, out var t) || !t.Any(configuration.IsVersionTag))
                 continue;
             tag = commit;
             break;
@@ -65,7 +65,8 @@ public static class Changelog
 
     private static Commit AsCommit(LibGit2Sharp.Commit c) => new(c.Message, c.Sha);
 
-    private static bool IsVersionTag(Tag tag) => tag.FriendlyName.IsSemanticVersion(VersionTagPrefix);
+    private static bool IsVersionTag(this Configuration config, Tag tag) =>
+        tag.FriendlyName.IsSemanticVersion(config.VersionTagPrefix);
 
     private record LogEntry(CommitType Type, string Description);
 }

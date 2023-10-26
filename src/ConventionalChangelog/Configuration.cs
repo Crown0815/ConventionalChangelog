@@ -3,9 +3,9 @@ using static ConventionalChangelog.Conventional.Relevance;
 
 namespace ConventionalChangelog;
 
-internal static class Configuration
+public class Configuration
 {
-    public const string VersionTagPrefix = "[pv]";
+    public string VersionTagPrefix => "[pv]";
     private static readonly List<CommitType> Groups = new();
 
     static Configuration()
