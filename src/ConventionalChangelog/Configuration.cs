@@ -1,4 +1,5 @@
-﻿using ConventionalChangelog.Conventional;
+﻿using System.Collections.Immutable;
+using ConventionalChangelog.Conventional;
 using static ConventionalChangelog.Conventional.Relevance;
 
 namespace ConventionalChangelog;
@@ -6,30 +7,22 @@ namespace ConventionalChangelog;
 public class Configuration
 {
     public string VersionTagPrefix => "[pv]";
-    private static readonly List<CommitType> Groups = new();
-
-    static Configuration()
+    private static readonly ImmutableArray<CommitType> ConfiguredCommitTypes = new[]
     {
-        Groups.Add(BreakingChange.Type);
+        BreakingChange.Type,
+        new("feat", "Features", Show),
+        new("fix", "Bug Fixes", Show),
+        new("perf", "Performance Improvements", Show),
+        new("build", "", Hide),
+        new("chore", "", Hide),
+        new("ci", "", Hide),
+        new("docs", "", Hide),
+        new("style", "", Hide),
+        new("refactor", "", Hide),
+        new("test", "", Hide),
+    }.ToImmutableArray();
 
-        Configure("feat", "Features", Show);
-        Configure("fix", "Bug Fixes", Show);
-        Configure("perf", "Performance Improvements", Show);
-        Configure("build", "", Hide);
-        Configure("chore", "", Hide);
-        Configure("ci", "", Hide);
-        Configure("docs", "", Hide);
-        Configure("style", "", Hide);
-        Configure("refactor", "", Hide);
-        Configure("test", "", Hide);
-    }
-
-    private static void Configure(string indicator, string header, Relevance relevance)
-    {
-        Groups.Add(new CommitType(indicator, header, relevance));
-    }
-
-    public static IReadOnlyCollection<CommitType> CommitTypes => Groups;
+    public static IReadOnlyCollection<CommitType> CommitTypes => ConfiguredCommitTypes;
     public static IComparer<CommitType> Comparer { get; } = new CommitTypeComparer();
 
     private class CommitTypeComparer : IComparer<CommitType>
@@ -38,7 +31,7 @@ public class Configuration
             IndexOf(x).CompareTo(IndexOf(y));
 
         private static int IndexOf(CommitType? c) => c is not null
-            ? Groups.IndexOf(c)
+            ? ConfiguredCommitTypes.IndexOf(c)
             : 0;
     }
 }
