@@ -15,8 +15,7 @@ public static class Changelog
         if (order == OldestToNewest)
             logEntries = logEntries.Reverse();
 
-        return logEntries
-            .OrderBy(x => x.Type, configuration.Comparer)
+        return configuration.Ordered(logEntries)
             .Aggregate(new LogAggregate(), Add).ToString();
     }
 
@@ -65,5 +64,5 @@ public static class Changelog
 
     private static Commit AsCommit(LibGit2Sharp.Commit c) => new(c.Message, c.Sha);
 
-    private record LogEntry(CommitType Type, string Description);
+    private record LogEntry(CommitType Type, string Description) : IHasCommitType;
 }

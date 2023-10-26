@@ -5,7 +5,7 @@ using static ConventionalChangelog.Conventional.Relevance;
 
 namespace ConventionalChangelog;
 
-public class Configuration : ITypeFinder
+public class Configuration : ITypeFinder, IComparer<CommitType>
 {
     private const string DefaultVersionTagPrefix = "[pv]";
 
@@ -26,32 +26,14 @@ public class Configuration : ITypeFinder
 
     public static Configuration Default() => new(DefaultCommitTypes, DefaultVersionTagPrefix);
 
-    private Configuration(IReadOnlyCollection<CommitType> commitTypes, string versionTagPrefix)
-    {
-        _versionTagPrefix = versionTagPrefix;
-        _commitTypes = commitTypes;
-        Comparer = new CommitTypeComparer(commitTypes);
-    }
 
-    private readonly IEnumerable<CommitType> _commitTypes;
-    public IComparer<CommitType> Comparer { get; }
+    private readonly ImmutableArray<CommitType> _commitTypes;
     private readonly string _versionTagPrefix;
 
-    private class CommitTypeComparer : IComparer<CommitType>
+    private Configuration(IEnumerable<CommitType> commitTypes, string versionTagPrefix)
     {
-        private readonly ImmutableArray<CommitType> _map;
-
-        public CommitTypeComparer(IEnumerable<CommitType> commitTypes)
-        {
-            _map = commitTypes.ToImmutableArray();
-        }
-
-        public int Compare(CommitType? x, CommitType? y) =>
-            IndexOf(x).CompareTo(IndexOf(y));
-
-        private int IndexOf(CommitType? c) => c is not null
-            ? _map.IndexOf(c)
-            : 0;
+        _versionTagPrefix = versionTagPrefix;
+        _commitTypes = commitTypes.ToImmutableArray();
     }
 
     public CommitType TypeFor(string typeIndicator)
@@ -59,7 +41,19 @@ public class Configuration : ITypeFinder
         return _commitTypes.SingleOrDefault(x => Matches(x, typeIndicator)) ?? CommitType.None;
     }
 
-    private static bool Matches(CommitType t, string m) => Regex.IsMatch(m, $"^{t.Indicator}$");
+    private static bool Matches(CommitType t, string m) =>
+        Regex.IsMatch(m, $"^{t.Indicator}$");
 
-    public bool IsVersionTag(string tagName) => tagName.IsSemanticVersion(_versionTagPrefix);
+    public bool IsVersionTag(string tagName) =>
+        tagName.IsSemanticVersion(_versionTagPrefix);
+
+    public IOrderedEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType =>
+        logEntries.OrderBy(x => x.Type, this);
+
+    public int Compare(CommitType? x, CommitType? y) =>
+        IndexOf(x).CompareTo(IndexOf(y));
+
+    private int IndexOf(CommitType? c) => c is not null
+        ? _commitTypes.IndexOf(c)
+        : 0;
 }
