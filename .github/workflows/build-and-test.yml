@@ -1,43 +1,43 @@
 name: build and test
 
 on:
-    push:
-    pull_request:
-        branches: [ main ]
-        paths:
-            - '**.cs'
-            - '**.csproj'
+  push:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**.cs'
+      - '**.csproj'
 
 jobs:
-    build-and-test:
+  build-and-test:
+    
+    name: build-and-test-${{matrix.os}}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: global.json
 
-        name: build-and-test-${{matrix.os}}
-        runs-on: ${{ matrix.os }}
-        strategy:
-            matrix:
-                os: [ubuntu-latest, windows-latest, macOS-latest]
+      - name: Install dependencies
+        run: dotnet restore
 
-        steps:
-            - uses: actions/checkout@v3
-            - name: Setup .NET Core
-              uses: actions/setup-dotnet@v3
-              with:
-                  global-json-file: global.json
+      - name: Build
+        run: dotnet build --no-restore
 
-            - name: Install dependencies
-              run: dotnet restore
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
 
-            - name: Build
-              run: dotnet build --no-restore
+      - name: Publish
+        run: dotnet publish src/ConventionalChangelog/ConventionalChangelog.csproj --framework net7.0 --configuration Release --output release --nologo
 
-            - name: Test
-              run: dotnet test --no-restore --verbosity normal
-
-            - name: Publish
-              run: dotnet publish src/ConventionalChangelog/ConventionalChangelog.csproj --framework net7.0 --configuration Release --output release --nologo
-
-            - name: Upload Build Artifact
-              uses: actions/upload-artifact@v3
-              with:
-                  name: Application_${{ matrix.os }}
-                  path: release
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Application_${{ matrix.os }}
+          path: release
