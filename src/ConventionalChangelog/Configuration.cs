@@ -28,14 +28,14 @@ public class Configuration : ITypeFinder
 
     private Configuration(IReadOnlyCollection<CommitType> commitTypes, string versionTagPrefix)
     {
-        VersionTagPrefix = versionTagPrefix;
-        CommitTypes = commitTypes;
+        _versionTagPrefix = versionTagPrefix;
+        _commitTypes = commitTypes;
         Comparer = new CommitTypeComparer(commitTypes);
     }
 
-    private IEnumerable<CommitType> CommitTypes { get; }
+    private readonly IEnumerable<CommitType> _commitTypes;
     public IComparer<CommitType> Comparer { get; }
-    public string VersionTagPrefix { get; }
+    private readonly string _versionTagPrefix;
 
     private class CommitTypeComparer : IComparer<CommitType>
     {
@@ -56,8 +56,10 @@ public class Configuration : ITypeFinder
 
     public CommitType TypeFor(string typeIndicator)
     {
-        return CommitTypes.SingleOrDefault(x => Matches(x, typeIndicator)) ?? CommitType.None;
+        return _commitTypes.SingleOrDefault(x => Matches(x, typeIndicator)) ?? CommitType.None;
     }
 
-    private bool Matches(CommitType t, string m) => Regex.IsMatch(m, $"^{t.Indicator}$");
+    private static bool Matches(CommitType t, string m) => Regex.IsMatch(m, $"^{t.Indicator}$");
+
+    public bool IsVersionTag(string tagName) => tagName.IsSemanticVersion(_versionTagPrefix);
 }

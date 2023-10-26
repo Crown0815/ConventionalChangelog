@@ -35,40 +35,35 @@ public static class Changelog
     {
         using var repo = new Repository(path);
 
-        var latestVersionTag = FindLatestVersion(configuration, repo);
-
         var filter = new CommitFilter
         {
             SortBy = CommitSortStrategies.Topological,
-            ExcludeReachableFrom = latestVersionTag,
+            ExcludeReachableFrom = NewestVersionCommitIn(repo, configuration),
         };
 
         return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray(), order, configuration);
     }
 
-    private static object FindLatestVersion(Configuration configuration, IRepository repo)
+    private static object? NewestVersionCommitIn(IRepository repo, Configuration configuration)
     {
-        var filter = new CommitFilter
+        var mainline = new CommitFilter
         {
             SortBy = CommitSortStrategies.Topological,
             FirstParentOnly = true,
             IncludeReachableFrom = repo.Head,
         };
 
-        var tags = repo.Tags.GroupBy(x => x.Target).ToDictionary(x => x.Key, x => x.ToList());
-        foreach (var commit in repo.Commits.QueryBy(filter))
-        {
-            if (tags.TryGetValue(commit, out var t) && t.Any(configuration.IsVersionTag))
-                return commit;
-        }
+        var versionCommits = repo.Tags
+            .Where(tag => configuration.IsVersionTag(tag.FriendlyName))
+            .Select(x => x.Target)
+            .ToHashSet();
 
-        return null!;
+        return repo.Commits
+            .QueryBy(mainline)
+            .FirstOrDefault(versionCommits.Contains);
     }
 
     private static Commit AsCommit(LibGit2Sharp.Commit c) => new(c.Message, c.Sha);
-
-    private static bool IsVersionTag(this Configuration config, Tag tag) =>
-        tag.FriendlyName.IsSemanticVersion(config.VersionTagPrefix);
 
     private record LogEntry(CommitType Type, string Description);
 }
