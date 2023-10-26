@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text.RegularExpressions;
 using ConventionalChangelog.Conventional;
 using static ConventionalChangelog.Conventional.Relevance;
 
@@ -32,7 +33,7 @@ public class Configuration
         Comparer = new CommitTypeComparer(commitTypes);
     }
 
-    public IEnumerable<CommitType> CommitTypes { get; }
+    private IEnumerable<CommitType> CommitTypes { get; }
     public IComparer<CommitType> Comparer { get; }
     public string VersionTagPrefix { get; }
 
@@ -52,4 +53,11 @@ public class Configuration
             ? _map.IndexOf(c)
             : 0;
     }
+
+    public CommitType TypeFor(string typeIndicator)
+    {
+        return CommitTypes.SingleOrDefault(x => Matches(x, typeIndicator)) ?? CommitType.None;
+    }
+
+    private bool Matches(CommitType t, string m) => Regex.IsMatch(m, $"^{t.Indicator}$");
 }

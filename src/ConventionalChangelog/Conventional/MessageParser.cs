@@ -33,12 +33,10 @@ internal static class MessageParser
         if (footers.Any(x => Regex.IsMatch(x.Token, BreakingChange.FooterPattern)))
             typeIndicator = typeIndicator.Replace(BreakingChange.Indicator, "");
 
-        var type = configuration.CommitTypes.SingleOrDefault(x => x.Matches(typeIndicator)) ?? CommitType.None;
+        var type = configuration.TypeFor(typeIndicator);
 
         return new CommitMessage(type, description, body, footers);
     }
-
-    private static bool Matches(this CommitType t, string m) => Regex.IsMatch(m, $"^{t.Indicator}$");
 
 #if NET6_0
     private static (string, string) HeaderFrom(string header)
