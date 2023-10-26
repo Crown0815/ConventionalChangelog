@@ -10,10 +10,10 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
     public class With_breaking_change
     {
         private const string BreakingChangesHeader = "Breaking Changes";
-        private static readonly CommitType BreakingChange = new("", BreakingChangesHeader);
+        private static readonly CommitType BreakingChange = new("", BreakingChangesHeader, Relevance.Show);
 
         private const string BreakingChangeIndicator = "!";
-        private static CommitType Breaking(CommitType t) => new(t.Indicator + BreakingChangeIndicator, "");
+        private static CommitType Breaking(CommitType t) => new(t.Indicator + BreakingChangeIndicator, "", Relevance.Show);
 
         [Fact]
         public void commit_type_contains_message_within_special_breaking_changes_group()

@@ -1,6 +1,5 @@
 ﻿namespace ConventionalChangelog.Conventional;
 
-public record CommitType(
-    string Indicator,
+public record CommitType(string Indicator,
     string ChangelogGroupHeader,
-    Relevance Relevance = Relevance.Show);
+    Relevance Relevance);
