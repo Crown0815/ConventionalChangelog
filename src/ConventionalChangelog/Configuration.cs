@@ -8,7 +8,7 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
 {
     // language=regex
     private const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
-    public const string FooterPattern = $"^(?<token>{Pattern.FooterToken}|{BreakingChange.FooterPattern})(?<separator>: | #)";
+    private const string FooterPattern = $"^(?<token>{Pattern.FooterToken}|{BreakingChange.FooterPattern})(: | #)";
     private const string DefaultVersionTagPrefix = "[pv]";
 
     private static readonly CommitType[] DefaultCommitTypes =
@@ -63,4 +63,30 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
         ? _commitTypes.IndexOf(c)
         : 0;
 
+    public bool IsFooter(string line) =>
+        line.StartMatches(Pattern.YouTrackCommand)
+        || line.StartMatches(FooterPattern);
+
+    public CommitMessage.Footer FooterFrom(string line)
+    {
+        if (line.StartMatches(Pattern.YouTrackCommand))
+            return YouTrackFooterFrom(line);
+        return TrailerFooterFrom(line);
+    }
+
+    private static CommitMessage.Footer TrailerFooterFrom(string line)
+    {
+        var match = line.MatchWith(FooterPattern);
+        var token = match.Groups["token"].Value;
+        var value = line.Replace(match.Value, "");
+        return new CommitMessage.Footer(token, value);
+    }
+
+    private static CommitMessage.Footer YouTrackFooterFrom(string line)
+    {
+        var parts = line.Split(" ");
+        var token = parts.First().Replace("#", "");
+        var value = line.Replace("#" + token, "").Trim();
+        return new CommitMessage.Footer(token, value);
+    }
 }

@@ -6,21 +6,23 @@ namespace ConventionalChangelog;
 
 public static class StringMatchingExtensions
 {
-    public static bool Matches(this string input, CommitType t) =>
-        input.Matches(t.Indicator, None);
+    public static bool Matches(this string input, CommitType type) =>
+        input.FullyMatches(type.Indicator, None);
 
-    public static bool Matches(this string pattern, CommitMessage.Footer f) =>
-        f.Token.Matches(pattern, IgnoreCase);
+    public static bool Matches(this string pattern, CommitMessage.Footer footer) =>
+        footer.Token.FullyMatches(pattern, IgnoreCase);
 
     public static bool Matches(this string input, string pattern) =>
-        input.Matches(pattern, None);
+        input.FullyMatches(pattern, None);
 
-    private static bool Matches(this string input, string pattern, RegexOptions options) =>
-        HasMatch(input, $"^{pattern}$", options);
+    private static bool FullyMatches(this string input, string pattern, RegexOptions options) =>
+        IsMatch(input, $"^{pattern}$", options);
 
-    public static bool ContainsMatchFor(this string line, string pattern) =>
-        HasMatch(line, pattern, None);
+    public static bool StartMatches(this string input, string pattern) =>
+        IsMatch(input, $"^{pattern}", None);
 
-    private static bool HasMatch(string input, string pattern, RegexOptions options) =>
+    private static bool IsMatch(string input, string pattern, RegexOptions options) =>
         Regex.IsMatch(input, pattern, options);
+
+    public static Match MatchWith(this string input, string pattern) => Regex.Match(input, pattern);
 }
