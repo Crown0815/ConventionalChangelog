@@ -4,18 +4,18 @@ using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
 namespace ConventionalChangelog.Unit.Tests.Integration;
 
-public class Git_specs : GitUsingTestsBase
+public class The_changelog_from_a_git_repository_using_conventional_commits : GitUsingTestsBase
 {
     private static string Version(string version) => $"v{version}";
 
     [Fact]
-    public void An_empty_repository_produces_an_empty_changelog()
+    public void is_empty_if_the_repository_is_empty()
     {
         Repository.Should().HaveChangelogMatching(A.Changelog.Empty);
     }
 
     [Fact]
-    public void A_repository_with_conventional_commits_produces_changelog_with_all_conventional_commit_messages()
+    public void contains_all_conventional_commit_messages()
     {
         Repository.Commit("non conventional commit message should not appear in changelog");
         Repository.Commit(Feature, 1);
@@ -29,7 +29,7 @@ public class Git_specs : GitUsingTestsBase
     }
 
     [Fact]
-    public void Changelog_from_only_conventional_commits_contains_messages_by_default_from_newest_to_oldest_commit()
+    public void by_default_orders_the_messages_from_newest_to_oldest_commit()
     {
         3.Times(i => Repository.Commit(Feature, i));
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1, 0));
@@ -38,10 +38,10 @@ public class Git_specs : GitUsingTestsBase
     [Theory]
     [InlineData(ChangelogOrder.NewestToOldest, new[]{2,1,0})]
     [InlineData(ChangelogOrder.OldestToNewest, new[]{0,1,2})]
-    public void Changelog_from_only_conventional_commits_contains_messages_in_requested_order(ChangelogOrder order, int[] commits)
+    public void when_requested_orders_the_messages_from(ChangelogOrder order, int[] expected)
     {
         3.Times(i => Repository.Commit(Feature, i));
-        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, commits), order);
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, expected), order);
     }
 
     [Theory]
@@ -53,7 +53,7 @@ public class Git_specs : GitUsingTestsBase
     [InlineData("1.0.0-alpha")]
     [InlineData("1.0.0-beta")]
     [InlineData("1.0.0-alpha.1")]
-    public void Changelog_from_conventional_commits_and_a_single_tag_should_contain_all_commits_after_the_tag(string number)
+    public void and_containing_a_version_tag_contains_all_commits_after_the_tag(string number)
     {
         Repository.Commit(Feature, "Before tag");
         Repository.Commit(Feature, "Tagged commit").Tag(Version(number));
@@ -64,7 +64,7 @@ public class Git_specs : GitUsingTestsBase
     }
 
     [Fact]
-    public void Changelog_from_conventional_commits_and_multiple_tags_should_contain_all_commits_after_the_last_tag()
+    public void and_containing_multiple_version_tags_produces_changelog_contain_all_commits_after_the_last_version_tag()
     {
         Repository.Commit(Feature, "Before tag");
         Repository.Commit(Feature, "Tagged commit").Tag(Version("1.0.0"));
@@ -77,17 +77,17 @@ public class Git_specs : GitUsingTestsBase
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1, 0));
     }
 
-    [Fact]
-    public void Changelog_from_conventional_commits_and_non_version_tags_should_contain_all_commits()
+    [Theory]
+    [InlineData("a")]
+    [InlineData("b")]
+    public void and_containing_non_version_tags_should_contain_all_commits(string nonVersionTag)
     {
-        Repository.Commit(Feature, 1).Tag("a");
-        Repository.Commit(Feature, 2).Tag("b");
-
-        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1));
+        Repository.Commit(Feature, 1).Tag(nonVersionTag);
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 1));
     }
 
     [Fact]
-    public void Changelog_from_conventional_commits_and_a_multiple_tags_on_same_commit_contains_all_commits_after_the_tags()
+    public void and_multiple_version_tags_on_the_same_commit_contains_all_commits_after_the_tags()
     {
         Repository.Commit(Feature, "Before tags");
         var commit = Repository.Commit(Feature, "Multi-tagged commit");
@@ -100,7 +100,7 @@ public class Git_specs : GitUsingTestsBase
     }
 
     [Fact]
-    public void Changelog_from_branched_conventional_commits_contains_messages_from_all_commits_since_last_tag_on_current_branch()
+    public void only_considers_commits_from_the_currently_checked_out_branch()
     {
         var root = Repository.Commit(Irrelevant, "Initial Commit");
         Repository.CreateBranch("develop");
@@ -121,7 +121,7 @@ public class Git_specs : GitUsingTestsBase
     }
 
     [Fact]
-    public void Changelog_from_merged_conventional_commits_contains_messages_from_all_commits_since_last_tag_on_first_parent()
+    public void when_encountering_merge_commits_ignores_version_tags_on_merged_branches()
     {
         Repository.Commit(Irrelevant, "Initial Commit");
         var develop = Repository.CreateBranch("develop");
@@ -135,7 +135,7 @@ public class Git_specs : GitUsingTestsBase
     }
 
     [Fact]
-    public void Changelog_from_merged_conventional_commits_contains_messages_from_all_commits_since_last_tag_on_first_parent1()
+    public void when_encountering_merge_commits_considers_version_tags_on_merged_commits()
     {
         Repository.Commit(Irrelevant, "Initial Commit");
         var develop = Repository.CreateBranch("develop");
