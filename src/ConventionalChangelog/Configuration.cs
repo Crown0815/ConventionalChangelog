@@ -6,6 +6,8 @@ namespace ConventionalChangelog;
 
 public class Configuration : ITypeFinder, IComparer<CommitType>
 {
+    // language=regex
+    private const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
     private const string DefaultVersionTagPrefix = "[pv]";
 
     private static readonly CommitType[] DefaultCommitTypes =
@@ -41,7 +43,7 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
         _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
 
     public bool IsVersionTag(string tagName) =>
-        tagName.IsSemanticVersion(_versionTagPrefix);
+        tagName.Matches($"^{_versionTagPrefix}{SemanticVersionPattern}$");
 
     public IOrderedEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType
     {

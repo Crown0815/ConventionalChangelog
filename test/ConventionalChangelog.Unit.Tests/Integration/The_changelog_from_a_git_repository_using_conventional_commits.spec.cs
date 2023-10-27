@@ -80,6 +80,10 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
     [Theory]
     [InlineData("a")]
     [InlineData("b")]
+    [InlineData("x1.0.0")]
+    [InlineData("pv1.0.0")]
+    [InlineData("vv1.0.0")]
+    [InlineData("v1.0.0.0")]
     public void and_containing_non_version_tags_should_contain_all_commits(string nonVersionTag)
     {
         Repository.Commit(Feature, 1).Tag(nonVersionTag);

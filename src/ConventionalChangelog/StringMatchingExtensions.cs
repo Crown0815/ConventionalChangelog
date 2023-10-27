@@ -12,6 +12,9 @@ public static class StringMatchingExtensions
     public static bool Matches(this string pattern, CommitMessage.Footer f) =>
         f.Token.Matches(pattern, IgnoreCase);
 
+    public static bool Matches(this string input, string pattern) =>
+        input.Matches(pattern, None);
+
     private static bool Matches(this string input, string pattern, RegexOptions options) =>
         HasMatch(input, $"^{pattern}$", options);
 
