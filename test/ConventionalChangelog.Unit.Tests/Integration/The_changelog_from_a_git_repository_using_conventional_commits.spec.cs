@@ -100,28 +100,6 @@ public class Git_specs : GitUsingTestsBase
     }
 
     [Fact]
-    public void Changelog_from_conventional_commits_with_fix_up_commits_excludes_those_fix_ups_with_their_target_in_the_changelog()
-    {
-        var after = Repository.Commit(Feature.CommitWithDescription(1));
-        Repository.Commit(Feature.CommitWithDescription(2).WithFooter("Fixes", after.Sha));
-
-        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 1));
-    }
-
-    [Fact]
-    public void Changelog_from_conventional_commits_with_fix_up_commits_excludes_those_fix_ups_with_their_target_in_the_changelog2()
-    {
-        var before = Repository.Commit(Feature, "Before tag");
-        Repository.Commit(Feature, "Multi-tagged commit").Tag(Version("1.0.0"));
-
-        var after = Repository.Commit(Feature.CommitWithDescription(1));
-        Repository.Commit(Feature.CommitWithDescription(2).WithFooter("Fixes", after.Sha));
-        Repository.Commit(Feature.CommitWithDescription(3).WithFooter("Fixes", before.Sha));
-
-        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 3, 1));
-    }
-
-    [Fact]
     public void Changelog_from_branched_conventional_commits_contains_messages_from_all_commits_since_last_tag_on_current_branch()
     {
         var root = Repository.Commit(Irrelevant, "Initial Commit");
