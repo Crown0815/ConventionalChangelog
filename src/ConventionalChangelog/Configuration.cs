@@ -37,10 +37,8 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
         _order = order;
     }
 
-    public CommitType TypeFor(string typeIndicator)
-    {
-        return _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
-    }
+    public CommitType TypeFor(string typeIndicator) =>
+        _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
 
     public bool IsVersionTag(string tagName) =>
         tagName.IsSemanticVersion(_versionTagPrefix);
