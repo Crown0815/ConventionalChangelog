@@ -44,7 +44,7 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
         _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
 
     public bool IsVersionTag(string tagName) =>
-        tagName.Matches($"^{_versionTagPrefix}{SemanticVersionPattern}$");
+        tagName.Matches(_versionTagPrefix + SemanticVersionPattern);
 
     public bool IsBreakingChange(CommitMessage.Footer footer) =>
         footer.Token.Matches(BreakingChange.FooterPattern);
