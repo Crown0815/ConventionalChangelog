@@ -28,15 +28,15 @@ public static class Changelog
 
     public static string FromRepository(string path, Configuration configuration)
     {
-        using var repo = new Repository(path);
+        using var repository = new Repository(path);
 
         var filter = new CommitFilter
         {
             SortBy = CommitSortStrategies.Topological,
-            ExcludeReachableFrom = NewestVersionCommitIn(repo, configuration),
+            ExcludeReachableFrom = NewestVersionCommitIn(repository, configuration),
         };
 
-        return From(repo.Commits.QueryBy(filter).Select(AsCommit).ToArray(), configuration);
+        return From(repository.Commits.QueryBy(filter).Select(AsCommit).ToArray(), configuration);
     }
 
     private static object? NewestVersionCommitIn(IRepository repo, Configuration configuration)
