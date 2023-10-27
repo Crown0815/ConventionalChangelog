@@ -15,8 +15,6 @@ public static class Changelog
             .Aggregate(new LogAggregate(), Add).ToString();
     }
 
-    private static LogAggregate Add(LogAggregate a, LogEntry l) => a.Add(l.Type, l.Description);
-
     private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage)
     {
         foreach (var footer in commitMessage.Footers)
@@ -25,6 +23,8 @@ public static class Changelog
 
         yield return new LogEntry(commitMessage.Type, commitMessage.Description);
     }
+
+    private static LogAggregate Add(LogAggregate a, LogEntry l) => a.Add(l.Type, l.Description);
 
     public static string FromRepository(string path, Configuration configuration)
     {
