@@ -8,8 +8,6 @@ internal static class MessageParser
 {
     private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
-    private const string FooterPattern = $"^(?<token>{Pattern.FooterToken}|{BreakingChange.FooterPattern})(?<separator>: | #)";
-
     private static readonly CommitMessage None = new(CommitType.None, "", "", Empty<Footer>());
 
     public static CommitMessage Parse(string rawMessage, ITypeFinder configuration) => rawMessage switch
@@ -30,7 +28,7 @@ internal static class MessageParser
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines);
 
-        if (footers.Any(BreakingChange.FooterPattern.Matches))
+        if (footers.Any(configuration.IsBreakingChange))
             typeIndicator = typeIndicator.Replace(BreakingChange.Indicator, "");
 
         var type = configuration.TypeFor(typeIndicator);
@@ -97,7 +95,7 @@ internal static class MessageParser
 
     private static bool IsFooter(string line) =>
         line.ContainsMatchFor(Pattern.YouTrackCommand)
-        || line.ContainsMatchFor(FooterPattern);
+        || line.ContainsMatchFor(Configuration.FooterPattern);
 
     private static Footer FooterFrom(string line)
     {
@@ -109,7 +107,7 @@ internal static class MessageParser
             return new Footer(token1, value1);
         }
 
-        var match = Regex.Match(line, FooterPattern);
+        var match = Regex.Match(line, Configuration.FooterPattern);
 
         var token = match.Groups["token"].Value;
         var value = line.Replace(match.Value, "");

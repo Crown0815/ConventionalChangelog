@@ -9,16 +9,16 @@ public static class Changelog
     {
         var logEntries = messages.Select(commit => CommitMessage.Parse(commit, configuration))
             .Reduce()
-            .SelectMany(LogEntries);
+            .SelectMany(x => LogEntries(x, configuration));
 
         return configuration.Ordered(logEntries)
             .Aggregate(new LogAggregate(), Add).ToString();
     }
 
-    private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage)
+    private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage, ITypeFinder configuration)
     {
         foreach (var footer in commitMessage.Footers)
-            if (BreakingChange.FooterPattern.Matches(footer))
+            if (configuration.IsBreakingChange(footer))
                 yield return new LogEntry(BreakingChange.Type, footer.Value);
 
         yield return new LogEntry(commitMessage.Type, commitMessage.Description);

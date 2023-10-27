@@ -8,6 +8,7 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
 {
     // language=regex
     private const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
+    public const string FooterPattern = $"^(?<token>{Pattern.FooterToken}|{BreakingChange.FooterPattern})(?<separator>: | #)";
     private const string DefaultVersionTagPrefix = "[pv]";
 
     private static readonly CommitType[] DefaultCommitTypes =
@@ -45,6 +46,9 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
     public bool IsVersionTag(string tagName) =>
         tagName.Matches($"^{_versionTagPrefix}{SemanticVersionPattern}$");
 
+    public bool IsBreakingChange(CommitMessage.Footer footer) =>
+        footer.Token.Matches(BreakingChange.FooterPattern);
+
     public IOrderedEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType
     {
         if (_order == ChangelogOrder.OldestToNewest)
@@ -58,4 +62,5 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
     private int IndexOf(CommitType? c) => c is not null
         ? _commitTypes.IndexOf(c)
         : 0;
+
 }
