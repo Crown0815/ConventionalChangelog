@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using ConventionalChangelog.Conventional;
-using static System.Text.RegularExpressions.RegexOptions;
+﻿using ConventionalChangelog.Conventional;
 
 namespace ConventionalChangelog;
 
@@ -42,14 +40,13 @@ internal static class MessageLinq
 
         private void CacheReferences(CommitMessage source)
         {
-            foreach (var target in TargetsFrom(source))
+            foreach (var target in TargetsFrom(source.Footers))
                 CacheReference(source, target);
         }
 
-        private IEnumerable<string> TargetsFrom(CommitMessage source) =>
-            source.Footers.Where(IsReference).Select(Target);
+        private IEnumerable<string> TargetsFrom(IEnumerable<CommitMessage.Footer> footers) =>
+            footers.Where(_strategy.Token.Matches).Select(Target);
 
-        private bool IsReference(CommitMessage.Footer f) => Regex.IsMatch(f.Token, $"^{_strategy.Token}$", IgnoreCase);
         private static string Target(CommitMessage.Footer f) => f.Value;
 
         private void CacheReference(CommitMessage source, string target)

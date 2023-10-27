@@ -2,9 +2,19 @@ using System.Text.RegularExpressions;
 
 namespace ConventionalChangelog;
 
-internal static class SemanticVersion
+internal static partial class SemanticVersion
 {
-    private static readonly Regex Regex = new(@"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$");
+    // language=regex
+    private const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$";
 
-    public static bool IsSemanticVersion(this string text, string prefix) => Regex.IsMatch("^"+prefix+text);
+#if NET6_0
+    private static Regex SemanticVersionRegex() => new(SemanticVersionPattern);
+#elif NET7_0_OR_GREATER
+    [GeneratedRegex(SemanticVersionPattern)]
+    private static partial Regex SemanticVersionRegex();
+#endif
+
+    private static readonly Lazy<Regex> Regex = new(SemanticVersionRegex);
+
+    public static bool IsSemanticVersion(this string text, string prefix) => Regex.Value.IsMatch(prefix + text);
 }

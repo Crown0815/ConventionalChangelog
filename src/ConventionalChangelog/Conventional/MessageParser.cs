@@ -30,7 +30,7 @@ internal static class MessageParser
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines);
 
-        if (footers.Any(x => Regex.IsMatch(x.Token, BreakingChange.FooterPattern)))
+        if (footers.Any(BreakingChange.FooterPattern.Matches))
             typeIndicator = typeIndicator.Replace(BreakingChange.Indicator, "");
 
         var type = configuration.TypeFor(typeIndicator);
@@ -95,15 +95,13 @@ internal static class MessageParser
         return (string.Join(Environment.NewLine, bodyParts).Trim(), footers.ToList());
     }
 
-    private static bool IsFooter(string line)
-    {
-        if (Regex.IsMatch(line, Pattern.YouTrackCommand)) return true;
-        return Regex.IsMatch(line, FooterPattern);
-    }
+    private static bool IsFooter(string line) =>
+        line.ContainsMatchFor(Pattern.YouTrackCommand)
+        || line.ContainsMatchFor(FooterPattern);
 
     private static Footer FooterFrom(string line)
     {
-        if (Regex.IsMatch(line, Pattern.YouTrackCommand))
+        if (line.ContainsMatchFor(Pattern.YouTrackCommand))
         {
             var x = line.Split(" ");
             var token1 = x.First().Replace("#", "");

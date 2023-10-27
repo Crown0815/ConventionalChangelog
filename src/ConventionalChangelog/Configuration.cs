@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Text.RegularExpressions;
 using ConventionalChangelog.Conventional;
 using static ConventionalChangelog.Conventional.Relevance;
 
@@ -40,11 +39,8 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
 
     public CommitType TypeFor(string typeIndicator)
     {
-        return _commitTypes.SingleOrDefault(x => Matches(x, typeIndicator)) ?? CommitType.None;
+        return _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
     }
-
-    private static bool Matches(CommitType t, string m) =>
-        Regex.IsMatch(m, $"^{t.Indicator}$");
 
     public bool IsVersionTag(string tagName) =>
         tagName.IsSemanticVersion(_versionTagPrefix);

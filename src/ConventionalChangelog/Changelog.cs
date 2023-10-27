@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using ConventionalChangelog.Conventional;
 using LibGit2Sharp;
 
@@ -21,7 +20,7 @@ public static class Changelog
     private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage)
     {
         foreach (var footer in commitMessage.Footers)
-            if (Regex.IsMatch(footer.Token, BreakingChange.FooterPattern))
+            if (BreakingChange.FooterPattern.Matches(footer))
                 yield return new LogEntry(BreakingChange.Type, footer.Value);
 
         yield return new LogEntry(commitMessage.Type, commitMessage.Description);
