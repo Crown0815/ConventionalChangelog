@@ -19,7 +19,7 @@ public static class Changelog
     {
         foreach (var footer in commitMessage.Footers)
             if (footer.IsBreakingChange)
-                yield return new LogEntry(BreakingChange.Type, footer.Value);
+                yield return new LogEntry(Configuration.BreakingChangeType, footer.Value);
 
         yield return new LogEntry(commitMessage.Type, commitMessage.Description);
     }

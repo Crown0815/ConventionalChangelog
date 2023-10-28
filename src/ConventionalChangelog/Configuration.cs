@@ -20,9 +20,13 @@ public class Configuration : IConfiguration, IComparer<CommitType>
 
     private const string FooterPattern = $"^{BreakingChangeTokenPattern}|{TrailerTokenPattern}|{YouTrackTokenPattern}";
 
+    private const string BreakingChangeIndicator = "!";
+
+    public static readonly CommitType BreakingChangeType = new($"[a-z]+{BreakingChangeIndicator}", "Breaking Changes", Relevance.Show);
+
     private static readonly CommitType[] DefaultCommitTypes =
     {
-        BreakingChange.Type,
+        BreakingChangeType,
         new("feat", "Features", Show),
         new("fix", "Bug Fixes", Show),
         new("perf", "Performance Improvements", Show),
@@ -52,7 +56,7 @@ public class Configuration : IConfiguration, IComparer<CommitType>
     public CommitType TypeFor(string typeIndicator, IReadOnlyCollection<CommitMessage.Footer> footers)
     {
         if (footers.Any(x => x.IsBreakingChange))
-            typeIndicator = typeIndicator.Replace(BreakingChange.Indicator, "");
+            typeIndicator = typeIndicator.Replace(BreakingChangeIndicator, "");
         return _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
     }
 
