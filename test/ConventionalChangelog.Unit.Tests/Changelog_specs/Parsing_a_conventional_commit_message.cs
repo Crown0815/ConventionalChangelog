@@ -89,14 +89,12 @@ public class Parsing_a_conventional_commit_message
         var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, footers);
         var parsed = Parse(messageWithSpecificFooter, Config);
 
-        parsed.Footers.Should().BeEquivalentTo(new Footer[]
-        {
-            new("token1", "value1"),
-            new("token-2", "value 2"),
-            new("token3", "value 3"),
-            new("token-4", $"value{Lb}with extra line"),
-            new("token-5", $"value{Lb}{Lb}with blank line"),
-        });
+        parsed.Footers.Should().Equal(
+            new Footer("token1", "value1"),
+            new Footer("token-2", "value 2"),
+            new Footer("token3", "value 3"),
+            new Footer("token-4", $"value{Lb}with extra line"),
+            new Footer("token-5", $"value{Lb}{Lb}with blank line"));
     }
 
     private static readonly string[] Tokens =
@@ -141,6 +139,6 @@ public class Parsing_a_conventional_commit_message
         var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, formattedFooter);
         var parsed = Parse(messageWithSpecificFooter, Config);
 
-        parsed.Footers.Should().BeEquivalentTo(new Footer[] { new(theToken, andTheValue) });
+        parsed.Footers.Should().Equal(new Footer(theToken, andTheValue));
     }
 }
