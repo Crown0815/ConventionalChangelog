@@ -3,7 +3,7 @@
 var output = (string?)null;
 var repositoryPath = args[0];
 
-if (args[0] == "-o")
+if (args[0] is "-o" or "--output")
 {
     output = args[1];
     repositoryPath = args[2];

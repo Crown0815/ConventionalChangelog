@@ -9,10 +9,13 @@ namespace ConventionalChangelog.Unit.Tests.Integration;
 
 public class The_cli_program_when_given_an_output_file : CliTestsBase
 {
+    private const string OutputKeyShort = "-o";
+    private const string OutputKeyLong = "--output";
     private readonly string _fileName = Guid.NewGuid().ToString();
 
     [Theory]
-    [InlineData("-o")]
+    [InlineData(OutputKeyShort)]
+    [InlineData(OutputKeyLong)]
     public void prints_changelog_into_the_file_given_through_the(string argument)
     {
         Repository.Commit(Feature, 1);
@@ -24,7 +27,8 @@ public class The_cli_program_when_given_an_output_file : CliTestsBase
     }
 
     [Theory]
-    [InlineData("-o")]
+    [InlineData(OutputKeyShort)]
+    [InlineData(OutputKeyLong)]
     public void run_from_teamcity_prints_a_service_message_setting_a_parameter_to_the_changelog(string argument)
     {
         Repository.Commit(Feature, 1);
