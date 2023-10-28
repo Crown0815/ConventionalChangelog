@@ -7,8 +7,13 @@ namespace ConventionalChangelog;
 public class Configuration : IConfiguration, IComparer<CommitType>
 {
     // language=regex
+    private const string FooterTokenPattern = @"[\w\-]+";
+    // language=regex
+    private const string YouTrackCommandPattern = @"^#\w+-\d+";
+    // language=regex
     private const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
-    private const string FooterPattern = $"^(?<token>{Pattern.FooterToken}|{BreakingChange.FooterPattern})(: | #)";
+
+    private const string FooterPattern = $"^(?<token>{FooterTokenPattern}|{BreakingChange.FooterPattern})(: | #)";
     private const string DefaultVersionTagPrefix = "[pv]";
 
     private static readonly CommitType[] DefaultCommitTypes =
@@ -64,12 +69,12 @@ public class Configuration : IConfiguration, IComparer<CommitType>
         : 0;
 
     public bool IsFooter(string line) =>
-        line.StartMatches(Pattern.YouTrackCommand)
+        line.StartMatches(YouTrackCommandPattern)
         || line.StartMatches(FooterPattern);
 
     public CommitMessage.Footer FooterFrom(string line)
     {
-        if (line.StartMatches(Pattern.YouTrackCommand))
+        if (line.StartMatches(YouTrackCommandPattern))
             return YouTrackFooterFrom(line);
         return TrailerFooterFrom(line);
     }
