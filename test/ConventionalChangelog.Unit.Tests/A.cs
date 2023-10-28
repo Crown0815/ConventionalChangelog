@@ -32,7 +32,7 @@ internal static class A
         private Changelog WithGroup(CommitType type) =>
             With(NewLine + Group(type) + HeaderSeparator);
 
-        private static string Group(CommitType type) => $"## {type.ChangelogGroupHeader}";
+        private static string Group(CommitType type) => $"## {type.Changelog.GroupHeader}";
 
         private static Changelog AddBulletPoint(Changelog c, int seed) =>
             c.With($"- {Description(seed)}{NewLine}");

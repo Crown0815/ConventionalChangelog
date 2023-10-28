@@ -22,21 +22,22 @@ public class Configuration : IConfiguration, IComparer<CommitType>
 
     private const string BreakingChangeIndicator = "!";
 
-    public static readonly CommitType BreakingChangeType = new($"[a-z]+{BreakingChangeIndicator}", "Breaking Changes", Relevance.Show);
+    public static readonly CommitType BreakingChangeType = new($"[a-z]+{BreakingChangeIndicator}",
+        new ChangelogType("Breaking Changes", Show));
 
     private static readonly CommitType[] DefaultCommitTypes =
     {
         BreakingChangeType,
-        new("feat", "Features", Show),
-        new("fix", "Bug Fixes", Show),
-        new("perf", "Performance Improvements", Show),
-        new("build", "", Hide),
-        new("chore", "", Hide),
-        new("ci", "", Hide),
-        new("docs", "", Hide),
-        new("style", "", Hide),
-        new("refactor", "", Hide),
-        new("test", "", Hide),
+        new("feat", new ChangelogType("Features", Show)),
+        new("fix", new ChangelogType("Bug Fixes", Show)),
+        new("perf", new ChangelogType("Performance Improvements", Show)),
+        new("build", new ChangelogType("", Hide)),
+        new("chore", new ChangelogType("", Hide)),
+        new("ci", new ChangelogType("", Hide)),
+        new("docs", new ChangelogType("", Hide)),
+        new("style", new ChangelogType("", Hide)),
+        new("refactor", new ChangelogType("", Hide)),
+        new("test", new ChangelogType("", Hide)),
     };
 
     public static Configuration Default() => With(default);

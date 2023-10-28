@@ -40,10 +40,10 @@ internal class LogAggregate
 
     public LogAggregate Add(CommitType type, string description)
     {
-        switch (type.Relevance)
+        switch (type.Changelog.Relevance)
         {
             case Relevance.Show:
-                AddBullet(type.ChangelogGroupHeader, description);
+                AddBullet(type.Changelog.GroupHeader, description);
                 return this;
             case Relevance.Hide:
                 AddHidden();
