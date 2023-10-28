@@ -1,36 +1,14 @@
-﻿using System.Diagnostics;
-using System.IO;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Xunit;
 using static System.Environment;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
 namespace ConventionalChangelog.Unit.Tests.Integration;
 
-public class The_cli_program : GitUsingTestsBase
+public class The_cli_program : CliTestsBase
 {
-    private static string OutputWithInput(string repositoryPath, params (string, string)[] environmentVariables)
-    {
-        using var process = new Process();
-
-        process.StartInfo.FileName = Path.Join(".",nameof(ConventionalChangelog));
-        process.StartInfo.Arguments = repositoryPath;
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.RedirectStandardOutput = true;
-        process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-        process.StartInfo.CreateNoWindow = true;
-        foreach (var (name, value) in environmentVariables)
-            process.StartInfo.EnvironmentVariables[name] = value;
-
-        process.Start();
-        var output = process.StandardOutput.ReadToEnd();
-        process.WaitForExit();
-
-        return output;
-    }
-
     [Fact]
-    public void prints_the_changelog_from_a_given_repository()
+    public void prints_the_changelog_from_a_given_repository_to_the_console()
     {
         Repository.Commit(Feature, 1);
 

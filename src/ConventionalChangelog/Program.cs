@@ -1,8 +1,25 @@
 ﻿using ConventionalChangelog;
 
-var changelog = Changelog.FromRepository(args[0], Configuration.Default());
+var output = (string?)null;
+var repositoryPath = args[0];
 
-if (Environment.GetEnvironmentVariable(TeamCity.EnvironmentVariable) is not null)
-    changelog = TeamCity.SetParameterCommand("CRN.Changelog", changelog);
+if (args[0] == "-o")
+{
+    output = args[1];
+    repositoryPath = args[2];
+}
+var changelog = Changelog.FromRepository(repositoryPath, Configuration.Default());
 
-Console.WriteLine(changelog);
+if (output is not null)
+{
+    File.WriteAllText(output, changelog + Environment.NewLine);
+    if (Environment.GetEnvironmentVariable(TeamCity.EnvironmentVariable) is not null)
+        Console.WriteLine(TeamCity.SetParameterCommand("CRN.Changelog", changelog));
+}
+else
+{
+    if (Environment.GetEnvironmentVariable(TeamCity.EnvironmentVariable) is not null)
+        Console.WriteLine(TeamCity.SetParameterCommand("CRN.Changelog", changelog));
+    else
+        Console.WriteLine(changelog);
+}

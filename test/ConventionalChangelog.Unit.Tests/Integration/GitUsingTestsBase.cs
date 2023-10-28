@@ -15,7 +15,7 @@ public abstract class GitUsingTestsBase : IDisposable
         Repository = new Repository(Repository.Init(path));
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         Repository.Dispose();
         ForceDelete(new DirectoryInfo(Repository.Path()));
