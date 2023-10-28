@@ -7,14 +7,18 @@ namespace ConventionalChangelog;
 public class Configuration : IConfiguration, IComparer<CommitType>
 {
     // language=regex
-    private const string FooterTokenPattern = @"[\w\-]+";
+    private const string BreakingChangeTokenPattern = "(?<breaking>(?<token>BREAKING[ -]CHANGE))(: | #)";
     // language=regex
-    private const string YouTrackCommandPattern = @"^#\w+-\d+";
+    private const string TrailerTokenPattern = @"(?<token>[\w\-]+)(: | #)";
+    // language=regex
+    private const string YouTrackTokenPattern = @"#(?<token>\w+-\d+)";
+
+    // language=regex
+    private const string DefaultVersionTagPrefix = "[pv]";
     // language=regex
     private const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
 
-    private const string FooterPattern = $"^(?<token>{FooterTokenPattern}|{BreakingChange.FooterPattern})(: | #)";
-    private const string DefaultVersionTagPrefix = "[pv]";
+    private const string FooterPattern = $"^{BreakingChangeTokenPattern}|{TrailerTokenPattern}|{YouTrackTokenPattern}";
 
     private static readonly CommitType[] DefaultCommitTypes =
     {
@@ -51,9 +55,6 @@ public class Configuration : IConfiguration, IComparer<CommitType>
     public bool IsVersionTag(string tagName) =>
         tagName.Matches(_versionTagPrefix + SemanticVersionPattern);
 
-    public bool IsBreakingChange(CommitMessage.Footer footer) =>
-        footer.Token.Matches(BreakingChange.FooterPattern);
-
     public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType
     {
         if (_order == ChangelogOrder.OldestToNewest)
@@ -68,30 +69,14 @@ public class Configuration : IConfiguration, IComparer<CommitType>
         ? _commitTypes.IndexOf(c)
         : 0;
 
-    public bool IsFooter(string line) =>
-        line.StartMatches(YouTrackCommandPattern)
-        || line.StartMatches(FooterPattern);
+    public bool IsFooter(string line) => line.StartMatches(FooterPattern);
 
     public CommitMessage.Footer FooterFrom(string line)
     {
-        if (line.StartMatches(YouTrackCommandPattern))
-            return YouTrackFooterFrom(line);
-        return TrailerFooterFrom(line);
-    }
-
-    private static CommitMessage.Footer TrailerFooterFrom(string line)
-    {
         var match = line.MatchWith(FooterPattern);
         var token = match.Groups["token"].Value;
+        var isBreaking = match.Groups["breaking"].Value is not "";
         var value = line.Replace(match.Value, "");
-        return new CommitMessage.Footer(token, value);
-    }
-
-    private static CommitMessage.Footer YouTrackFooterFrom(string line)
-    {
-        var parts = line.Split(" ");
-        var token = parts.First().Replace("#", "");
-        var value = line.Replace("#" + token, "").Trim();
-        return new CommitMessage.Footer(token, value);
+        return new CommitMessage.Footer(token, value, isBreaking);
     }
 }

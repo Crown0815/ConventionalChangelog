@@ -8,7 +8,6 @@ public interface IConfiguration
 
     bool IsFooter(string line);
     CommitMessage.Footer FooterFrom(string line);
-    bool IsBreakingChange(CommitMessage.Footer footer);
 
     IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType;
 

@@ -27,7 +27,7 @@ internal static class MessageParser
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines, configuration);
 
-        if (footers.Any(configuration.IsBreakingChange))
+        if (footers.Any(x => x.IsBreakingChange))
             typeIndicator = typeIndicator.Replace(BreakingChange.Indicator, "");
 
         var type = configuration.TypeFor(typeIndicator);

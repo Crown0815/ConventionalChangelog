@@ -97,14 +97,6 @@ public class Parsing_a_conventional_commit_message
             new Footer("token-5", $"value{Lb}{Lb}with blank line"));
     }
 
-    private static readonly string[] Tokens =
-    {
-        "token",
-        "token-with-dash",
-        "BREAKING CHANGE",
-        "BREAKING-CHANGE",
-    };
-
     private static readonly string[] Separators = { ": ", " #" };
 
     private static readonly string[] Values =
@@ -116,9 +108,17 @@ public class Parsing_a_conventional_commit_message
         $"value with{Lb}{Lb}blank line",
     };
 
+    public static IEnumerable<object[]> BreakingChangeConventionFooters()
+    {
+        foreach (var token in new[] { "BREAKING CHANGE", "BREAKING-CHANGE", })
+        foreach (var separator in Separators)
+        foreach (var value in Values)
+            yield return new object[] { token + separator + value, token, value, true };
+    }
+
     public static IEnumerable<object[]> GitTrailerConventionFooters()
     {
-        foreach (var token in Tokens)
+        foreach (var token in new[] { "token", "token-with-dash", })
         foreach (var separator in Separators)
         foreach (var value in Values)
             yield return new object[] { token + separator + value, token, value };
@@ -132,13 +132,14 @@ public class Parsing_a_conventional_commit_message
     }
 
     [Theory]
+    [MemberData(nameof(BreakingChangeConventionFooters))]
     [MemberData(nameof(GitTrailerConventionFooters))]
     [MemberData(nameof(YouTrackConventionFooters))]
-    public void extracts_from_a(string formattedFooter, string theToken, string andTheValue)
+    public void extracts_from_a(string formattedFooter, string theToken, string andTheValue, bool withIsBreakingChange = false)
     {
         var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, formattedFooter);
         var parsed = Parse(messageWithSpecificFooter, Config);
 
-        parsed.Footers.Should().Equal(new Footer(theToken, andTheValue));
+        parsed.Footers.Should().Equal(new Footer(theToken, andTheValue, withIsBreakingChange));
     }
 }
