@@ -49,8 +49,12 @@ public class Configuration : IConfiguration, IComparer<CommitType>
         _order = order;
     }
 
-    public CommitType TypeFor(string typeIndicator) =>
-        _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
+    public CommitType TypeFor(string typeIndicator, IReadOnlyCollection<CommitMessage.Footer> footers)
+    {
+        if (footers.Any(x => x.IsBreakingChange))
+            typeIndicator = typeIndicator.Replace(BreakingChange.Indicator, "");
+        return _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
+    }
 
     public bool IsVersionTag(string tagName) =>
         tagName.Matches(_versionTagPrefix + SemanticVersionPattern);

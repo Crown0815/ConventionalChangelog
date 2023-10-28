@@ -4,7 +4,7 @@ namespace ConventionalChangelog;
 
 public interface IConfiguration
 {
-    CommitType TypeFor(string typeIndicator);
+    CommitType TypeFor(string typeIndicator, IReadOnlyCollection<CommitMessage.Footer> footers);
 
     bool IsFooter(string line);
     CommitMessage.Footer FooterFrom(string line);
