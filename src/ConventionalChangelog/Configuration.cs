@@ -4,7 +4,7 @@ using static ConventionalChangelog.Conventional.Relevance;
 
 namespace ConventionalChangelog;
 
-public class Configuration : ITypeFinder, IComparer<CommitType>
+public class Configuration : IConfiguration, IComparer<CommitType>
 {
     // language=regex
     private const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
@@ -49,7 +49,7 @@ public class Configuration : ITypeFinder, IComparer<CommitType>
     public bool IsBreakingChange(CommitMessage.Footer footer) =>
         footer.Token.Matches(BreakingChange.FooterPattern);
 
-    public IOrderedEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType
+    public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType
     {
         if (_order == ChangelogOrder.OldestToNewest)
             logEntries = logEntries.Reverse();

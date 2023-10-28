@@ -9,7 +9,7 @@ namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public class Parsing_a_conventional_commit_message
 {
-    private static readonly ITypeFinder Config = Configuration.Default();
+    private static readonly IConfiguration Config = Configuration.Default();
 
     // Lb = Linebreak. The abbreviation was chosen to keep string definitions short
     private static readonly string Lb = Environment.NewLine;

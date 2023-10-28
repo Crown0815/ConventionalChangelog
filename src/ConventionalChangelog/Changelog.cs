@@ -5,7 +5,7 @@ namespace ConventionalChangelog;
 
 public static class Changelog
 {
-    public static string From(IEnumerable<Commit> messages, Configuration configuration)
+    public static string From(IEnumerable<Commit> messages, IConfiguration configuration)
     {
         var logEntries = messages.Select(commit => CommitMessage.Parse(commit, configuration))
             .Reduce()
@@ -15,7 +15,7 @@ public static class Changelog
             .Aggregate(new LogAggregate(), Add).ToString();
     }
 
-    private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage, ITypeFinder configuration)
+    private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage, IConfiguration configuration)
     {
         foreach (var footer in commitMessage.Footers)
             if (configuration.IsBreakingChange(footer))
@@ -26,7 +26,7 @@ public static class Changelog
 
     private static LogAggregate Add(LogAggregate a, LogEntry l) => a.Add(l.Type, l.Description);
 
-    public static string FromRepository(string path, Configuration configuration)
+    public static string FromRepository(string path, IConfiguration configuration)
     {
         using var repository = new Repository(path);
         var newestVersionTag = NewestVersionCommitIn(repository, configuration);
@@ -35,7 +35,7 @@ public static class Changelog
         return From(repository.Commits.QueryBy(filter).Select(AsCommit).ToArray(), configuration);
     }
 
-    private static object? NewestVersionCommitIn(IRepository repo, Configuration configuration)
+    private static object? NewestVersionCommitIn(IRepository repo, IConfiguration configuration)
     {
         var mainline = MainlineFrom(repo.Head);
 

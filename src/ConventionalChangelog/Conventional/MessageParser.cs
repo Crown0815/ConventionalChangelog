@@ -9,20 +9,20 @@ internal static class MessageParser
 
     private static readonly CommitMessage None = new(CommitType.None, "", "", Empty<Footer>());
 
-    public static CommitMessage Parse(string rawMessage, ITypeFinder configuration) => rawMessage switch
+    public static CommitMessage Parse(string rawMessage, IConfiguration configuration) => rawMessage switch
     {
         null => throw new ArgumentNullException(nameof(rawMessage)),
         "" => None,
         _ => Parsed(rawMessage, configuration),
     };
 
-    private static CommitMessage Parsed(string rawMessage, ITypeFinder configuration)
+    private static CommitMessage Parsed(string rawMessage, IConfiguration configuration)
     {
         using var lines = new StringReader(rawMessage);
         return Read(lines, configuration);
     }
 
-    private static CommitMessage Read(TextReader lines, ITypeFinder configuration)
+    private static CommitMessage Read(TextReader lines, IConfiguration configuration)
     {
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines, configuration);
@@ -55,12 +55,12 @@ internal static class MessageParser
             yield return line;
     }
 
-    private static IEnumerable<Footer> FootersFrom(IEnumerable<string> lines, ITypeFinder typeFinder)
+    private static IEnumerable<Footer> FootersFrom(IEnumerable<string> lines, IConfiguration configuration)
     {
         Footer? buffer = null;
         foreach (var line in lines)
         {
-            if (buffer is not null && typeFinder.IsFooter(line))
+            if (buffer is not null && configuration.IsFooter(line))
             {
                 yield return buffer with {Value = buffer.Value.Trim()};
                 buffer = null;
@@ -68,22 +68,22 @@ internal static class MessageParser
             if (buffer is not null)
                 buffer = buffer with { Value = buffer.Value + Environment.NewLine + line};
             else
-                buffer = typeFinder.FooterFrom(line);
+                buffer = configuration.FooterFrom(line);
         }
 
         if (buffer is not null)
             yield return buffer with {Value = buffer.Value.Trim()};
     }
 
-    private static (string, IReadOnlyCollection<Footer>) BodyFrom(TextReader reader, ITypeFinder typeFinder)
+    private static (string, IReadOnlyCollection<Footer>) BodyFrom(TextReader reader, IConfiguration configuration)
     {
         var bodyParts = new List<string>();
         var footers = Enumerable.Empty<Footer>();
         while (reader.ReadLine() is { } line)
         {
-            if (typeFinder.IsFooter(line))
+            if (configuration.IsFooter(line))
             {
-                footers = FootersFrom(LinesFrom(reader).Prepend(line), typeFinder);
+                footers = FootersFrom(LinesFrom(reader).Prepend(line), configuration);
                 break;
             }
             bodyParts.Add(line);
