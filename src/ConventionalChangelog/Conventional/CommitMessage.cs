@@ -9,7 +9,7 @@ public record CommitMessage(CommitType Type, string Description, string Body, IR
 
     internal static CommitMessage Parse(Commit commit, IConfiguration configuration) => Parse(commit.Message, configuration) with { Hash = commit.Hash };
 
-    public record Footer(string Token, string Value, bool IsBreakingChange = false);
+    public record Footer(string Token, string Value, CommitType? CommitType = null);
 
     public string Hash { get; private init; } = Guid.NewGuid().ToString();
 }

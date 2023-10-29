@@ -56,7 +56,7 @@ public class Configuration : IConfiguration, IComparer<CommitType>
 
     public CommitType TypeFor(string typeIndicator, IReadOnlyCollection<CommitMessage.Footer> footers)
     {
-        if (footers.Any(x => x.IsBreakingChange))
+        if (footers.Any(x => x.CommitType == BreakingChangeType))
             typeIndicator = typeIndicator.Replace(BreakingChangeIndicator, "");
         return _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
     }
@@ -86,6 +86,6 @@ public class Configuration : IConfiguration, IComparer<CommitType>
         var token = match.Groups["token"].Value;
         var isBreaking = match.Groups["breaking"].Value is not "";
         var value = line.Replace(match.Value, "");
-        return new CommitMessage.Footer(token, value, isBreaking);
+        return new CommitMessage.Footer(token, value, isBreaking ? BreakingChangeType : null);
     }
 }

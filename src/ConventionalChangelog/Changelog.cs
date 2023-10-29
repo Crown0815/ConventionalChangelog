@@ -18,8 +18,8 @@ public static class Changelog
     private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage)
     {
         foreach (var footer in commitMessage.Footers)
-            if (footer.IsBreakingChange)
-                yield return new LogEntry(Configuration.BreakingChangeType, footer.Value);
+            if (footer.CommitType is {} type)
+                yield return new LogEntry(type, footer.Value);
 
         yield return new LogEntry(commitMessage.Type, commitMessage.Description);
     }

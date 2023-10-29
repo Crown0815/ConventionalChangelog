@@ -73,10 +73,8 @@ public class Parsing_a_conventional_commit_message
     [Fact]
     public void with_a_single_footer_extracts_its_footer()
     {
-        _parsed.Footers.Should().BeEquivalentTo(new Footer[]
-        {
-            new(ConventionalCommit.FooterToken, ConventionalCommit.FooterValue),
-        });
+        _parsed.Footers.Should().Equal(
+            new Footer(ConventionalCommit.FooterToken, ConventionalCommit.FooterValue));
     }
 
     [Fact]
@@ -113,7 +111,7 @@ public class Parsing_a_conventional_commit_message
         foreach (var token in new[] { "BREAKING CHANGE", "BREAKING-CHANGE", })
         foreach (var separator in Separators)
         foreach (var value in Values)
-            yield return new object[] { token + separator + value, token, value, true };
+            yield return new object[] { token + separator + value, token, value, Configuration.BreakingChangeType };
     }
 
     public static IEnumerable<object[]> GitTrailerConventionFooters()
@@ -121,7 +119,7 @@ public class Parsing_a_conventional_commit_message
         foreach (var token in new[] { "token", "token-with-dash", })
         foreach (var separator in Separators)
         foreach (var value in Values)
-            yield return new object[] { token + separator + value, token, value };
+            yield return new object[] { token + separator + value, token, value};
     }
 
     public static IEnumerable<object[]> YouTrackConventionFooters()
@@ -135,11 +133,11 @@ public class Parsing_a_conventional_commit_message
     [MemberData(nameof(BreakingChangeConventionFooters))]
     [MemberData(nameof(GitTrailerConventionFooters))]
     [MemberData(nameof(YouTrackConventionFooters))]
-    public void extracts_from_a(string formattedFooter, string theToken, string andTheValue, bool withIsBreakingChange = false)
+    public void extracts_from_a(string formattedFooter, string theToken, string andTheValue, CommitType? type = null)
     {
         var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, formattedFooter);
         var parsed = Parse(messageWithSpecificFooter, Config);
 
-        parsed.Footers.Should().Equal(new Footer(theToken, andTheValue, withIsBreakingChange));
+        parsed.Footers.Should().Equal(new Footer(theToken, andTheValue, type));
     }
 }
