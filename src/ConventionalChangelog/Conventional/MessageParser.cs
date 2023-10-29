@@ -14,7 +14,6 @@ public class MessageParser
 
     public CommitMessage Parse(string rawMessage) => rawMessage switch
     {
-//        null => throw new ArgumentNullException(nameof(rawMessage)),
         "" => Empty,
         _ => InnerParse(rawMessage),
     };
