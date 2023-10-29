@@ -13,6 +13,12 @@ internal class LogAggregate
 
     private string _text = EmptyChangelog;
     private bool _hasGeneralCodeImprovements;
+    private readonly IConfiguration _configuration;
+
+    public LogAggregate(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
 
     private bool IsEmpty => _text == EmptyChangelog;
 
@@ -38,12 +44,13 @@ internal class LogAggregate
 
     private void AddHidden() => _hasGeneralCodeImprovements = true;
 
-    public LogAggregate Add(CommitType type, string description)
+    public LogAggregate Add(string typeIndicator, string description)
     {
-        switch (type.Changelog.Relevance)
+        var type = _configuration.TypeFor(typeIndicator);
+        switch (type.Relevance)
         {
             case Relevance.Show:
-                AddBullet(type.Changelog.GroupHeader, description);
+                AddBullet(type.GroupHeader, description);
                 return this;
             case Relevance.Hide:
                 AddHidden();

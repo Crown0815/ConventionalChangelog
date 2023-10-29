@@ -1,8 +1,6 @@
-using ConventionalChangelog.Conventional;
-
 namespace ConventionalChangelog;
 
 public interface IHasCommitType
 {
-    public CommitType Type { get; }
+    public string TypeIndicator { get; }
 }

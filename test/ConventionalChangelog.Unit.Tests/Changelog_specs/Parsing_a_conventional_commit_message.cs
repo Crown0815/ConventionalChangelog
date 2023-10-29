@@ -55,7 +55,7 @@ public class Parsing_a_conventional_commit_message
     [Fact]
     public void extracts_its_type_indicator()
     {
-        _parsed.Type.Indicator.Should().Be(ConventionalCommit.Type);
+        _parsed.TypeIndicator.Should().Be(ConventionalCommit.Type);
     }
 
     [Fact]

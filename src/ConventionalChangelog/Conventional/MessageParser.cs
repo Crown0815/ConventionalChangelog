@@ -7,7 +7,7 @@ internal static class MessageParser
 {
     private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
-    private static readonly CommitMessage None = new(CommitType.None, "", "", Empty<Footer>());
+    private static readonly CommitMessage None = new("", "", "", Empty<Footer>());
 
     public static CommitMessage Parse(string rawMessage, IConfiguration configuration) => rawMessage switch
     {
@@ -26,9 +26,9 @@ internal static class MessageParser
     {
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
         var (body, footers) = BodyFrom(lines, configuration);
-        var type = configuration.TypeFor(typeIndicator, footers);
+        typeIndicator = configuration.TypeFor(typeIndicator, footers);
 
-        return new CommitMessage(type, description, body, footers);
+        return new CommitMessage(typeIndicator, description, body, footers);
     }
 
 #if NET6_0

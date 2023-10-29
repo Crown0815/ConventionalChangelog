@@ -12,19 +12,19 @@ public static class Changelog
             .SelectMany(LogEntries);
 
         return configuration.Ordered(logEntries)
-            .Aggregate(new LogAggregate(), Add).ToString();
+            .Aggregate(new LogAggregate(configuration), Add).ToString();
     }
 
     private static IEnumerable<LogEntry> LogEntries(CommitMessage commitMessage)
     {
         foreach (var footer in commitMessage.Footers)
             if (footer is IPrintable p)
-                yield return new LogEntry(p.Type, p.Description);
+                yield return new LogEntry(p.TypeIndicator, p.Description);
 
-        yield return new LogEntry(commitMessage.Type, commitMessage.Description);
+        yield return new LogEntry(commitMessage.TypeIndicator, commitMessage.Description);
     }
 
-    private static LogAggregate Add(LogAggregate a, LogEntry l) => a.Add(l.Type, l.Description);
+    private static LogAggregate Add(LogAggregate a, LogEntry l) => a.Add(l.TypeIndicator, l.Description);
 
     public static string FromRepository(string path, IConfiguration configuration)
     {
@@ -64,5 +64,5 @@ public static class Changelog
 
     private static Commit AsCommit(LibGit2Sharp.Commit c) => new(c.Message, c.Sha);
 
-    private record LogEntry(CommitType Type, string Description) : IHasCommitType;
+    private record LogEntry(string TypeIndicator, string Description) : IHasCommitType;
 }

@@ -4,7 +4,7 @@ using static ConventionalChangelog.Conventional.Relevance;
 
 namespace ConventionalChangelog;
 
-public class Configuration : IConfiguration, IComparer<CommitType>
+public class Configuration : IConfiguration, IComparer<string>
 {
     // language=regex
     private const string BreakingChangeIndicator = "(?<inner>[a-z]+)!";
@@ -54,10 +54,20 @@ public class Configuration : IConfiguration, IComparer<CommitType>
         _order = order;
     }
 
-    public CommitType TypeFor(string typeIndicator, IReadOnlyCollection<CommitMessage.Footer> footers)
+    public string TypeFor(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {
         if (footers.Any(x => x is IPrintable))
-            typeIndicator = typeIndicator.ReplaceWith(BreakingChangeIndicator, "inner");
+            return typeIndicator.ReplaceWith(BreakingChangeIndicator, "inner");
+        return typeIndicator;
+    }
+
+    public ChangelogType TypeFor(string typeIndicator)
+    {
+        return InnerTypeFor(typeIndicator).Changelog;
+    }
+
+    private CommitType InnerTypeFor(string typeIndicator)
+    {
         return _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
     }
 
@@ -68,14 +78,14 @@ public class Configuration : IConfiguration, IComparer<CommitType>
     {
         if (_order == ChangelogOrder.OldestToNewest)
             logEntries = logEntries.Reverse();
-        return logEntries.OrderBy(x => x.Type, this);
+        return logEntries.OrderBy(x => x.TypeIndicator, this);
     }
 
-    public int Compare(CommitType? x, CommitType? y) =>
+    public int Compare(string? x, string? y) =>
         IndexOf(x).CompareTo(IndexOf(y));
 
-    private int IndexOf(CommitType? c) => c is not null
-        ? _commitTypes.IndexOf(c)
+    private int IndexOf(string? c) => c is not null
+        ? _commitTypes.IndexOf(InnerTypeFor(c))
         : 0;
 
     public bool IsFooter(string line) => line.StartMatches(FooterPattern);
@@ -87,11 +97,11 @@ public class Configuration : IConfiguration, IComparer<CommitType>
         var value = line.Replace(match.Value, "");
         var isBreaking = match.Groups["breaking"].Value is not "";
         if (isBreaking)
-            return new PrintableFooter(token, value, BreakingChangeType);
+            return new PrintableFooter(token, value, "breaking!");
         return new CommitMessage.Footer(token, value);
     }
 
-    private record PrintableFooter(string Token, string Value, CommitType Type)
+    private record PrintableFooter(string Token, string Value, string TypeIndicator)
         : CommitMessage.Footer(Token, Value), IPrintable
     {
         public string Description => Value;

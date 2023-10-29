@@ -2,7 +2,8 @@
 
 namespace ConventionalChangelog.Conventional;
 
-public record CommitMessage(CommitType Type, string Description, string Body, IReadOnlyCollection<Footer> Footers)
+public record CommitMessage(string TypeIndicator, string Description, string Body, IReadOnlyCollection<Footer>
+        Footers)
 {
     public static CommitMessage Parse(string rawMessage, IConfiguration configuration) =>
         MessageParser.Parse(rawMessage, configuration);

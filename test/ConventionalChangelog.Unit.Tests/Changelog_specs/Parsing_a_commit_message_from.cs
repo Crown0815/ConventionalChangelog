@@ -13,7 +13,7 @@ public class Parsing_a_commit_message_from
     public void an_empty_string_returns_an_empty_commit_message()
     {
         var parsed = CommitMessage.Parse("", _configuration);
-        parsed.Type.Should().Be(CommitType.None);
+        parsed.TypeIndicator.Should().BeEmpty();
         parsed.Body.Should().BeEmpty();
         parsed.Description.Should().BeEmpty();
         parsed.Footers.Should().BeEmpty();
