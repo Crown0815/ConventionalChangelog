@@ -12,13 +12,7 @@ public class MessageParser
         _configuration = configuration;
     }
 
-    public CommitMessage Parse(string rawMessage) => rawMessage switch
-    {
-        "" => Empty,
-        _ => InnerParse(rawMessage),
-    };
-
-    private CommitMessage InnerParse(string rawMessage)
+    public CommitMessage Parse(string rawMessage)
     {
         using var lines = new StringReader(rawMessage);
         return Read(lines);
@@ -26,7 +20,7 @@ public class MessageParser
 
     private CommitMessage Read(TextReader lines)
     {
-        var (typeIndicator, description) = HeaderFrom(lines.ReadLine()!);
+        var (typeIndicator, description) = HeaderFrom(lines.ReadLine());
         var (body, footers) = BodyFrom(lines);
         typeIndicator = _configuration.TypeFor(typeIndicator, footers);
 
@@ -34,15 +28,15 @@ public class MessageParser
     }
 
 #if NET6_0
-    private static (string, string) HeaderFrom(string header)
+    private static (string, string) HeaderFrom(string? header)
     {
-        var twoParts = header.Split(Separator);
-        return twoParts.Length == 2
+        var twoParts = header?.Split(Separator);
+        return twoParts?.Length == 2
             ? (twoParts.First(), twoParts.Last().Trim())
             : ("", "");
     }
 #elif NET7_0_OR_GREATER
-    private static (string, string) HeaderFrom(string header) => header.Split(Separator) is [var first, var second]
+    private static (string, string) HeaderFrom(string? header) => header?.Split(Separator) is [var first, var second]
         ? (first,second.Trim())
         : ("", "");
 #endif
