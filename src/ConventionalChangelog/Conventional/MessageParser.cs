@@ -4,7 +4,6 @@ namespace ConventionalChangelog.Conventional;
 
 public class MessageParser
 {
-    private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
     private readonly IConfiguration _configuration;
 
     public MessageParser(IConfiguration configuration)
@@ -22,21 +21,21 @@ public class MessageParser
     {
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine());
         var (body, footers) = BodyFrom(lines);
-        typeIndicator = _configuration.TypeFor(typeIndicator, footers);
+        typeIndicator = _configuration.Sanitize(typeIndicator, footers);
 
         return new CommitMessage(typeIndicator, description, body, footers);
     }
 
 #if NET6_0
-    private static (string, string) HeaderFrom(string? header)
+    private (string, string) HeaderFrom(string? header)
     {
-        var twoParts = header?.Split(Separator);
+        var twoParts = header?.Split(_configuration.Separator);
         return twoParts?.Length == 2
             ? (twoParts.First(), twoParts.Last().Trim())
             : ("", "");
     }
 #elif NET7_0_OR_GREATER
-    private static (string, string) HeaderFrom(string? header) => header?.Split(Separator) is [var first, var second]
+    private (string, string) HeaderFrom(string? header) => header?.Split(_configuration.Separator) is [var first, var second]
         ? (first,second.Trim())
         : ("", "");
 #endif

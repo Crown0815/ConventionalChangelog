@@ -6,6 +6,8 @@ namespace ConventionalChangelog;
 
 public class Configuration : IConfiguration, IComparer<string>
 {
+    private const string ConventionalCommitSeparator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
+
     // language=regex
     private const string BreakingChangeIndicator = "(?<inner>[a-z]+)!";
     // language=regex
@@ -54,7 +56,9 @@ public class Configuration : IConfiguration, IComparer<string>
         _order = order;
     }
 
-    public string TypeFor(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
+    public string Separator => ConventionalCommitSeparator;
+
+    public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {
         if (footers.Any(x => x is IPrintable))
             return typeIndicator.ReplaceWith(BreakingChangeIndicator, "inner");
@@ -74,7 +78,7 @@ public class Configuration : IConfiguration, IComparer<string>
     public bool IsVersionTag(string tagName) =>
         tagName.Matches(_versionTagPrefix + SemanticVersionPattern);
 
-    public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType
+    public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T : IHasCommitType
     {
         if (_order == ChangelogOrder.OldestToNewest)
             logEntries = logEntries.Reverse();
