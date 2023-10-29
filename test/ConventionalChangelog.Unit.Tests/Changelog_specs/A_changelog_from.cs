@@ -15,7 +15,7 @@ public class A_changelog_from
 
     [Theory]
     [MemberData(nameof(NullCases))]
-    public void null_throws_null_exception(params Commit[] nullCase)
+    public void null_throws_exception(params Commit[] nullCase)
     {
         Action fromNull = () => A.Changelog.From(nullCase);
         fromNull.Should().Throw<Exception>();

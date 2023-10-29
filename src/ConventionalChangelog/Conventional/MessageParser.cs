@@ -3,20 +3,20 @@ using static ConventionalChangelog.Conventional.CommitMessage;
 
 namespace ConventionalChangelog.Conventional;
 
-internal class MessageParser2
+public class MessageParser
 {
     private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
     private static readonly CommitMessage None = new("", "", "", Empty<Footer>());
     private readonly IConfiguration _configuration;
 
-    public MessageParser2(IConfiguration configuration)
+    public MessageParser(IConfiguration configuration)
     {
         _configuration = configuration;
     }
 
     public CommitMessage Parse(string rawMessage) => rawMessage switch
     {
-        null => throw new ArgumentNullException(nameof(rawMessage)),
+//        null => throw new ArgumentNullException(nameof(rawMessage)),
         "" => None,
         _ => InnerParse(rawMessage),
     };
@@ -92,9 +92,4 @@ internal class MessageParser2
         if (buffer is not null)
             yield return buffer with {Value = buffer.Value.Trim()};
     }
-}
-
-internal static class MessageParser
-{
-    public static CommitMessage Parse(string rawMessage, IConfiguration configuration) => new MessageParser2(configuration).Parse(rawMessage);
 }
