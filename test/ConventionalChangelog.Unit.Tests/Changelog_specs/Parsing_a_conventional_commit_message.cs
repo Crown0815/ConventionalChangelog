@@ -111,7 +111,7 @@ public class Parsing_a_conventional_commit_message
         foreach (var token in new[] { "BREAKING CHANGE", "BREAKING-CHANGE", })
         foreach (var separator in Separators)
         foreach (var value in Values)
-            yield return new object[] { token + separator + value, token, value, Configuration.BreakingChangeType };
+            yield return new object[] { token + separator + value, token, value };
     }
 
     public static IEnumerable<object[]> GitTrailerConventionFooters()
@@ -133,11 +133,11 @@ public class Parsing_a_conventional_commit_message
     [MemberData(nameof(BreakingChangeConventionFooters))]
     [MemberData(nameof(GitTrailerConventionFooters))]
     [MemberData(nameof(YouTrackConventionFooters))]
-    public void extracts_from_a(string formattedFooter, string theToken, string andTheValue, CommitType? type = null)
+    public void extracts_from_a(string formattedFooter, string theToken, string andTheValue)
     {
         var messageWithSpecificFooter = ConventionalCommit.Message.Replace(ConventionalCommit.Footer, formattedFooter);
         var parsed = Parse(messageWithSpecificFooter, Config);
 
-        parsed.Footers.Should().Equal(new Footer(theToken, andTheValue, type));
+        parsed.Footers.Should().BeEquivalentTo(new Footer[]{new (theToken, andTheValue)});
     }
 }

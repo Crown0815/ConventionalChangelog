@@ -7,6 +7,8 @@ namespace ConventionalChangelog;
 public class Configuration : IConfiguration, IComparer<CommitType>
 {
     // language=regex
+    private const string BreakingChangeIndicator = "(?<inner>[a-z]+)!";
+    // language=regex
     private const string BreakingChangeTokenPattern = "(?<breaking>(?<token>BREAKING[ -]CHANGE))(: | #)";
     // language=regex
     private const string TrailerTokenPattern = @"(?<token>[\w\-]+)(: | #)";
@@ -20,9 +22,7 @@ public class Configuration : IConfiguration, IComparer<CommitType>
 
     private const string FooterPattern = $"^{BreakingChangeTokenPattern}|{TrailerTokenPattern}|{YouTrackTokenPattern}";
 
-    private const string BreakingChangeIndicator = "!";
-
-    public static readonly CommitType BreakingChangeType = new($"[a-z]+{BreakingChangeIndicator}",
+    private static readonly CommitType BreakingChangeType = new(BreakingChangeIndicator,
         new ChangelogType("Breaking Changes", Show));
 
     private static readonly CommitType[] DefaultCommitTypes =
@@ -56,8 +56,8 @@ public class Configuration : IConfiguration, IComparer<CommitType>
 
     public CommitType TypeFor(string typeIndicator, IReadOnlyCollection<CommitMessage.Footer> footers)
     {
-        if (footers.Any(x => x.CommitType == BreakingChangeType))
-            typeIndicator = typeIndicator.Replace(BreakingChangeIndicator, "");
+        if (footers.Any(x => x is IPrintable))
+            typeIndicator = typeIndicator.ReplaceWith(BreakingChangeIndicator, "inner");
         return _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
     }
 
@@ -84,8 +84,16 @@ public class Configuration : IConfiguration, IComparer<CommitType>
     {
         var match = line.MatchWith(FooterPattern);
         var token = match.Groups["token"].Value;
-        var isBreaking = match.Groups["breaking"].Value is not "";
         var value = line.Replace(match.Value, "");
-        return new CommitMessage.Footer(token, value, isBreaking ? BreakingChangeType : null);
+        var isBreaking = match.Groups["breaking"].Value is not "";
+        if (isBreaking)
+            return new PrintableFooter(token, value, BreakingChangeType);
+        return new CommitMessage.Footer(token, value);
+    }
+
+    private record PrintableFooter(string Token, string Value, CommitType Type)
+        : CommitMessage.Footer(Token, Value), IPrintable
+    {
+        public string Description => Value;
     }
 }

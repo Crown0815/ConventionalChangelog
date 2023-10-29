@@ -25,4 +25,9 @@ public static class StringMatchingExtensions
         Regex.IsMatch(input, pattern, options);
 
     public static Match MatchWith(this string input, string pattern) => Regex.Match(input, pattern);
+
+    public static string ReplaceWith(this string input, string pattern, string group)
+    {
+        return Regex.Replace(input, pattern, x => x.Groups[group].Value);
+    }
 }
