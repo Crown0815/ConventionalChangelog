@@ -1,12 +1,10 @@
-﻿using static System.Array;
-using static ConventionalChangelog.Conventional.CommitMessage;
+﻿using static ConventionalChangelog.Conventional.CommitMessage;
 
 namespace ConventionalChangelog.Conventional;
 
 public class MessageParser
 {
     private const string Separator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
-    private static readonly CommitMessage None = new("", "", "", Empty<Footer>());
     private readonly IConfiguration _configuration;
 
     public MessageParser(IConfiguration configuration)
@@ -17,7 +15,7 @@ public class MessageParser
     public CommitMessage Parse(string rawMessage) => rawMessage switch
     {
 //        null => throw new ArgumentNullException(nameof(rawMessage)),
-        "" => None,
+        "" => Empty,
         _ => InnerParse(rawMessage),
     };
 
