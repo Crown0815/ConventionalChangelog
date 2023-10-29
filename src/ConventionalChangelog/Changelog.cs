@@ -12,7 +12,8 @@ public static class Changelog
 
     public static string From(IEnumerable<Commit> messages, IConfiguration configuration)
     {
-        var logEntries = messages.Select(commit => CommitMessage.Parse(commit, configuration))
+        var parser = new MessageParser2(configuration);
+        var logEntries = messages.Select(commit => parser.Parse(commit.Message) with { Hash = commit.Hash })
             .Reduce()
             .SelectMany(AsPrintable);
 
