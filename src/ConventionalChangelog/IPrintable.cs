@@ -1,7 +1,6 @@
 namespace ConventionalChangelog;
 
-public interface IPrintable
+public interface IPrintable : IHasCommitType
 {
-    public string TypeIndicator { get; }
     public string Description { get; }
 }
