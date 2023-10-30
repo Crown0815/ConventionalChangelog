@@ -1,8 +1,7 @@
 ﻿namespace ConventionalChangelog.Conventional;
 
-public record CommitType(string Indicator, ChangelogType Changelog)
+public record CommitType(string Indicator, string GroupHeader, Relevance Relevance) :
+    ChangelogType(GroupHeader, Relevance)
 {
-    public static readonly CommitType None = new("", new ChangelogType("", Relevance.Ignore));
+    public static readonly CommitType None = new("", "", Relevance.Ignore);
 }
-
-public record ChangelogType(string GroupHeader, Relevance Relevance);

@@ -24,22 +24,19 @@ public class Configuration : IConfiguration, IComparer<string>
 
     private const string FooterPattern = $"^{BreakingChangeTokenPattern}|{TrailerTokenPattern}|{YouTrackTokenPattern}";
 
-    private static readonly CommitType BreakingChangeType = new(BreakingChangeIndicator,
-        new ChangelogType("Breaking Changes", Show));
-
     private static readonly CommitType[] DefaultCommitTypes =
     {
-        BreakingChangeType,
-        new("feat", new ChangelogType("Features", Show)),
-        new("fix", new ChangelogType("Bug Fixes", Show)),
-        new("perf", new ChangelogType("Performance Improvements", Show)),
-        new("build", new ChangelogType("", Hide)),
-        new("chore", new ChangelogType("", Hide)),
-        new("ci", new ChangelogType("", Hide)),
-        new("docs", new ChangelogType("", Hide)),
-        new("style", new ChangelogType("", Hide)),
-        new("refactor", new ChangelogType("", Hide)),
-        new("test", new ChangelogType("", Hide)),
+        new(BreakingChangeIndicator, "Breaking Changes", Show),
+        new("feat", "Features", Show),
+        new("fix", "Bug Fixes", Show),
+        new("perf", "Performance Improvements", Show),
+        new("build", "", Hide),
+        new("chore", "", Hide),
+        new("ci", "", Hide),
+        new("docs", "", Hide),
+        new("style", "", Hide),
+        new("refactor", "", Hide),
+        new("test", "", Hide),
     };
 
     public static Configuration Default() => With(default);
@@ -67,7 +64,7 @@ public class Configuration : IConfiguration, IComparer<string>
 
     public ChangelogType TypeFor(string typeIndicator)
     {
-        return InnerTypeFor(typeIndicator).Changelog;
+        return InnerTypeFor(typeIndicator);
     }
 
     private CommitType InnerTypeFor(string typeIndicator)
@@ -85,8 +82,7 @@ public class Configuration : IConfiguration, IComparer<string>
         return logEntries.OrderBy(x => x.TypeIndicator, this);
     }
 
-    public int Compare(string? x, string? y) =>
-        IndexOf(x).CompareTo(IndexOf(y));
+    public int Compare(string? x, string? y) => IndexOf(x).CompareTo(IndexOf(y));
 
     private int IndexOf(string? c) => c is not null
         ? _commitTypes.IndexOf(InnerTypeFor(c))
