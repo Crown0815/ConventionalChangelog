@@ -8,6 +8,7 @@ if (args[0] is "-o" or "--output")
     output = args[1];
     repositoryPath = args[2];
 }
+
 var changelog = new Changelog(Configuration.Default()).FromRepository(repositoryPath);
 
 if (output is not null)

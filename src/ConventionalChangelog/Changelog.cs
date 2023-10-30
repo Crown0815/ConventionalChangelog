@@ -6,11 +6,13 @@ public class Changelog
 {
     private readonly IConfiguration _configuration;
     private readonly RepositoryReader _repositoryReader;
+    private readonly MessageParser _parser;
 
     public Changelog(IConfiguration configuration)
     {
         _configuration = configuration;
         _repositoryReader = new RepositoryReader(_configuration);
+        _parser = new MessageParser(_configuration);
     }
 
     public string FromRepository(string path)
@@ -20,8 +22,7 @@ public class Changelog
 
     public string From(IEnumerable<Commit> messages)
     {
-        var parser = new MessageParser(_configuration);
-        var logEntries = messages.Select(commit => parser.Parse(commit.Message) with { Hash = commit.Hash })
+        var logEntries = messages.Select(commit => _parser.Parse(commit.Message) with { Hash = commit.Hash })
             .Reduce()
             .SelectMany(AsPrintable);
 
