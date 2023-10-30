@@ -2,32 +2,37 @@ using ConventionalChangelog.Conventional;
 
 namespace ConventionalChangelog;
 
-public static class Changelog
+public class Changelog
 {
-    public static string FromRepository(string path, IConfiguration configuration)
+    private readonly IConfiguration _configuration;
+    private readonly RepositoryReader _repositoryReader;
+
+    public Changelog(IConfiguration configuration)
     {
-        var repositoryReader = new RepositoryReader(configuration);
-        var commits = repositoryReader.CommitsFrom(path);
-        return From(commits, configuration);
+        _configuration = configuration;
+        _repositoryReader = new RepositoryReader(_configuration);
     }
 
-    public static string From(IEnumerable<Commit> messages, IConfiguration configuration)
+    public string FromRepository(string path)
     {
-        var parser = new MessageParser(configuration);
+        return From(_repositoryReader.CommitsFrom(path));
+    }
+
+    public string From(IEnumerable<Commit> messages)
+    {
+        var parser = new MessageParser(_configuration);
         var logEntries = messages.Select(commit => parser.Parse(commit.Message) with { Hash = commit.Hash })
             .Reduce()
             .SelectMany(AsPrintable);
 
-        return configuration.Ordered(logEntries)
-            .Aggregate(new LogAggregate(configuration), Add)
+        return _configuration.Ordered(logEntries)
+            .Aggregate(new LogAggregate(_configuration), Add)
             .ToString();
     }
 
     private static IEnumerable<IPrintable> AsPrintable(CommitMessage message)
     {
-        return message
-            .Footers.OfType<IPrintable>()
-            .Prepend(message);
+        return message.Footers.OfType<IPrintable>().Prepend(message);
     }
 
     private static LogAggregate Add(LogAggregate a, IPrintable p) => a.Add(p.TypeIndicator, p.Description);

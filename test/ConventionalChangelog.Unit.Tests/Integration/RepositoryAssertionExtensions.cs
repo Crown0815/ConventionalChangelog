@@ -31,8 +31,9 @@ internal static class RepositoryAssertionExtensions
 
         public void HaveChangelogMatching(string changelog, ChangelogOrder order = default)
         {
+            var conventionalChangelog = new Changelog(Configuration.With(order));
             Execute.Assertion
-                .Given(() => Changelog.FromRepository(Subject.Path(), Configuration.With(order)))
+                .Given(() => conventionalChangelog.FromRepository(Subject.Path()))
                 .ForCondition(c => c == changelog)
                 .FailWith(ExpectedMatchingChangelogButDifferentWasFound,
                     _ => changelog, c => c, _ => Environment.NewLine + LogGraphOf(Subject));
