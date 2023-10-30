@@ -2,12 +2,19 @@ using LibGit2Sharp;
 
 namespace ConventionalChangelog;
 
-public static class RepositoryReader
+public class RepositoryReader
 {
-    public static IEnumerable<Commit> CommitsFrom(string path, IConfiguration configuration)
+    private readonly IConfiguration _configuration;
+
+    public RepositoryReader(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+    public IEnumerable<Commit> CommitsFrom(string path)
     {
         using var repository = new Repository(path);
-        var newestVersionTag = NewestVersionCommitIn(repository, configuration);
+        var newestVersionTag = NewestVersionCommitIn(repository);
 
         return repository.Commits
             .QueryBy(AllSince(newestVersionTag))
@@ -15,10 +22,10 @@ public static class RepositoryReader
             .ToArray();
     }
 
-    private static object? NewestVersionCommitIn(IRepository repository, IConfiguration configuration)
+    private object? NewestVersionCommitIn(IRepository repository)
     {
         var versionCommits = repository.Tags
-            .Where(tag => configuration.IsVersionTag(tag.FriendlyName))
+            .Where(tag => _configuration.IsVersionTag(tag.FriendlyName))
             .Select(x => x.Target)
             .ToHashSet();
 

@@ -6,7 +6,8 @@ public static class Changelog
 {
     public static string FromRepository(string path, IConfiguration configuration)
     {
-        var commits = RepositoryReader.CommitsFrom(path, configuration);
+        var repositoryReader = new RepositoryReader(configuration);
+        var commits = repositoryReader.CommitsFrom(path);
         return From(commits, configuration);
     }
 
