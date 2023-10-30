@@ -1,4 +1,5 @@
-﻿using static ConventionalChangelog.Conventional.CommitMessage;
+﻿using System.Text;
+using static ConventionalChangelog.Conventional.CommitMessage;
 
 namespace ConventionalChangelog.Conventional;
 
@@ -42,7 +43,7 @@ public class MessageParser
 
     private (string, IReadOnlyCollection<Footer>) BodyFrom(TextReader reader)
     {
-        var bodyParts = new List<string>();
+        var builder = new StringBuilder();
         var footers = Enumerable.Empty<Footer>();
         while (reader.ReadLine() is { } line)
         {
@@ -51,10 +52,10 @@ public class MessageParser
                 footers = FootersFrom(LinesFrom(reader).Prepend(line));
                 break;
             }
-            bodyParts.Add(line);
+            builder.AppendLine(line);
         }
 
-        return (string.Join(Environment.NewLine, bodyParts).Trim(), footers.ToList());
+        return (builder.ToString().Trim('\n', '\r'), footers.ToList());
     }
 
     private static IEnumerable<string> LinesFrom(TextReader reader)
