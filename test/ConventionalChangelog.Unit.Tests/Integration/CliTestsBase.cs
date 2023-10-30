@@ -5,7 +5,7 @@ namespace ConventionalChangelog.Unit.Tests.Integration;
 
 public abstract class CliTestsBase : GitUsingTestsBase
 {
-    protected string OutputWithInput(string arguments, params (string, string)[] environmentVariables)
+    protected static string OutputWithInput(string arguments, params (string, string)[] environmentVariables)
     {
         using var process = new Process();
 
