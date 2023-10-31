@@ -2,7 +2,7 @@ using LibGit2Sharp;
 
 namespace ConventionalChangelog;
 
-public class RepositoryReader
+internal class RepositoryReader
 {
     private readonly IConfigured _configured;
 

@@ -8,9 +8,9 @@ public class Changelog
     private readonly RepositoryReader _repositoryReader;
     private readonly MessageParser _parser;
 
-    public Changelog(IConfigured configured)
+    public Changelog(Configuration configuration)
     {
-        _configured = configured;
+        _configured = new Configured(configuration);
         _repositoryReader = new RepositoryReader(_configured);
         _parser = new MessageParser(_configured);
     }

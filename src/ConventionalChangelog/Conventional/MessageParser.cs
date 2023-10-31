@@ -7,10 +7,11 @@ public class MessageParser
 {
     private readonly IConfigured _configured;
 
-    public MessageParser(IConfigured configured)
+    public MessageParser(Configuration configuration) : this(new Configured(configuration))
     {
-        _configured = configured;
     }
+
+    internal MessageParser(IConfigured configured) => _configured = configured;
 
     public CommitMessage Parse(string rawMessage)
     {

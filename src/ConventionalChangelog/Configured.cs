@@ -1,71 +1,25 @@
 ﻿using System.Collections.Immutable;
 using ConventionalChangelog.Conventional;
-using static ConventionalChangelog.Conventional.Relevance;
 
 namespace ConventionalChangelog;
 
-internal class DefaultConfiguration
-{
-    // language=regex
-    private const string BreakingChangeTokenPattern = "(?<breaking>(?<token>BREAKING[ -]CHANGE))(: | #)";
-    // language=regex
-    private const string TrailerTokenPattern = @"(?<token>[\w\-]+)(: | #)";
-    // language=regex
-    private const string YouTrackTokenPattern = @"#(?<token>\w+-\d+)";
-
-    private const string CompleteFooterPattern = $"^{BreakingChangeTokenPattern}|{TrailerTokenPattern}|{YouTrackTokenPattern}";
-
-    // language=regex
-    private const string SemanticVersionPattern2 = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
-
-    public string FooterPattern => CompleteFooterPattern;
-
-    // language=regex
-    public string VersionTagPrefix => "[pv]";
-
-    public string SemanticVersionPattern => SemanticVersionPattern2;
-
-    public CommitType[] CommitTypes { get; } =
-    {
-        new("(?<inner>[a-z]+)!", "Breaking Changes", Show),
-        new("feat", "Features", Show),
-        new("fix", "Bug Fixes", Show),
-        new("perf", "Performance Improvements", Show),
-        new("build", "", Hide),
-        new("chore", "", Hide),
-        new("ci", "", Hide),
-        new("docs", "", Hide),
-        new("style", "", Hide),
-        new("refactor", "", Hide),
-        new("test", "", Hide),
-    };
-}
-
-public class Configured : IConfigured, IComparer<string>
+internal class Configured : IConfigured, IComparer<string>
 {
     private const string ConventionalCommitSeparator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
-    public static Configured Default() => With(default);
-    public static Configured With(ChangelogOrder order)
-    {
-        var configuration = new DefaultConfiguration();
-        return new Configured(configuration.CommitTypes, configuration.VersionTagPrefix, order, configuration
-            .FooterPattern, configuration.SemanticVersionPattern);
-    }
-
     private readonly ImmutableArray<CommitType> _commitTypes;
     private readonly string _versionTagPrefix;
-    private readonly ChangelogOrder _order;
+    private readonly ChangelogOrder _changelogOrder;
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
 
-    private Configured(IEnumerable<CommitType> commitTypes, string versionTagPrefix, ChangelogOrder order, string footerPattern, string semanticVersionPattern)
+    public Configured(Configuration configuration)
     {
-        _commitTypes = commitTypes.ToImmutableArray();
-        _versionTagPrefix = versionTagPrefix;
-        _order = order;
-        _footerPattern = footerPattern;
-        _semanticVersionPattern = semanticVersionPattern;
+        _commitTypes = configuration.CommitTypes.ToImmutableArray();
+        _versionTagPrefix = configuration.VersionTagPrefix;
+        _changelogOrder = configuration.ChangelogOrder;
+        _footerPattern = configuration.FooterPattern;
+        _semanticVersionPattern = configuration.SemanticVersionPattern;
     }
 
     public string Separator => ConventionalCommitSeparator;
@@ -92,7 +46,7 @@ public class Configured : IConfigured, IComparer<string>
 
     public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T : IHasCommitType
     {
-        if (_order == ChangelogOrder.OldestToNewest)
+        if (_changelogOrder == ChangelogOrder.OldestToNewest)
             logEntries = logEntries.Reverse();
         return logEntries.OrderBy(x => x.TypeIndicator, this);
     }
