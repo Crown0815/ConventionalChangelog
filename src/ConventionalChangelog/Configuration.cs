@@ -4,12 +4,8 @@ using static ConventionalChangelog.Conventional.Relevance;
 
 namespace ConventionalChangelog;
 
-public class Configuration : IConfiguration, IComparer<string>
+internal class DefaultConfiguration
 {
-    private const string ConventionalCommitSeparator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
-
-    // language=regex
-    private const string BreakingChangeIndicator = "(?<inner>[a-z]+)!";
     // language=regex
     private const string BreakingChangeTokenPattern = "(?<breaking>(?<token>BREAKING[ -]CHANGE))(: | #)";
     // language=regex
@@ -17,16 +13,21 @@ public class Configuration : IConfiguration, IComparer<string>
     // language=regex
     private const string YouTrackTokenPattern = @"#(?<token>\w+-\d+)";
 
-    // language=regex
-    private const string DefaultVersionTagPrefix = "[pv]";
-    // language=regex
-    private const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
+    private const string CompleteFooterPattern = $"^{BreakingChangeTokenPattern}|{TrailerTokenPattern}|{YouTrackTokenPattern}";
 
-    private const string FooterPattern = $"^{BreakingChangeTokenPattern}|{TrailerTokenPattern}|{YouTrackTokenPattern}";
+    // language=regex
+    private const string SemanticVersionPattern2 = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
 
-    private static readonly CommitType[] DefaultCommitTypes =
+    public string FooterPattern => CompleteFooterPattern;
+
+    // language=regex
+    public string VersionTagPrefix => "[pv]";
+
+    public string SemanticVersionPattern => SemanticVersionPattern2;
+
+    public CommitType[] CommitTypes { get; } =
     {
-        new(BreakingChangeIndicator, "Breaking Changes", Show),
+        new("(?<inner>[a-z]+)!", "Breaking Changes", Show),
         new("feat", "Features", Show),
         new("fix", "Bug Fixes", Show),
         new("perf", "Performance Improvements", Show),
@@ -38,27 +39,41 @@ public class Configuration : IConfiguration, IComparer<string>
         new("refactor", "", Hide),
         new("test", "", Hide),
     };
+}
+
+public class Configuration : IConfiguration, IComparer<string>
+{
+    private const string ConventionalCommitSeparator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
     public static Configuration Default() => With(default);
-    public static Configuration With(ChangelogOrder order) => new(DefaultCommitTypes, DefaultVersionTagPrefix, order);
+    public static Configuration With(ChangelogOrder order)
+    {
+        var configuration = new DefaultConfiguration();
+        return new Configuration(configuration.CommitTypes, configuration.VersionTagPrefix, order, configuration
+            .FooterPattern, configuration.SemanticVersionPattern);
+    }
 
     private readonly ImmutableArray<CommitType> _commitTypes;
     private readonly string _versionTagPrefix;
     private readonly ChangelogOrder _order;
+    private readonly string _footerPattern;
+    private readonly string _semanticVersionPattern;
 
-    private Configuration(IEnumerable<CommitType> commitTypes, string versionTagPrefix, ChangelogOrder order)
+    private Configuration(IEnumerable<CommitType> commitTypes, string versionTagPrefix, ChangelogOrder order, string footerPattern, string semanticVersionPattern)
     {
         _commitTypes = commitTypes.ToImmutableArray();
         _versionTagPrefix = versionTagPrefix;
         _order = order;
+        _footerPattern = footerPattern;
+        _semanticVersionPattern = semanticVersionPattern;
     }
 
     public string Separator => ConventionalCommitSeparator;
 
     public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {
-        if (footers.Any(x => x is IPrintable))
-            return typeIndicator.ReplaceWith(BreakingChangeIndicator, "inner");
+        if (footers.OfType<IPrintable>().SingleOrDefault() is {} p)
+            return typeIndicator.ReplaceWith(InnerTypeFor(p.TypeIndicator).Indicator, "inner");
         return typeIndicator;
     }
 
@@ -73,7 +88,7 @@ public class Configuration : IConfiguration, IComparer<string>
     }
 
     public bool IsVersionTag(string tagName) =>
-        tagName.Matches(_versionTagPrefix + SemanticVersionPattern);
+        tagName.Matches(_versionTagPrefix + _semanticVersionPattern);
 
     public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T : IHasCommitType
     {
@@ -88,14 +103,14 @@ public class Configuration : IConfiguration, IComparer<string>
         ? _commitTypes.IndexOf(InnerTypeFor(c))
         : 0;
 
-    public bool IsFooter(string line) => line.StartMatches(FooterPattern);
+    public bool IsFooter(string line) => line.StartMatches(_footerPattern);
 
     public CommitMessage.Footer FooterFrom(string line)
     {
-        var match = line.MatchWith(FooterPattern);
+        var match = line.MatchWith(_footerPattern);
         var token = match.Groups["token"].Value;
         var value = line.Replace(match.Value, "");
-        var isBreaking = match.Groups["breaking"].Value is not "";
+        var isBreaking = match.Groups["breaking"].Success;
         if (isBreaking)
             return new PrintableFooter(token, value, "breaking!");
         return new CommitMessage.Footer(token, value);
