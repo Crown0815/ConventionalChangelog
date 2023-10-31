@@ -2,7 +2,7 @@ using ConventionalChangelog.Conventional;
 
 namespace ConventionalChangelog;
 
-public interface IConfiguration
+public interface IConfigured
 {
     string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers);
     ChangelogType TypeFor(string typeIndicator);

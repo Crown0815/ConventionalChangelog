@@ -41,15 +41,15 @@ internal class DefaultConfiguration
     };
 }
 
-public class Configuration : IConfiguration, IComparer<string>
+public class Configured : IConfigured, IComparer<string>
 {
     private const string ConventionalCommitSeparator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
-    public static Configuration Default() => With(default);
-    public static Configuration With(ChangelogOrder order)
+    public static Configured Default() => With(default);
+    public static Configured With(ChangelogOrder order)
     {
         var configuration = new DefaultConfiguration();
-        return new Configuration(configuration.CommitTypes, configuration.VersionTagPrefix, order, configuration
+        return new Configured(configuration.CommitTypes, configuration.VersionTagPrefix, order, configuration
             .FooterPattern, configuration.SemanticVersionPattern);
     }
 
@@ -59,7 +59,7 @@ public class Configuration : IConfiguration, IComparer<string>
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
 
-    private Configuration(IEnumerable<CommitType> commitTypes, string versionTagPrefix, ChangelogOrder order, string footerPattern, string semanticVersionPattern)
+    private Configured(IEnumerable<CommitType> commitTypes, string versionTagPrefix, ChangelogOrder order, string footerPattern, string semanticVersionPattern)
     {
         _commitTypes = commitTypes.ToImmutableArray();
         _versionTagPrefix = versionTagPrefix;

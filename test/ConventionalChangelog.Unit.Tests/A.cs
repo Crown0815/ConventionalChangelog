@@ -8,7 +8,7 @@ internal static class A
 {
     internal class Changelog
     {
-        private static readonly ConventionalChangelog.Changelog ConventionalChangelog = new(Configuration.Default());
+        private static readonly ConventionalChangelog.Changelog ConventionalChangelog = new(Configured.Default());
 
         public static string From(params Commit[] messages) =>
             ConventionalChangelog.From(messages);

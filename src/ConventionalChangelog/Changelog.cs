@@ -4,15 +4,15 @@ namespace ConventionalChangelog;
 
 public class Changelog
 {
-    private readonly IConfiguration _configuration;
+    private readonly IConfigured _configured;
     private readonly RepositoryReader _repositoryReader;
     private readonly MessageParser _parser;
 
-    public Changelog(IConfiguration configuration)
+    public Changelog(IConfigured configured)
     {
-        _configuration = configuration;
-        _repositoryReader = new RepositoryReader(_configuration);
-        _parser = new MessageParser(_configuration);
+        _configured = configured;
+        _repositoryReader = new RepositoryReader(_configured);
+        _parser = new MessageParser(_configured);
     }
 
     public string FromRepository(string path)
@@ -26,8 +26,8 @@ public class Changelog
             .Reduce()
             .SelectMany(AsPrintable);
 
-        return _configuration.Ordered(logEntries)
-            .Aggregate(new LogAggregate(_configuration), Add)
+        return _configured.Ordered(logEntries)
+            .Aggregate(new LogAggregate(_configured), Add)
             .ToString();
     }
 

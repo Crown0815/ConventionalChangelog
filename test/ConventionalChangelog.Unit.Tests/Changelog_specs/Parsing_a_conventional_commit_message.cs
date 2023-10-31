@@ -9,7 +9,7 @@ namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public class Parsing_a_conventional_commit_message
 {
-    private static readonly MessageParser MessageParser = new(Configuration.Default());
+    private static readonly MessageParser MessageParser = new(Configured.Default());
     private static CommitMessage Parsed(string message) => MessageParser.Parse(message);
 
     // Lb = Linebreak. The abbreviation was chosen to keep string definitions short

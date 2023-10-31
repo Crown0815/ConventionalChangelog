@@ -9,7 +9,7 @@ if (args[0] is "-o" or "--output")
     repositoryPath = args[2];
 }
 
-var changelog = new Changelog(Configuration.Default()).FromRepository(repositoryPath);
+var changelog = new Changelog(Configured.Default()).FromRepository(repositoryPath);
 
 if (output is not null)
 {

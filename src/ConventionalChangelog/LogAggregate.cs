@@ -13,11 +13,11 @@ internal class LogAggregate
 
     private string _text = EmptyChangelog;
     private bool _hasGeneralCodeImprovements;
-    private readonly IConfiguration _configuration;
+    private readonly IConfigured _configured;
 
-    public LogAggregate(IConfiguration configuration)
+    public LogAggregate(IConfigured configured)
     {
-        _configuration = configuration;
+        _configured = configured;
     }
 
     private bool IsEmpty => _text == EmptyChangelog;
@@ -46,7 +46,7 @@ internal class LogAggregate
 
     public LogAggregate Add(string typeIndicator, string description)
     {
-        var type = _configuration.TypeFor(typeIndicator);
+        var type = _configured.TypeFor(typeIndicator);
         switch (type.Relevance)
         {
             case Relevance.Show:
