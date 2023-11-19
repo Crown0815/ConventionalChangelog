@@ -7,12 +7,19 @@ public class Changelog
     private readonly IConfigured _configured;
     private readonly RepositoryReader _repositoryReader;
     private readonly MessageParser _parser;
+    private readonly MessageLinq.Strategy[] _strategies;
 
     public Changelog(Configuration configuration)
     {
         _configured = new Configured(configuration);
         _repositoryReader = new RepositoryReader(_configured);
         _parser = new MessageParser(_configured);
+
+        _strategies = new MessageLinq.Strategy[] {
+            new(configuration.DropSelf, true, true, true),
+            new(configuration.DropBoth, false, false, true),
+            new(configuration.DropOther, false, true, false),
+        };
     }
 
     public string FromRepository(string path)
@@ -23,7 +30,7 @@ public class Changelog
     public string From(IEnumerable<Commit> messages)
     {
         var logEntries = messages.Select(commit => _parser.Parse(commit.Message) with { Hash = commit.Hash })
-            .Reduce()
+            .Reduce(_strategies)
             .SelectMany(AsPrintable);
 
         return _configured.Ordered(logEntries)

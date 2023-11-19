@@ -13,4 +13,8 @@ public class Configuration
     public IEnumerable<CommitType> CommitTypes => DefaultConfiguration.CommitTypes;
 
     public ChangelogOrder ChangelogOrder { get; init; } = DefaultConfiguration.ChangelogOrder;
+
+    public string DropSelf => "fix(es|up)|enhances";
+    public string DropBoth => "reverts?";
+    public string DropOther => "overrides?";
 }
