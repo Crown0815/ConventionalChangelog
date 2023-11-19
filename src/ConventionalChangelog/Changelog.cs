@@ -7,14 +7,14 @@ public class Changelog
     private readonly IConfigured _configured;
     private readonly RepositoryReader _repositoryReader;
     private readonly MessageParser _parser;
-    private readonly MessageLinq _messageLinq;
+    private readonly RelationshipResolver _relationshipResolver;
 
     public Changelog(Configuration configuration)
     {
         _configured = new Configured(configuration);
         _repositoryReader = new RepositoryReader(_configured);
         _parser = new MessageParser(_configured);
-        _messageLinq = new MessageLinq(configuration);
+        _relationshipResolver = new RelationshipResolver(configuration);
     }
 
     public string FromRepository(string path)
@@ -25,7 +25,7 @@ public class Changelog
     public string From(IEnumerable<Commit> commits)
     {
         var commitMessages = commits.Select(_parser.Parse);
-        var logMessages = _messageLinq.Reduce(commitMessages).SelectMany(AsPrintable);
+        var logMessages = _relationshipResolver.ResolveRelationshipsBetween(commitMessages).SelectMany(AsPrintable);
         var logAggregate = _configured.Ordered(logMessages).Aggregate(new LogAggregate(_configured), Add);
         return logAggregate.ToString();
     }

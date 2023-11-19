@@ -2,47 +2,47 @@
 
 namespace ConventionalChangelog;
 
-internal class MessageLinq
+internal class RelationshipResolver
 {
-    private readonly record struct Strategy(string Token, bool Add, bool Register, bool Remove);
+    private readonly record struct Relationship(string Token, bool Add, bool Register, bool Remove);
 
-    private readonly IEnumerable<Strategy> _strategies;
+    private readonly IEnumerable<Relationship> _relationships;
 
-    public MessageLinq(Configuration configuration)
+    public RelationshipResolver(Configuration configuration)
     {
-        _strategies = new Strategy[] {
+        _relationships = new Relationship[] {
             new(configuration.DropSelf, true, true, true),
             new(configuration.DropBoth, false, false, true),
             new(configuration.DropOther, false, true, false),
         };
     }
 
-    public IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages)
+    public IEnumerable<CommitMessage> ResolveRelationshipsBetween(IEnumerable<CommitMessage> messages)
     {
-        return _strategies.Aggregate(messages, Reduce);
+        return _relationships.Aggregate(messages, Reduce);
     }
 
-    private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Strategy strategy)
+    private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Relationship relationship)
     {
-        return messages.Aggregate(new Reducer(strategy), (c, m) => c.Add(m)).Messages;
+        return messages.Aggregate(new Resolver(relationship), (c, m) => c.Add(m)).Messages;
     }
 
 
-    private class Reducer
+    private class Resolver
     {
-        private readonly Strategy _strategy;
+        private readonly Relationship _relationship;
         private readonly List<CommitMessage> _messages = new();
         private readonly Dictionary<string, List<CommitMessage>> _references = new();
 
-        public Reducer(Strategy strategy) => _strategy = strategy;
+        public Resolver(Relationship relationship) => _relationship = relationship;
 
-        public Reducer Add(CommitMessage message)
+        public Resolver Add(CommitMessage message)
         {
             var found = _references.TryGetValue(message.Hash, out var referenced);
 
-            if (!found || _strategy.Add) _messages.Add(message);
-            if (!found || _strategy.Register) CacheReferences(message);
-            if (found && _strategy.Remove) _messages.RemoveAll(referenced!.Contains);
+            if (!found || _relationship.Add) _messages.Add(message);
+            if (!found || _relationship.Register) CacheReferences(message);
+            if (found && _relationship.Remove) _messages.RemoveAll(referenced!.Contains);
             return this;
         }
 
@@ -53,7 +53,7 @@ internal class MessageLinq
         }
 
         private IEnumerable<string> ReferencesFrom(CommitMessage commitMessage) =>
-            commitMessage.Footers.Where(_strategy.Token.Matches).Select(Target);
+            commitMessage.Footers.Where(_relationship.Token.Matches).Select(Target);
 
         private static string Target(CommitMessage.Footer f) => f.Value;
 
