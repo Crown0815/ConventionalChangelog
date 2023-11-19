@@ -4,7 +4,7 @@ using static System.Environment;
 
 namespace ConventionalChangelog;
 
-internal class LogAggregate
+internal class LogWriter
 {
     private const string BulletPoint = "- ";
     private const string ChangelogTitle = "# Changelog";
@@ -19,12 +19,12 @@ internal class LogAggregate
     private string? _currentGroup;
     private bool _isEmpty = true;
 
-    public LogAggregate(IConfigured configured)
+    public LogWriter(IConfigured configured)
     {
         _configured = configured;
     }
 
-    public LogAggregate Add(string typeIndicator, string description)
+    public LogWriter Add(string typeIndicator, string description)
     {
         var type = _configured.TypeFor(typeIndicator);
         if (type.Relevance == Relevance.Show) AddBullet(type.GroupHeader, description);

@@ -26,7 +26,7 @@ public class Changelog
     {
         var commitMessages = commits.Select(_parser.Parse);
         var logMessages = _relationshipResolver.ResolveRelationshipsBetween(commitMessages).SelectMany(AsPrintable);
-        var logAggregate = _configured.Ordered(logMessages).Aggregate(new LogAggregate(_configured), Add);
+        var logAggregate = _configured.Ordered(logMessages).Aggregate(new LogWriter(_configured), Add);
         return logAggregate.ToString();
     }
 
@@ -35,7 +35,7 @@ public class Changelog
         return message.Footers.OfType<IPrintable>().Prepend(message);
     }
 
-    private static LogAggregate Add(LogAggregate a, IPrintable p)
+    private static LogWriter Add(LogWriter a, IPrintable p)
     {
         return a.Add(p.TypeIndicator, p.Description);
     }
