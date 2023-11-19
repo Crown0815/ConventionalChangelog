@@ -20,7 +20,14 @@ internal class LogAggregate
         _configured = configured;
     }
 
-    private bool IsEmpty => _text == EmptyChangelog;
+    public LogAggregate Add(string typeIndicator, string description)
+    {
+        var type = _configured.TypeFor(typeIndicator);
+        if (type.Relevance == Relevance.Show) AddBullet(type.GroupHeader, description);
+        if (type.Relevance == Relevance.Hide) AddHidden();
+
+        return this;
+    }
 
     private void AddBullet(string header, string text)
     {
@@ -35,6 +42,8 @@ internal class LogAggregate
 
     private static string ChangeGroupHeader(string header) => GroupHeaderPrefix + header;
 
+    private void AddHidden() => _hasGeneralCodeImprovements = true;
+
     public override string ToString()
     {
         if (IsEmpty && _hasGeneralCodeImprovements)
@@ -42,14 +51,5 @@ internal class LogAggregate
         return _text;
     }
 
-    private void AddHidden() => _hasGeneralCodeImprovements = true;
-
-    public LogAggregate Add(string typeIndicator, string description)
-    {
-        var type = _configured.TypeFor(typeIndicator);
-        if (type.Relevance == Relevance.Show) AddBullet(type.GroupHeader, description);
-        if (type.Relevance == Relevance.Hide) AddHidden();
-
-        return this;
-    }
+    private bool IsEmpty => _text == EmptyChangelog;
 }
