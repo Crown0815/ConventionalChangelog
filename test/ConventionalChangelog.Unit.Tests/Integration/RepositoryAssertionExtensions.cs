@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 using LibGit2Sharp;
@@ -13,10 +14,10 @@ internal static class RepositoryAssertionExtensions
     public class RepositoryChangelogAssertions : ReferenceTypeAssertions<Repository, RepositoryChangelogAssertions>
     {
 #if NET6_0
-        private const string ExpectedMatchingChangelogButDifferentWasFound = "Expected {context:directory} to have changelog {0}, but found {1}.";
+        private const string ExpectedMatchingChangelogButDifferentWasFound = "Expected {context:repo} to have changelog {0}, but found {1}.";
 #elif NET7_0_OR_GREATER
         private const string ExpectedMatchingChangelogButDifferentWasFound = """
-                    Expected {context:directory} to have changelog {0}, but found {1}.
+                    Expected {context:repo} to have changelog {0}, but found {1}.
 
                     GitGraph:
                     {2}
@@ -27,7 +28,8 @@ internal static class RepositoryAssertionExtensions
         {
         }
 
-        protected override string Identifier => nameof(Repository);
+        [ExcludeFromCodeCoverage]
+        protected override string Identifier => "repo";
 
         public void HaveChangelogMatching(string changelog, ChangelogOrder order = default)
         {
