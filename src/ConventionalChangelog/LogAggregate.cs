@@ -47,17 +47,9 @@ internal class LogAggregate
     public LogAggregate Add(string typeIndicator, string description)
     {
         var type = _configured.TypeFor(typeIndicator);
-        switch (type.Relevance)
-        {
-            case Relevance.Show:
-                AddBullet(type.GroupHeader, description);
-                return this;
-            case Relevance.Hide:
-                AddHidden();
-                return this;
-            case Relevance.Ignore:
-            default:
-                return this;
-        }
+        if (type.Relevance == Relevance.Show) AddBullet(type.GroupHeader, description);
+        if (type.Relevance == Relevance.Hide) AddHidden();
+
+        return this;
     }
 }
