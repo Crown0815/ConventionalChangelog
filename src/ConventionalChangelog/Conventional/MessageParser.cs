@@ -13,6 +13,11 @@ public class MessageParser
 
     internal MessageParser(IConfigured configured) => _configured = configured;
 
+    public CommitMessage Parse(Commit commit)
+    {
+        return Parse(commit.Message) with { Hash = commit.Hash };
+    }
+
     public CommitMessage Parse(string rawMessage)
     {
         using var lines = new StringReader(rawMessage);

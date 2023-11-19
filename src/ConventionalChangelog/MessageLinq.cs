@@ -2,14 +2,27 @@
 
 namespace ConventionalChangelog;
 
-internal static class MessageLinq
+internal class MessageLinq
 {
-    public readonly record struct Strategy(string Token, bool Add, bool Register, bool Remove);
+    private readonly record struct Strategy(string Token, bool Add, bool Register, bool Remove);
 
-    public static IEnumerable<CommitMessage> Reduce(this IEnumerable<CommitMessage> messages, IEnumerable<Strategy> strategies) =>
-        strategies
+    private readonly IEnumerable<Strategy> _strategies;
+
+    public MessageLinq(Configuration configuration)
+    {
+        _strategies = new Strategy[] {
+            new(configuration.DropSelf, true, true, true),
+            new(configuration.DropBoth, false, false, true),
+            new(configuration.DropOther, false, true, false),
+        };
+    }
+
+    public IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages)
+    {
+        return _strategies
             .Select(s => new Reducer(s))
             .Aggregate(messages, Reduce);
+    }
 
     private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Reducer reducer) =>
         messages.Aggregate(reducer, (c, m) => c.Add(m)).Messages;
