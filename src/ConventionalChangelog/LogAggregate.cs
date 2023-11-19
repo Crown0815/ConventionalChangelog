@@ -1,4 +1,6 @@
+using System.Text;
 using ConventionalChangelog.Conventional;
+using static System.Environment;
 
 namespace ConventionalChangelog;
 
@@ -9,11 +11,13 @@ internal class LogAggregate
     private const string GeneralCodeImprovementsMessage = "*General Code Improvements*";
     private const string GroupHeaderPrefix = "## ";
 
-    private static readonly string EmptyChangelog = ChangelogTitle + Environment.NewLine;
+    private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
-    private string _text = EmptyChangelog;
+    private readonly StringBuilder _changelog = new(EmptyChangelog);
     private bool _hasGeneralCodeImprovements;
     private readonly IConfigured _configured;
+    private string? _currentGroup;
+    private bool _isEmpty = true;
 
     public LogAggregate(IConfigured configured)
     {
@@ -31,25 +35,31 @@ internal class LogAggregate
 
     private void AddBullet(string header, string text)
     {
-        if (!_text.Contains(header))
-        {
-            _text += Environment.NewLine;
-            _text += ChangeGroupHeader(header) + Environment.NewLine + Environment.NewLine;
-        }
-
-        _text += BulletPoint + text + Environment.NewLine;
+        _isEmpty = false;
+        if (_currentGroup != header)
+            StartNewGroup(header);
+        _changelog.AppendLine($"{BulletPoint}{text}");
     }
 
-    private static string ChangeGroupHeader(string header) => GroupHeaderPrefix + header;
+    private void StartNewGroup(string header)
+    {
+        _currentGroup = header;
+        _changelog.AppendFormat(null, "{0}{1}{2}{0}{0}", NewLine, GroupHeaderPrefix, header);
+    }
 
     private void AddHidden() => _hasGeneralCodeImprovements = true;
 
     public override string ToString()
     {
-        if (IsEmpty && _hasGeneralCodeImprovements)
-            return _text + Environment.NewLine + GeneralCodeImprovementsMessage;
-        return _text;
+        if (_isEmpty && _hasGeneralCodeImprovements)
+            return GeneralCodeImprovements().ToString();
+        return _changelog.ToString();
     }
 
-    private bool IsEmpty => _text == EmptyChangelog;
+    private StringBuilder GeneralCodeImprovements()
+    {
+        _changelog.AppendLine();
+        _changelog.Append(GeneralCodeImprovementsMessage);
+        return _changelog;
+    }
 }
