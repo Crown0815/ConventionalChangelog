@@ -19,13 +19,13 @@ internal class MessageLinq
 
     public IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages)
     {
-        return _strategies
-            .Select(s => new Reducer(s))
-            .Aggregate(messages, Reduce);
+        return _strategies.Aggregate(messages, Reduce);
     }
 
-    private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Reducer reducer) =>
-        messages.Aggregate(reducer, (c, m) => c.Add(m)).Messages;
+    private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Strategy strategy)
+    {
+        return messages.Aggregate(new Reducer(strategy), (c, m) => c.Add(m)).Messages;
+    }
 
 
     private class Reducer
@@ -38,22 +38,22 @@ internal class MessageLinq
 
         public Reducer Add(CommitMessage message)
         {
-            var found = _references.TryGetValue(message.Hash, out var ms);
+            var found = _references.TryGetValue(message.Hash, out var referenced);
 
             if (!found || _strategy.Add) _messages.Add(message);
             if (!found || _strategy.Register) CacheReferences(message);
-            if (found && _strategy.Remove) _messages.RemoveAll(ms!.Contains);
+            if (found && _strategy.Remove) _messages.RemoveAll(referenced!.Contains);
             return this;
         }
 
         private void CacheReferences(CommitMessage source)
         {
-            foreach (var target in TargetsFrom(source.Footers))
+            foreach (var target in ReferencesFrom(source))
                 CacheReference(source, target);
         }
 
-        private IEnumerable<string> TargetsFrom(IEnumerable<CommitMessage.Footer> footers) =>
-            footers.Where(_strategy.Token.Matches).Select(Target);
+        private IEnumerable<string> ReferencesFrom(CommitMessage commitMessage) =>
+            commitMessage.Footers.Where(_strategy.Token.Matches).Select(Target);
 
         private static string Target(CommitMessage.Footer f) => f.Value;
 
