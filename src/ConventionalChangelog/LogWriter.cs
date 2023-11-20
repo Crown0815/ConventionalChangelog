@@ -24,13 +24,18 @@ internal class LogWriter
         _configured = configured;
     }
 
-    public LogWriter Add(string typeIndicator, string description)
+    public string Write(IEnumerable<IPrintable> writable)
     {
-        var type = _configured.TypeFor(typeIndicator);
-        if (type.Relevance == Relevance.Show) AddBullet(type.GroupHeader, description);
-        if (type.Relevance == Relevance.Hide) AddHidden();
+        foreach (var printable in _configured.Ordered(writable))
+            Add(printable);
+        return Write();
+    }
 
-        return this;
+    private void Add(IPrintable printable)
+    {
+        var type = _configured.TypeFor(printable.TypeIndicator);
+        if (type.Relevance == Relevance.Show) AddBullet(type.GroupHeader, printable.Description);
+        if (type.Relevance == Relevance.Hide) AddHidden();
     }
 
     private void AddBullet(string header, string text)
@@ -49,7 +54,7 @@ internal class LogWriter
 
     private void AddHidden() => _hasGeneralCodeImprovements = true;
 
-    public override string ToString()
+    private string Write()
     {
         if (_isEmpty && _hasGeneralCodeImprovements)
             return GeneralCodeImprovements().ToString();
