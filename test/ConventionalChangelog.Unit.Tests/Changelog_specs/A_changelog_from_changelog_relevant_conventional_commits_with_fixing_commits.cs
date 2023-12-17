@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Xunit;
-using Base = ConventionalChangelog.Unit.Tests.Changelog_specs.A_changelog_from_changelog_relevant_conventional_commits;
 
 namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
