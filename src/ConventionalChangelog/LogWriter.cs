@@ -13,58 +13,76 @@ internal class LogWriter
 
     private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
-    private readonly StringBuilder _changelog = new(EmptyChangelog);
-    private bool _hasGeneralCodeImprovements;
     private readonly IConfigured _configured;
-    private string? _currentGroup;
-    private bool _isEmpty = true;
+
 
     public LogWriter(IConfigured configured)
     {
         _configured = configured;
     }
 
-    public string Write(IEnumerable<IPrintable> writable)
+    public string Print(IEnumerable<IPrintable> writable)
     {
+        var writtenLog = new WrittenLog(EmptyChangelog);
         foreach (var printable in _configured.Ordered(writable))
-            Add(printable);
-        return Write();
+            writtenLog.Add(printable, _configured.TypeFor(printable.TypeIndicator));
+        return writtenLog.Print();
     }
 
-    private void Add(IPrintable printable)
+    private class WrittenLog
     {
-        var type = _configured.TypeFor(printable.TypeIndicator);
-        if (type.Relevance == Relevance.Show) AddBullet(type.GroupHeader, printable.Description);
-        if (type.Relevance == Relevance.Hide) AddHidden();
-    }
+        private readonly StringBuilder _changelog;
 
-    private void AddBullet(string header, string text)
-    {
-        _isEmpty = false;
-        if (_currentGroup != header)
-            StartNewGroup(header);
-        _changelog.AppendLine($"{BulletPoint}{text}");
-    }
+        private string? _currentSection;
+        private bool _hasGeneralCodeImprovements;
+        private bool _isEmpty = true;
 
-    private void StartNewGroup(string header)
-    {
-        _currentGroup = header;
-        _changelog.AppendFormat(null, "{0}{1}{2}{0}{0}", NewLine, GroupHeaderPrefix, header);
-    }
+        public WrittenLog(string emptyChangelog)
+        {
+            _changelog = new StringBuilder(emptyChangelog);
+        }
 
-    private void AddHidden() => _hasGeneralCodeImprovements = true;
+        public void Add(IPrintable printable, ChangelogType type)
+        {
+            if (type.Relevance == Relevance.Show)
+                AddBullet(type.GroupHeader, printable.Description);
+            if (type.Relevance == Relevance.Hide)
+                AddGeneralCodeImprovement();
+        }
 
-    private string Write()
-    {
-        if (_isEmpty && _hasGeneralCodeImprovements)
-            return GeneralCodeImprovements().ToString();
-        return _changelog.ToString();
-    }
+        private void AddBullet(string header, string text)
+        {
+            if (_currentSection != header)
+                StartNewSection(header);
+            AddBullet(text);
+        }
 
-    private StringBuilder GeneralCodeImprovements()
-    {
-        _changelog.AppendLine();
-        _changelog.Append(GeneralCodeImprovementsMessage);
-        return _changelog;
+        private void StartNewSection(string header)
+        {
+            _currentSection = header;
+            _changelog.AppendFormat(null, "{0}{1}{2}{0}{0}", NewLine, GroupHeaderPrefix, header);
+        }
+
+        private void AddBullet(string text)
+        {
+            _isEmpty = false;
+            _changelog.AppendLine($"{BulletPoint}{text}");
+        }
+
+        private void AddGeneralCodeImprovement() => _hasGeneralCodeImprovements = true;
+
+        public string Print()
+        {
+            if (_isEmpty && _hasGeneralCodeImprovements)
+                return GeneralCodeImprovements().ToString();
+            return _changelog.ToString();
+        }
+
+        private StringBuilder GeneralCodeImprovements()
+        {
+            _changelog.AppendLine();
+            _changelog.Append(GeneralCodeImprovementsMessage);
+            return _changelog;
+        }
     }
 }
