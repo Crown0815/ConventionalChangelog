@@ -13,19 +13,19 @@ internal class LogWriter
 
     private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
-    private readonly IConfigured _configured;
+    private readonly ICustomization _customization;
 
 
-    public LogWriter(IConfigured configured)
+    public LogWriter(ICustomization customization)
     {
-        _configured = configured;
+        _customization = customization;
     }
 
     public string Print(IEnumerable<IPrintable> writable)
     {
         var writtenLog = new WrittenLog(EmptyChangelog);
-        foreach (var printable in _configured.Ordered(writable))
-            writtenLog.Add(printable, _configured.TypeFor(printable.TypeIndicator));
+        foreach (var printable in _customization.Ordered(writable))
+            writtenLog.Add(printable, _customization.TypeFor(printable.TypeIndicator));
         return writtenLog.Print();
     }
 

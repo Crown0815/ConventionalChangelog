@@ -2,47 +2,53 @@
 
 namespace ConventionalChangelog;
 
+internal record Relationship(string Token, bool DropSelf, bool DropOther);
+
 internal class RelationshipResolver
 {
-    private readonly record struct Relationship(string Token, bool Add, bool Register, bool Remove);
+    private readonly record struct Rule(string Token, bool Add, bool Register, bool Remove);
 
-    private readonly IEnumerable<Relationship> _relationships;
+    private readonly IEnumerable<Rule> _rules;
 
-    public RelationshipResolver(Configuration configuration)
+    public RelationshipResolver(ICustomization customization)
     {
-        _relationships = new Relationship[] {
-            new(configuration.DropSelf, true, true, true),
-            new(configuration.DropBoth, false, false, true),
-            new(configuration.DropOther, false, true, false),
-        };
+        _rules = customization.Relationships.Select(AsRule);
     }
+
+    private static Rule AsRule(Relationship relationship) => new
+    (
+        relationship.Token,
+        relationship is { DropOther: false },
+        relationship.DropSelf != relationship.DropOther,
+        relationship is { DropSelf: true}
+    );
 
     public IEnumerable<CommitMessage> ResolveRelationshipsBetween(IEnumerable<CommitMessage> messages)
     {
-        return _relationships.Aggregate(messages, Reduce);
+        return _rules.Aggregate(messages, Reduce);
     }
 
-    private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Relationship relationship)
+    private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Rule rule)
     {
-        return messages.Aggregate(new Resolver(relationship), (c, m) => c.Add(m)).Messages;
+        return messages.Aggregate(new Resolver(rule), (c, m) => c.Add(m)).Messages;
     }
 
 
     private class Resolver
     {
-        private readonly Relationship _relationship;
+        private readonly Rule _rule;
         private readonly List<CommitMessage> _messages = new();
         private readonly Dictionary<string, List<CommitMessage>> _references = new();
 
-        public Resolver(Relationship relationship) => _relationship = relationship;
+        public Resolver(Rule rule) => _rule = rule;
 
         public Resolver Add(CommitMessage message)
         {
             var found = _references.TryGetValue(message.Hash, out var referenced);
 
-            if (!found || _relationship.Add) _messages.Add(message);
-            if (!found || _relationship.Register) CacheReferences(message);
-            if (found && _relationship.Remove) _messages.RemoveAll(referenced!.Contains);
+            if (!found || _rule.Add) _messages.Add(message);
+            if (!found || _rule.Register) CacheReferences(message);
+            if (found && _rule.Remove) _messages.RemoveAll(referenced!.Contains);
             return this;
         }
 
@@ -53,7 +59,7 @@ internal class RelationshipResolver
         }
 
         private IEnumerable<string> ReferencesFrom(CommitMessage commitMessage) =>
-            commitMessage.Footers.Where(_relationship.Token.Matches).Select(Target);
+            commitMessage.Footers.Where(_rule.Token.Matches).Select(Target);
 
         private static string Target(CommitMessage.Footer f) => f.Value;
 

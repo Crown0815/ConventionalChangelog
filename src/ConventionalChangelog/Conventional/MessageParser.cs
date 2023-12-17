@@ -5,13 +5,13 @@ namespace ConventionalChangelog.Conventional;
 
 public class MessageParser
 {
-    private readonly IConfigured _configured;
+    private readonly ICustomization _customization;
 
-    public MessageParser(Configuration configuration) : this(new Configured(configuration))
+    public MessageParser(Configuration configuration) : this(new Customization(configuration))
     {
     }
 
-    internal MessageParser(IConfigured configured) => _configured = configured;
+    internal MessageParser(ICustomization customization) => _customization = customization;
 
     public CommitMessage Parse(Commit commit)
     {
@@ -28,7 +28,7 @@ public class MessageParser
     {
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine());
         var (body, footers) = BodyFrom(lines);
-        typeIndicator = _configured.Sanitize(typeIndicator, footers);
+        typeIndicator = _customization.Sanitize(typeIndicator, footers);
 
         return new CommitMessage(typeIndicator, description, body, footers);
     }
@@ -36,14 +36,14 @@ public class MessageParser
 #if NET6_0
     private (string, string) HeaderFrom(string? header)
     {
-        var twoParts = header?.Split(_configured.Separator);
+        var twoParts = header?.Split(_customization.Separator);
         return twoParts?.Length == 2
             ? (twoParts.First(), twoParts.Last().Trim())
             : ("", "");
     }
 #elif NET7_0_OR_GREATER
     private (string, string) HeaderFrom(string? header) =>
-        header?.Split(_configured.Separator) is [var first, var second]
+        header?.Split(_customization.Separator) is [var first, var second]
             ? (first,second.Trim())
             : ("", "");
 #endif
@@ -54,7 +54,7 @@ public class MessageParser
         var footers = Enumerable.Empty<Footer>();
         while (reader.ReadLine() is { } line)
         {
-            if (_configured.IsFooter(line))
+            if (_customization.IsFooter(line))
             {
                 footers = FootersFrom(LinesFrom(reader).Prepend(line));
                 break;
@@ -76,7 +76,7 @@ public class MessageParser
         Footer? buffer = null;
         foreach (var line in lines)
         {
-            if (buffer is not null && _configured.IsFooter(line))
+            if (buffer is not null && _customization.IsFooter(line))
             {
                 yield return buffer with {Value = buffer.Value.Trim()};
                 buffer = null;
@@ -84,7 +84,7 @@ public class MessageParser
             if (buffer is not null)
                 buffer = buffer with { Value = buffer.Value + Environment.NewLine + line};
             else
-                buffer = _configured.FooterFrom(line);
+                buffer = _customization.FooterFrom(line);
         }
 
         if (buffer is not null)

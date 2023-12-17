@@ -11,11 +11,11 @@ public class Changelog
 
     public Changelog(Configuration configuration)
     {
-        IConfigured configured = new Configured(configuration);
-        _relationshipResolver = new RelationshipResolver(configuration);
-        _repositoryReader = new RepositoryReader(configured);
-        _parser = new MessageParser(configured);
-        _logWriter = new LogWriter(configured);
+        ICustomization customization = new Customization(configuration);
+        _repositoryReader = new RepositoryReader(customization);
+        _parser = new MessageParser(customization);
+        _relationshipResolver = new RelationshipResolver(customization);
+        _logWriter = new LogWriter(customization);
     }
 
     public string FromRepository(string path)

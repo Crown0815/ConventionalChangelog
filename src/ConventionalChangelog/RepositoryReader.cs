@@ -4,11 +4,11 @@ namespace ConventionalChangelog;
 
 internal class RepositoryReader
 {
-    private readonly IConfigured _configured;
+    private readonly ICustomization _customization;
 
-    public RepositoryReader(IConfigured configured)
+    public RepositoryReader(ICustomization customization)
     {
-        _configured = configured;
+        _customization = customization;
     }
 
     public IEnumerable<Commit> CommitsFrom(string path)
@@ -25,7 +25,7 @@ internal class RepositoryReader
     private object? NewestVersionCommitIn(IRepository repository)
     {
         var versionCommits = repository.Tags
-            .Where(tag => _configured.IsVersionTag(tag.FriendlyName))
+            .Where(tag => _customization.IsVersionTag(tag.FriendlyName))
             .Select(x => x.Target)
             .ToHashSet();
 

@@ -3,7 +3,7 @@ using ConventionalChangelog.Conventional;
 
 namespace ConventionalChangelog;
 
-internal class Configured : IConfigured, IComparer<string>
+internal class Customization : ICustomization, IComparer<string>
 {
     private const string ConventionalCommitSeparator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
 
@@ -13,16 +13,23 @@ internal class Configured : IConfigured, IComparer<string>
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
 
-    public Configured(Configuration configuration)
+    public Customization(Configuration configuration)
     {
         _commitTypes = configuration.CommitTypes.ToImmutableArray();
         _versionTagPrefix = configuration.VersionTagPrefix;
         _changelogOrder = configuration.ChangelogOrder;
         _footerPattern = configuration.FooterPattern;
         _semanticVersionPattern = configuration.SemanticVersionPattern;
+        Relationships = new Relationship[]
+        {
+            new(configuration.DropSelf, true, false),
+            new(configuration.DropOther, false, true),
+            new(configuration.DropBoth, true, true),
+        };
     }
 
     public string Separator => ConventionalCommitSeparator;
+    public IReadOnlyCollection<Relationship> Relationships { get; }
 
     public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {

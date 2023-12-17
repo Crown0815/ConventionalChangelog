@@ -2,7 +2,7 @@ using ConventionalChangelog.Conventional;
 
 namespace ConventionalChangelog;
 
-public interface IConfigured
+internal interface ICustomization
 {
     string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers);
     ChangelogType TypeFor(string typeIndicator);
@@ -15,4 +15,5 @@ public interface IConfigured
     bool IsVersionTag(string tagName);
 
     string Separator { get; }
+    IReadOnlyCollection<Relationship> Relationships { get; }
 }
