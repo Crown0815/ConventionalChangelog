@@ -6,41 +6,40 @@ internal record Relationship(string Token, bool DropSelf, bool DropOther);
 
 internal class RelationshipResolver
 {
-    private readonly record struct Rule(string Token, bool Add, bool Register, bool Remove);
-
-    private readonly IEnumerable<Rule> _rules;
+    private readonly ICustomization _customization;
 
     public RelationshipResolver(ICustomization customization)
     {
-        _rules = customization.Relationships.Select(AsRule);
+        _customization = customization;
     }
-
-    private static Rule AsRule(Relationship relationship) => new
-    (
-        relationship.Token,
-        relationship is { DropOther: false },
-        relationship.DropSelf != relationship.DropOther,
-        relationship is { DropSelf: true}
-    );
 
     public IEnumerable<CommitMessage> ResolveRelationshipsBetween(IEnumerable<CommitMessage> messages)
     {
-        return _rules.Aggregate(messages, Reduce);
+        return _customization.Relationships.Aggregate(messages, Reduce);
     }
 
-    private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Rule rule)
+    private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Relationship relationship)
     {
-        return messages.Aggregate(new Resolver(rule), (c, m) => c.Add(m)).Messages;
+        return messages.Aggregate(new Resolver(relationship), (c, m) => c.Add(m)).Messages;
     }
-
 
     private class Resolver
     {
+        private readonly record struct Rule(string Token, bool Add, bool Register, bool Remove);
+
         private readonly Rule _rule;
         private readonly List<CommitMessage> _messages = new();
         private readonly Dictionary<string, List<CommitMessage>> _references = new();
 
-        public Resolver(Rule rule) => _rule = rule;
+        public Resolver(Relationship relationship) => _rule = AsRule(relationship);
+
+        private static Rule AsRule(Relationship relationship) => new
+        (
+            relationship.Token,
+            relationship is { DropOther: false },
+            relationship.DropSelf != relationship.DropOther,
+            relationship is { DropSelf: true}
+        );
 
         public Resolver Add(CommitMessage message)
         {
