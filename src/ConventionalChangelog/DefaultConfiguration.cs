@@ -16,6 +16,12 @@ internal static class DefaultConfiguration
     public const string VersionTagPrefix = "[pv]";
     // language=regex
     public const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
+    // language=regex
+    public const string DropSelf = "fix(es|up)|enhances";
+    // language=regex
+    public const string DropBoth = "reverts?";
+    // language=regex
+    public const string DropOther = "overrides?";
 
     public const ChangelogOrder ChangelogOrder = default;
 

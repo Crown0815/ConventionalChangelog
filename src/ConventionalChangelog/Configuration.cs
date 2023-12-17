@@ -14,7 +14,7 @@ public class Configuration
 
     public ChangelogOrder ChangelogOrder { get; init; } = DefaultConfiguration.ChangelogOrder;
 
-    public string DropSelf => "fix(es|up)|enhances";
-    public string DropBoth => "reverts?";
-    public string DropOther => "overrides?";
+    public string DropSelf => DefaultConfiguration.DropSelf;
+    public string DropBoth => DefaultConfiguration.DropBoth;
+    public string DropOther => DefaultConfiguration.DropOther;
 }
