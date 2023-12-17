@@ -42,9 +42,10 @@ public class MessageParser
             : ("", "");
     }
 #elif NET7_0_OR_GREATER
-    private (string, string) HeaderFrom(string? header) => header?.Split(_configured.Separator) is [var first, var second]
-        ? (first,second.Trim())
-        : ("", "");
+    private (string, string) HeaderFrom(string? header) =>
+        header?.Split(_configured.Separator) is [var first, var second]
+            ? (first,second.Trim())
+            : ("", "");
 #endif
 
     private (string, IReadOnlyCollection<Footer>) BodyFrom(TextReader reader)
