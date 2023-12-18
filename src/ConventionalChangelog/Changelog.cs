@@ -20,21 +20,8 @@ public class Changelog
 
     public string FromRepository(string path)
     {
-        var rawCommits = _repositoryReader.CommitsFrom(path);
-        var correctedCommits = ApplyCorrectionsTo(rawCommits, path);
-        return From(correctedCommits);
-    }
-
-    private static IEnumerable<Commit> ApplyCorrectionsTo(IEnumerable<Commit> commits, string path)
-    {
-        foreach (var commit in commits)
-        {
-            var overwrite = Path.Combine(path, ".conventional-changelog", commit.Hash);
-            if (File.Exists(overwrite))
-                yield return new Commit(File.ReadAllText(overwrite), commit.Hash);
-            else
-                yield return commit;
-        }
+        var commits = _repositoryReader.CommitsFrom(path);
+        return From(commits);
     }
 
     public string From(IEnumerable<Commit> commits)

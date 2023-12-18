@@ -18,7 +18,7 @@ internal class RepositoryReader
 
         return repository.Commits
             .QueryBy(AllSince(newestVersionTag))
-            .Select(AsCommit)
+            .Select(c => AsCommit(c, path))
             .ToArray();
     }
 
@@ -47,5 +47,17 @@ internal class RepositoryReader
         ExcludeReachableFrom = anchor,
     };
 
-    private static Commit AsCommit(LibGit2Sharp.Commit c) => new(c.Message, c.Sha);
+    private static Commit AsCommit(LibGit2Sharp.Commit commit, string path)
+    {
+        var message = MessageFor(commit, path);
+        return new Commit(message, commit.Sha);
+    }
+
+    private static string MessageFor(LibGit2Sharp.Commit c, string path)
+    {
+        var overwrite = Path.Combine(path, ".conventional-changelog", c.Sha);
+        if (File.Exists(overwrite))
+            return File.ReadAllText(overwrite);
+        return c.Message;
+    }
 }
