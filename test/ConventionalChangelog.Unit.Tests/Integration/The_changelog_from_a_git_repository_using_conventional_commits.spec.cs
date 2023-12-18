@@ -1,4 +1,6 @@
-﻿using LibGit2Sharp;
+﻿using System.IO;
+using FluentAssertions;
+using LibGit2Sharp;
 using Xunit;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
@@ -156,5 +158,21 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         Repository.Merge(develop);
 
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 4, 3));
+    }
+
+    [Fact]
+    public void when_the_repository_contains_a_file_overwriting_a_commit_message_the_overwriting_message_is_printed()
+    {
+        Repository.Commit(Irrelevant, "Initial Commit");
+        var commit = Repository.Commit(Feature, 1);
+        Repository.Path().Should().NotEndWith(".git/");
+        var directory = Path.Combine(Repository.Path(), ".conventional-changelog");
+        var file = Path.Combine(directory, $"{commit.Sha}");
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(file, Feature.CommitWithDescription(3).Message);
+        Commands.Stage(Repository, file);
+        Repository.Commit(Feature, 2);
+
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 3));
     }
 }
