@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using FluentAssertions;
 using LibGit2Sharp;
 using Xunit;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
@@ -165,14 +164,20 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
     {
         Repository.Commit(Irrelevant, "Initial Commit");
         var commit = Repository.Commit(Feature, 1);
-        Repository.Path().Should().NotEndWith(".git/");
-        var directory = Path.Combine(Repository.Path(), ".conventional-changelog");
-        var file = Path.Combine(directory, $"{commit.Sha}");
-        Directory.CreateDirectory(directory);
-        File.WriteAllText(file, Feature.CommitWithDescription(3).Message);
+
+        var file = CorrectUsingFile(commit, Feature.CommitWithDescription(3));
         Commands.Stage(Repository, file);
         Repository.Commit(Feature, 2);
 
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 3));
+    }
+
+    private string CorrectUsingFile(GitObject commit, Commit newCommit)
+    {
+        var directory = Path.Combine(Repository.Path(), ".conventional-changelog");
+        Directory.CreateDirectory(directory);
+        var file = Path.Combine(directory, $"{commit.Sha}");
+        File.WriteAllText(file, newCommit.Message);
+        return file;
     }
 }
