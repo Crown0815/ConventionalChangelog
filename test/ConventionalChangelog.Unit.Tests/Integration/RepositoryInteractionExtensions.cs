@@ -53,5 +53,5 @@ internal static class RepositoryInteractionExtensions
 
     private static IRepository Repository(this IBelongToARepository x) => x.Repository;
 
-    public static string Path(this Repository r) => r.Info.Path;
+    public static string Path(this Repository r) => r.Info.WorkingDirectory;
 }
