@@ -49,5 +49,5 @@ jobs:
           body_path: "changelog.md"
           prerelease: ${{ steps.version.outputs.preReleaseLabel != '' }}
 
-#      - name: Publish
-#        run: dotnet nuget push "**/*.nupkg" --source nuget.org --api-key ${{ secrets.NUGET_API_KEY }}
+      - name: Publish
+        run: dotnet nuget push "**/*.nupkg" --source nuget.org --api-key ${{ secrets.NUGET_API_KEY }}
