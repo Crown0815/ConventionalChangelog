@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ConventionalChangelog.Conventional;
 using FluentAssertions;
 using Xunit;
@@ -108,19 +109,19 @@ public class Parsing_a_conventional_commit_message
 
     public static IEnumerable<object[]> BreakingChangeConventionFooters()
     {
-        foreach (var token in new[] { "BREAKING CHANGE", "BREAKING-CHANGE" })
-        foreach (var separator in Separators)
-        foreach (var value in Values)
-            yield return new object[] { token + separator + value, token, value };
+        return FootersFrom("BREAKING CHANGE", "BREAKING-CHANGE");
     }
 
     public static IEnumerable<object[]> GitTrailerConventionFooters()
     {
-        foreach (var token in new[] { "token", "token-with-dash" })
-        foreach (var separator in Separators)
-        foreach (var value in Values)
-            yield return new object[] { token + separator + value, token, value};
+        return FootersFrom("token", "token-with-dash");
     }
+
+    private static IEnumerable<object[]> FootersFrom(params string[] tokens) =>
+        from token in tokens
+        from separator in Separators
+        from value in Values
+        select new object[] { token + separator + value, token, value};
 
     public static IEnumerable<object[]> YouTrackConventionFooters()
     {
