@@ -10,9 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: global.json
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.10.2
@@ -24,11 +30,6 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0.10.2
         with:
           useConfigFile: true
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3
-        with:
-          global-json-file: global.json
 
       - name: Package
         run: dotnet pack --configuration Release --output nuget --nologo -p:Version=${{ steps.version.outputs.nuGetVersionV2 }}
