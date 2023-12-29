@@ -33,10 +33,20 @@ jobs:
       - name: Package
         run: dotnet pack --configuration Release --output nuget --nologo -p:Version=${{ steps.version.outputs.nuGetVersionV2 }}
 
-      - name: Tag Repository
-        uses: rickstaa/action-create-tag@v1
+      - name: Generate Release Notes
+        run: |-
+          dotnet tool install --global ConventionalChangelog --version 0.7.0
+          changelog "${{ github.workspace }}" >> "changelog.md"
+
+      - name: Create a Release
+        uses: comnoco/create-release-action@v2.0.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag: "v${{ steps.version.outputs.semVer }}"
+          tag_name: "v${{ steps.version.outputs.semVer }}"
+          release_name: "${{ steps.version.outputs.semVer }}"
+          body_path: "changelog.md"
+          prerelease: ${{ steps.version.outputs.preReleaseLabel != '' }}
 
       - name: Publish
         run: dotnet nuget push "**/*.nupkg" --source nuget.org --api-key ${{ secrets.NUGET_API_KEY }}
