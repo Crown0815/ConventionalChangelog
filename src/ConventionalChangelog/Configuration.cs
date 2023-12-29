@@ -2,19 +2,26 @@ using ConventionalChangelog.Conventional;
 
 namespace ConventionalChangelog;
 
-public class Configuration
+public class Configuration : IConfiguration
 {
-    public string FooterPattern => DefaultConfiguration.FooterPattern;
+    private readonly IConfiguration _default = new DefaultConfiguration();
+    private readonly ChangelogOrder? _changelogOrder;
 
-    public string VersionTagPrefix => DefaultConfiguration.VersionTagPrefix;
+    public string FooterPattern => _default.FooterPattern;
 
-    public string SemanticVersionPattern => DefaultConfiguration.SemanticVersionPattern;
+    public string VersionTagPrefix => _default.VersionTagPrefix;
 
-    public IEnumerable<CommitType> CommitTypes => DefaultConfiguration.CommitTypes;
+    public string SemanticVersionPattern => _default.SemanticVersionPattern;
 
-    public ChangelogOrder ChangelogOrder { get; init; } = DefaultConfiguration.ChangelogOrder;
+    public IEnumerable<CommitType> CommitTypes => _default.CommitTypes;
 
-    public string DropSelf => DefaultConfiguration.DropSelf;
-    public string DropBoth => DefaultConfiguration.DropBoth;
-    public string DropOther => DefaultConfiguration.DropOther;
+    public ChangelogOrder ChangelogOrder
+    {
+        get => _changelogOrder ?? _default.ChangelogOrder;
+        init => _changelogOrder = value;
+    }
+
+    public string DropSelf => _default.DropSelf;
+    public string DropBoth => _default.DropBoth;
+    public string DropOther => _default.DropOther;
 }

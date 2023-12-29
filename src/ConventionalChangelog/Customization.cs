@@ -13,7 +13,7 @@ internal class Customization : ICustomization, IComparer<string>
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
 
-    public Customization(Configuration configuration)
+    public Customization(IConfiguration configuration)
     {
         _commitTypes = configuration.CommitTypes.ToImmutableArray();
         _versionTagPrefix = configuration.VersionTagPrefix;

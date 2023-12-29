@@ -9,9 +9,9 @@ public class Changelog
     private readonly RelationshipResolver _relationshipResolver;
     private readonly LogWriter _logWriter;
 
-    public Changelog(Configuration configuration)
+    public Changelog(IConfiguration configuration)
     {
-        ICustomization customization = new Customization(configuration);
+        var customization = new Customization(configuration);
         _repositoryReader = new RepositoryReader(customization);
         _parser = new MessageParser(customization);
         _relationshipResolver = new RelationshipResolver(customization);

@@ -7,7 +7,7 @@ public class MessageParser
 {
     private readonly ICustomization _customization;
 
-    public MessageParser(Configuration configuration) : this(new Customization(configuration))
+    public MessageParser() : this(new Customization(new Configuration()))
     {
     }
 
