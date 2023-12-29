@@ -7,7 +7,7 @@ using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
 namespace ConventionalChangelog.Unit.Tests.Integration;
 
-public class The_cli_program_when_given_an_output_file : CliTestsBase
+public sealed class The_cli_program_when_given_an_output_file : CliTestsBase
 {
     private const string OutputKeyShort = "-o";
     private const string OutputKeyLong = "--output";

@@ -19,6 +19,7 @@ public abstract class GitUsingTestsBase : IDisposable
     {
         Repository.Dispose();
         ForceDelete(new DirectoryInfo(Repository.Path()));
+        GC.SuppressFinalize(this);
     }
 
     private static void ForceDelete(DirectoryInfo directory)
