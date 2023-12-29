@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using ConventionalChangelog.Conventional;
 using FluentAssertions;
 using Xunit;
@@ -96,9 +94,9 @@ public class Parsing_a_conventional_commit_message
             new Footer("token-5", $"value{Lb}{Lb}with blank line"));
     }
 
-    private static readonly string[] Separators = { ": ", " #" };
+    public static readonly string[] Separators = { ": ", " #" };
 
-    private static readonly string[] Values =
+    public static readonly string[] Values =
     {
         "value",
         "value with spaces",
@@ -107,38 +105,49 @@ public class Parsing_a_conventional_commit_message
         $"value with{Lb}{Lb}blank line",
     };
 
-    public static IEnumerable<object[]> BreakingChangeConventionFooters()
+    public static readonly string[] Tokens =
     {
-        return FootersFrom("BREAKING CHANGE", "BREAKING-CHANGE");
-    }
+        "token",
+        "token-with-dash",
+        "BREAKING CHANGE",
+        "BREAKING-CHANGE",
+    };
 
-    public static IEnumerable<object[]> GitTrailerConventionFooters()
+    [Theory, CombinatorialData]
+    public void extracts_the_parts_from_a_footer_formatted_using_a(
+        [CombinatorialMemberData(nameof(Separators))] string separator,
+        [CombinatorialMemberData(nameof(Tokens))] string aToken,
+        [CombinatorialMemberData(nameof(Values))] string andAValue)
     {
-        return FootersFrom("token", "token-with-dash");
-    }
-
-    private static IEnumerable<object[]> FootersFrom(params string[] tokens) =>
-        from token in tokens
-        from separator in Separators
-        from value in Values
-        select new object[] { token + separator + value, token, value};
-
-    public static IEnumerable<object[]> YouTrackConventionFooters()
-    {
-        yield return new object[] { "#SWX-1234", "SWX-1234", "" };
-        yield return new object[] { "#SWX-1234 command", "SWX-1234", "command" };
-        yield return new object[] { "#SWX-1234 command1 command2", "SWX-1234", "command1 command2" };
-    }
-
-    [Theory]
-    [MemberData(nameof(BreakingChangeConventionFooters))]
-    [MemberData(nameof(GitTrailerConventionFooters))]
-    [MemberData(nameof(YouTrackConventionFooters))]
-    public void extracts_from_a(string formattedFooter, string theToken, string andTheValue)
-    {
+        var formattedFooter = aToken + separator + andAValue;
         var message = TestCommit.Message.Replace(TestCommit.Footer, formattedFooter);
         var parsed = Parsed(message);
 
-        parsed.Footers.Should().BeEquivalentTo(new Footer[]{new (theToken, andTheValue)});
+        parsed.Footers.Should().BeEquivalentTo(new Footer[]{new (aToken, andAValue)});
+    }
+
+    public static readonly string[] YouTrackValues =
+    {
+        "",
+        "command",
+        "command1 command2",
+    };
+
+    public static readonly string[] YouTrackTokens =
+    {
+        "SWX-1234",
+        "DZE-12",
+    };
+
+    [Theory, CombinatorialData]
+    public void extracts_the_parts_from_a_youtrack_footer_consisting_of(
+        [CombinatorialMemberData(nameof(YouTrackTokens))] string aToken,
+        [CombinatorialMemberData(nameof(YouTrackValues))] string andAValue)
+    {
+        var formattedFooter = "#" + aToken + " " + andAValue;
+        var message = TestCommit.Message.Replace(TestCommit.Footer, formattedFooter);
+        var parsed = Parsed(message);
+
+        parsed.Footers.Should().BeEquivalentTo(new Footer[]{new (aToken, andAValue)});
     }
 }
