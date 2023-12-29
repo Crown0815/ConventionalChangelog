@@ -21,7 +21,7 @@ internal static class RepositoryInteractionExtensions
         return r.Commit(type.CommitWith(message));
     }
 
-    public static GitCommit Commit(this Repository r, Commit message)
+    private static GitCommit Commit(this Repository r, Commit message)
     {
         return r.Commit(message.Message);
     }
