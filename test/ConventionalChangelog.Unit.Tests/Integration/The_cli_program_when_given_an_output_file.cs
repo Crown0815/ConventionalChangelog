@@ -23,7 +23,7 @@ public class The_cli_program_when_given_an_output_file : CliTestsBase
         var output = OutputWithInput($"{argument} {_fileName} {Repository.Path()}");
 
         output.Should().BeEmpty();
-        File.ReadAllText(_fileName).Should().Be(A.Changelog.WithGroup(Feature, 1) + Environment.NewLine);
+        File.ReadAllText(_fileName).Should().Be(A.Changelog.WithGroup(Feature, 1) + NewLine);
     }
 
     [Theory]
