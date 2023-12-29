@@ -72,9 +72,10 @@ internal class Customization : ICustomization, IComparer<string>
         var token = match.Groups["token"].Value;
         var value = line.Replace(match.Value, "");
         var isBreaking = match.Groups["breaking"].Success;
-        if (isBreaking)
-            return new PrintableFooter(token, value, "breaking!");
-        return new CommitMessage.Footer(token, value);
+
+        return isBreaking
+            ? new PrintableFooter(token, value, "breaking!")
+            : new CommitMessage.Footer(token, value);
     }
 
     private record PrintableFooter(string Token, string Value, string TypeIndicator)

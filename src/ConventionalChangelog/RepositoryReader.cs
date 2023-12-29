@@ -86,9 +86,9 @@ internal class RepositoryReader
         private string MessageFor(LibGit2Sharp.Commit c)
         {
             var overwrite = Path.Combine(_path, ".conventional-changelog", c.Sha);
-            if (File.Exists(overwrite))
-                return File.ReadAllText(overwrite);
-            return c.Message;
+            return File.Exists(overwrite)
+                ? File.ReadAllText(overwrite)
+                : c.Message;
         }
 
         public void Dispose() => _inner.Dispose();
