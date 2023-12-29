@@ -36,8 +36,8 @@ jobs:
 
       - name: Generate Release Notes
         run: |-
-          dotnet tool install --global ConventionalChangelog --version 0.7.0
-          changelog "${{ github.workspace }}" >> "changelog.md"
+          dotnet tool install --global ConventionalChangelog --version 0.8.0
+          changelog "${{ github.workspace }}" --output "changelog.md"
 
       - name: Create a Release
         uses: comnoco/create-release-action@v2.0.5
