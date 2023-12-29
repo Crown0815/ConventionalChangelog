@@ -44,10 +44,19 @@ internal class LogWriter
 
         public void Add(IPrintable printable, ChangelogType type)
         {
-            if (type.Relevance == Relevance.Show)
-                AddBullet(type.GroupHeader, printable.Description);
-            if (type.Relevance == Relevance.Hide)
-                AddGeneralCodeImprovement();
+            switch (type.Relevance)
+            {
+                case Relevance.Show:
+                    AddBullet(type.GroupHeader, printable.Description);
+                    break;
+                case Relevance.Hide:
+                    AddGeneralCodeImprovement();
+                    break;
+                case Relevance.Ignore:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type));
+            }
         }
 
         private void AddBullet(string header, string text)
