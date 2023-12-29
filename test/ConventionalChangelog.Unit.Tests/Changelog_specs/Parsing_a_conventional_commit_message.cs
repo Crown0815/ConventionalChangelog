@@ -108,7 +108,7 @@ public class Parsing_a_conventional_commit_message
 
     public static IEnumerable<object[]> BreakingChangeConventionFooters()
     {
-        foreach (var token in new[] { "BREAKING CHANGE", "BREAKING-CHANGE", })
+        foreach (var token in new[] { "BREAKING CHANGE", "BREAKING-CHANGE" })
         foreach (var separator in Separators)
         foreach (var value in Values)
             yield return new object[] { token + separator + value, token, value };
@@ -116,7 +116,7 @@ public class Parsing_a_conventional_commit_message
 
     public static IEnumerable<object[]> GitTrailerConventionFooters()
     {
-        foreach (var token in new[] { "token", "token-with-dash", })
+        foreach (var token in new[] { "token", "token-with-dash" })
         foreach (var separator in Separators)
         foreach (var value in Values)
             yield return new object[] { token + separator + value, token, value};
