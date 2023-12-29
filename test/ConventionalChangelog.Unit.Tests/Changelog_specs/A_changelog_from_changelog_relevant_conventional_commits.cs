@@ -7,11 +7,11 @@ namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public partial class A_changelog_from_changelog_relevant_conventional_commits
 {
-    public static readonly object[][] ChangelogRelevantCommitTypes =
+    public static readonly TheoryData<CommitType> ChangelogRelevantCommitTypes = new()
     {
-        new object[] { Feature },
-        new object[] { Bugfix },
-        new object[] { PerformanceImprovement },
+        Feature,
+        Bugfix,
+        PerformanceImprovement,
     };
 
     [Theory]

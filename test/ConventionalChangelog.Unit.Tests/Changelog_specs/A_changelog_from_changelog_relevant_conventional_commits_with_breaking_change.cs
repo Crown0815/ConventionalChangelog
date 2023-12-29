@@ -39,10 +39,10 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
                 .And(Feature, 2));
         }
 
-        public static readonly object[][] BreakingChangeFooterTokens =
+        public static readonly TheoryData<string> BreakingChangeFooterTokens = new()
         {
-            new object[] { "BREAKING CHANGE" },
-            new object[] { "BREAKING-CHANGE" },
+            "BREAKING CHANGE",
+            "BREAKING-CHANGE",
         };
 
         [Theory]
