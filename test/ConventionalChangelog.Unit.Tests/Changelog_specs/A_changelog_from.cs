@@ -15,7 +15,7 @@ public class A_changelog_from
 
     [Theory]
     [MemberData(nameof(NullCases))]
-    public void null_throws_exception(params Commit[] nullCase)
+    public void null_throws_exception(Commit[] nullCase)
     {
         Action fromNull = () => A.Changelog.From(nullCase);
         fromNull.Should().Throw<Exception>();
@@ -30,7 +30,7 @@ public class A_changelog_from
 
     [Theory]
     [MemberData(nameof(EmptyCases))]
-    public void empty_changes_is_empty(params Commit[] noChanges)
+    public void empty_changes_is_empty(Commit[] noChanges)
     {
         var changelog = A.Changelog.From(noChanges);
         changelog.Should().Be(A.Changelog.Empty);
