@@ -6,6 +6,7 @@ internal class Customization : ICustomization, IComparer<string>
 {
     private const string TokenGroupId = "token";
     private const string BreakingGroupId = "breaking";
+    private const string InnerGroupId = "inner";
 
     private readonly ImmutableArray<CommitType> _commitTypes;
     private readonly string _versionTagPrefix;
@@ -38,7 +39,7 @@ internal class Customization : ICustomization, IComparer<string>
     public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {
         if (footers.OfType<IPrintReady>().SingleOrDefault() is {} p)
-            return typeIndicator.ReplaceWith(InnerTypeFor(p.TypeIndicator).Indicator, "inner");
+            return typeIndicator.ReplaceWith(InnerTypeFor(p.TypeIndicator).Indicator, InnerGroupId);
         return typeIndicator;
     }
 
