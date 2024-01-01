@@ -1,4 +1,3 @@
-using ConventionalChangelog.Configuration;
 using ConventionalChangelog.Conventional;
 using ConventionalChangelog.Git;
 
