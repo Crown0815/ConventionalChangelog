@@ -33,7 +33,7 @@ internal class Customization : ICustomization, IComparer<string>
 
     public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {
-        if (footers.OfType<IPrintable>().SingleOrDefault() is {} p)
+        if (footers.OfType<IPrintReady>().SingleOrDefault() is {} p)
             return typeIndicator.ReplaceWith(InnerTypeFor(p.TypeIndicator).Indicator, "inner");
         return typeIndicator;
     }
@@ -74,12 +74,12 @@ internal class Customization : ICustomization, IComparer<string>
         var isBreaking = match.Groups["breaking"].Success;
 
         return isBreaking
-            ? new PrintableFooter(token, value, "breaking!")
+            ? new PrintReadyFooter(token, value, "breaking!")
             : new CommitMessage.Footer(token, value);
     }
 
-    private record PrintableFooter(string Token, string Value, string TypeIndicator)
-        : CommitMessage.Footer(Token, Value), IPrintable
+    private record PrintReadyFooter(string Token, string Value, string TypeIndicator)
+        : CommitMessage.Footer(Token, Value), IPrintReady
     {
         public string Description => Value;
     }

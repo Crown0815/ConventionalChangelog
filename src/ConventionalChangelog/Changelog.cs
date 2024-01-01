@@ -35,15 +35,15 @@ public class Changelog
         return commits.Select(_parser.Parse);
     }
 
-    private IEnumerable<IPrintable> PrintReady(IEnumerable<CommitMessage> messages)
+    private IEnumerable<IPrintReady> PrintReady(IEnumerable<CommitMessage> messages)
     {
         return _relationshipResolver
             .ResolveRelationshipsBetween(messages)
-            .SelectMany(AsPrintable);
+            .SelectMany(AsPrintReady);
     }
 
-    private static IEnumerable<IPrintable> AsPrintable(CommitMessage message)
+    private static IEnumerable<IPrintReady> AsPrintReady(CommitMessage message)
     {
-        return message.Footers.OfType<IPrintable>().Prepend(message);
+        return message.Footers.OfType<IPrintReady>().Prepend(message);
     }
 }

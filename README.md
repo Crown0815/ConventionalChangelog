@@ -22,3 +22,7 @@ changelog "/path/to/repository" --output "changelog.md"
 
 [ccommits-url]: https://conventionalcommits.org/
 [ccommits-img]: https://badgen.net/badge/conventional%20commits/v1.0.0/dfb317
+
+## Inspiration
+
+This tool was inspired by

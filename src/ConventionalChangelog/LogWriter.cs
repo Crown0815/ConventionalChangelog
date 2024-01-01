@@ -21,7 +21,7 @@ internal class LogWriter
         _customization = customization;
     }
 
-    public string Print(IEnumerable<IPrintable> writable)
+    public string Print(IEnumerable<IPrintReady> writable)
     {
         var writtenLog = new WrittenLog(EmptyChangelog);
         foreach (var printable in _customization.Ordered(writable))
@@ -42,12 +42,12 @@ internal class LogWriter
             _changelog = new StringBuilder(emptyChangelog);
         }
 
-        public void Add(IPrintable printable, ChangelogType type)
+        public void Add(IPrintReady printReady, ChangelogType type)
         {
             switch (type.Relevance)
             {
                 case Relevance.Show:
-                    AddBullet(type.GroupHeader, printable.Description);
+                    AddBullet(type.GroupHeader, printReady.Description);
                     break;
                 case Relevance.Hide:
                     AddGeneralCodeImprovement();
