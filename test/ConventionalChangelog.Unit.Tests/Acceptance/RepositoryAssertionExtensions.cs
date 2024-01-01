@@ -5,7 +5,7 @@ using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 using LibGit2Sharp;
 
-namespace ConventionalChangelog.Unit.Tests.Integration;
+namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 internal static class RepositoryAssertionExtensions
 {

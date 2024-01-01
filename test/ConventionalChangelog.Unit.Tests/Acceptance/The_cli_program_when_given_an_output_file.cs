@@ -5,7 +5,7 @@ using Xunit;
 using static System.Environment;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
-namespace ConventionalChangelog.Unit.Tests.Integration;
+namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 public sealed class The_cli_program_when_given_an_output_file : CliTestsBase
 {

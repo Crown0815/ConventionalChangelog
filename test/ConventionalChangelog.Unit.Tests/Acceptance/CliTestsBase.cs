@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace ConventionalChangelog.Unit.Tests.Integration;
+namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 public abstract class CliTestsBase : GitUsingTestsBase
 {

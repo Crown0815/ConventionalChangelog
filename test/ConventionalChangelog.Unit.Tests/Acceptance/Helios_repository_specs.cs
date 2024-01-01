@@ -1,7 +1,7 @@
 ﻿using Xunit;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
-namespace ConventionalChangelog.Unit.Tests.Integration;
+namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 public class Helios_repository_specs : GitUsingTestsBase
 {

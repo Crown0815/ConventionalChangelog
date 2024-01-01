@@ -2,7 +2,7 @@ using System;
 using LibGit2Sharp;
 using GitCommit = LibGit2Sharp.Commit;
 
-namespace ConventionalChangelog.Unit.Tests.Integration;
+namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 internal static class RepositoryInteractionExtensions
 {

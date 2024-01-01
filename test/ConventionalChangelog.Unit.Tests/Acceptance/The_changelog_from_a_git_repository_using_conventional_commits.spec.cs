@@ -3,7 +3,7 @@ using LibGit2Sharp;
 using Xunit;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
-namespace ConventionalChangelog.Unit.Tests.Integration;
+namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 public class The_changelog_from_a_git_repository_using_conventional_commits : GitUsingTestsBase
 {
