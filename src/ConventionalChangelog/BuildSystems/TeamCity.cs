@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace ConventionalChangelog;
+namespace ConventionalChangelog.BuildSystems;
 
 public static class TeamCity
 {

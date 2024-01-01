@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ConventionalChangelog.BuildSystems;
 using FluentAssertions;
 using Xunit;
 using static System.Environment;

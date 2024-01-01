@@ -1,4 +1,5 @@
 ﻿using ConventionalChangelog;
+using ConventionalChangelog.BuildSystems;
 using ConventionalChangelog.Configuration;
 
 var output = (string?)null;
