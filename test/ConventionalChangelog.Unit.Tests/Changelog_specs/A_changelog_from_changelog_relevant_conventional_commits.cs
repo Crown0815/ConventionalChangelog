@@ -20,7 +20,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         var message1 = type.CommitWithDescription(1);
         var message2 = type.CommitWithDescription(2);
 
-        var changelog = A.Changelog.From(message1, message2);
+        var changelog = The.ChangelogFrom(message1, message2);
 
         changelog.Should().Be(A.Changelog.WithGroup(type, 1, 2));
     }
@@ -31,7 +31,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         var message1 = Feature.CommitWithDescription(1);
         var message2 = Irrelevant.CommitWithDescription(2);
 
-        var changelog = A.Changelog.From(message1, message2);
+        var changelog = The.ChangelogFrom(message1, message2);
 
         changelog.Should().Be(A.Changelog.WithGroup(Feature, 1));
     }
@@ -49,7 +49,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             Bugfix.CommitWithDescription(6),
         };
 
-        var changelog = A.Changelog.From(messages);
+        var changelog = The.ChangelogFrom(messages);
 
         changelog.Should().Be(A.Changelog
             .WithGroup(Feature, 1, 4)

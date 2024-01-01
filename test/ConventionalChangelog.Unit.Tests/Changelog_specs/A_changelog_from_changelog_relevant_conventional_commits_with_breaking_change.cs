@@ -19,7 +19,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         {
             var breakingChange = Breaking(Feature).CommitWithDescription(1);
 
-            var changelog = A.Changelog.From(breakingChange);
+            var changelog = The.ChangelogFrom(breakingChange);
 
             changelog.Should().Be(A.Changelog
                 .WithGroup(BreakingChange, 1));
@@ -31,7 +31,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             var breakingChange = Breaking(Feature).CommitWithDescription(1);
             var anotherChange = Feature.CommitWithDescription(2);
 
-            var changelog = A.Changelog.From(breakingChange, anotherChange);
+            var changelog = The.ChangelogFrom(breakingChange, anotherChange);
 
             changelog.Should().Be(A.Changelog
                 .WithGroup(BreakingChange, 1)
@@ -51,7 +51,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             var breakingChange = Feature.CommitWithDescription(1)
                 .WithFooter(token, 2);
 
-            var changelog = A.Changelog.From(breakingChange);
+            var changelog = The.ChangelogFrom(breakingChange);
 
             changelog.Should().Be(A.Changelog
                 .WithGroup(BreakingChange, 2)
@@ -65,7 +65,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             var breakingChange = Breaking(Feature).CommitWithDescription(1)
                 .WithFooter(token, 2);
 
-            var changelog = A.Changelog.From(breakingChange);
+            var changelog = The.ChangelogFrom(breakingChange);
 
             changelog.Should().Be(A.Changelog
                 .WithGroup(BreakingChange, 2)

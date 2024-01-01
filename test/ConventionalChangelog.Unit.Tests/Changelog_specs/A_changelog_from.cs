@@ -17,7 +17,7 @@ public class A_changelog_from
     [MemberData(nameof(NullCases))]
     public void null_throws_exception(Commit[] nullCase)
     {
-        Action fromNull = () => A.Changelog.From(nullCase);
+        Action fromNull = () => The.ChangelogFrom(nullCase);
         fromNull.Should().Throw<Exception>();
     }
 
@@ -32,7 +32,7 @@ public class A_changelog_from
     [MemberData(nameof(EmptyCases))]
     public void empty_changes_is_empty(Commit[] noChanges)
     {
-        var changelog = A.Changelog.From(noChanges);
+        var changelog = The.ChangelogFrom(noChanges);
         changelog.Should().Be(A.Changelog.Empty);
     }
 
@@ -41,7 +41,7 @@ public class A_changelog_from
     [InlineData("1234: abc")]
     public void non_conventional_commits_is_empty(string nonConventionalCommitMessage)
     {
-        var changelog = A.Changelog.From(new Commit(nonConventionalCommitMessage));
+        var changelog = The.ChangelogFrom(new Commit(nonConventionalCommitMessage));
         changelog.Should().Be(A.Changelog.Empty);
     }
 
@@ -58,7 +58,7 @@ public class A_changelog_from
         var type = indicator.ToCommitType();
         var conventionalCommit1 = type.CommitWith("unused description");
         var conventionalCommit2 = type.CommitWith("unused description");
-        var changelog = A.Changelog.From(conventionalCommit1, conventionalCommit2);
+        var changelog = The.ChangelogFrom(conventionalCommit1, conventionalCommit2);
         changelog.Should().Be(A.Changelog.WithGeneralCodeImprovementsMessage());
     }
 }
