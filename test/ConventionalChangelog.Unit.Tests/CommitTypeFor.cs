@@ -1,5 +1,3 @@
-using ConventionalChangelog.Conventional;
-
 namespace ConventionalChangelog.Unit.Tests;
 
 internal static class CommitTypeFor

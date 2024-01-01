@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using ConventionalChangelog.Conventional;
 
-namespace ConventionalChangelog;
+namespace ConventionalChangelog.Configuration;
 
 internal class Customization : ICustomization, IComparer<string>
 {

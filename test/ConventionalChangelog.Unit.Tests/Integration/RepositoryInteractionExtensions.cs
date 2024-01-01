@@ -1,6 +1,5 @@
 using System;
 using LibGit2Sharp;
-using ConventionalChangelog.Conventional;
 using GitCommit = LibGit2Sharp.Commit;
 
 namespace ConventionalChangelog.Unit.Tests.Integration;

@@ -1,4 +1,5 @@
 ﻿using ConventionalChangelog;
+using ConventionalChangelog.Configuration;
 
 var output = (string?)null;
 var repositoryPath = args[0];

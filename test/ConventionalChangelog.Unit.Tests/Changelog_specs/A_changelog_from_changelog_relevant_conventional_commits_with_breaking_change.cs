@@ -1,5 +1,4 @@
-﻿using ConventionalChangelog.Conventional;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Xunit;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 

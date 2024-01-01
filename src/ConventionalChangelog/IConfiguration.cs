@@ -1,5 +1,3 @@
-using ConventionalChangelog.Conventional;
-
 namespace ConventionalChangelog;
 
 public interface IConfiguration

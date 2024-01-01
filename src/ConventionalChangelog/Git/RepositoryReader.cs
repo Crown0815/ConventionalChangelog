@@ -1,6 +1,6 @@
 using LibGit2Sharp;
 
-namespace ConventionalChangelog;
+namespace ConventionalChangelog.Git;
 
 internal class RepositoryReader
 {

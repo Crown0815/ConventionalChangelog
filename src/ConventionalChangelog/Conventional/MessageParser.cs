@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using ConventionalChangelog.Configuration;
 using static ConventionalChangelog.Conventional.CommitMessage;
 
 namespace ConventionalChangelog.Conventional;
@@ -7,7 +8,7 @@ public class MessageParser
 {
     private readonly ICustomization _customization;
 
-    public MessageParser() : this(new Customization(new Configuration()))
+    public MessageParser() : this(new Customization(new DefaultConfiguration()))
     {
     }
 

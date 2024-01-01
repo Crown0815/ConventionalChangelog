@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using ConventionalChangelog.Conventional;
 using static System.Environment;
 
 namespace ConventionalChangelog.Unit.Tests;
@@ -8,7 +7,7 @@ internal static class A
 {
     internal class Changelog
     {
-        private static readonly ConventionalChangelog.Changelog ConventionalChangelog = new(new Configuration());
+        private static readonly ConventionalChangelog.Changelog ConventionalChangelog = new(new Configuration.Configuration());
 
         public static string From(params Commit[] messages) =>
             ConventionalChangelog.From(messages);

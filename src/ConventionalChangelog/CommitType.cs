@@ -1,4 +1,4 @@
-﻿namespace ConventionalChangelog.Conventional;
+﻿namespace ConventionalChangelog;
 
 public record CommitType(string Indicator, string GroupHeader, Relevance Relevance) :
     ChangelogType(GroupHeader, Relevance)

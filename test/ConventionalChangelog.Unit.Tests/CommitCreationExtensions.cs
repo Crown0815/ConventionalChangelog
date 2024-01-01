@@ -1,5 +1,4 @@
 ﻿using System;
-using ConventionalChangelog.Conventional;
 
 namespace ConventionalChangelog.Unit.Tests;
 

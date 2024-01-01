@@ -33,7 +33,7 @@ internal static class RepositoryAssertionExtensions
 
         public void HaveChangelogMatching(string changelog, ChangelogOrder order = default)
         {
-            var conventionalChangelog = new Changelog(new Configuration { ChangelogOrder = order});
+            var conventionalChangelog = new Changelog(new Configuration.Configuration { ChangelogOrder = order});
             Execute.Assertion
                 .Given(() => conventionalChangelog.FromRepository(Subject.Path()))
                 .ForCondition(c => c == changelog)

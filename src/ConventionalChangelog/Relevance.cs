@@ -1,4 +1,4 @@
-﻿namespace ConventionalChangelog.Conventional;
+﻿namespace ConventionalChangelog;
 
 public enum Relevance
 {
