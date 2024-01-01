@@ -26,6 +26,8 @@ public static class StringMatchingExtensions
 
     public static Match MatchWith(this string input, string pattern) => Regex.Match(input, pattern);
 
+    public static MatchCollection MatchesWith(this string input, string pattern) => Regex.Matches(input, pattern);
+
     public static string ReplaceWith(this string input, string pattern, string group)
     {
         return Regex.Replace(input, pattern, x => x.Groups[group].Value);

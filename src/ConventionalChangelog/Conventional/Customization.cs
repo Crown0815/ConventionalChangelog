@@ -4,6 +4,9 @@ namespace ConventionalChangelog.Conventional;
 
 internal class Customization : ICustomization, IComparer<string>
 {
+    private const string TokenGroupId = "token";
+    private const string BreakingGroupId = "breaking";
+
     private readonly ImmutableArray<CommitType> _commitTypes;
     private readonly string _versionTagPrefix;
     private readonly ChangelogOrder _changelogOrder;
@@ -24,6 +27,8 @@ internal class Customization : ICustomization, IComparer<string>
             new(configuration.DropOther, false, true),
             new(configuration.DropBoth, true, true),
         };
+
+        Validate(_footerPattern);
     }
 
     public string Separator { get; }
@@ -68,9 +73,9 @@ internal class Customization : ICustomization, IComparer<string>
     public CommitMessage.Footer FooterFrom(string line)
     {
         var match = line.MatchWith(_footerPattern);
-        var token = match.Groups["token"].Value;
+        var token = match.Groups[TokenGroupId].Value;
         var value = line.Replace(match.Value, "");
-        var isBreaking = match.Groups["breaking"].Success;
+        var isBreaking = match.Groups[BreakingGroupId].Success;
 
         return isBreaking
             ? new PrintReadyFooter(token, value, "breaking!")
@@ -81,5 +86,31 @@ internal class Customization : ICustomization, IComparer<string>
         : CommitMessage.Footer(Token, Value), IPrintReady
     {
         public string Description => Value;
+    }
+
+    private static void Validate(string footerPattern)
+    {
+        var allGroupIds = footerPattern.MatchesWith(@"\?\<(\w+)\>");
+        var found = allGroupIds.Select(x => x.Groups[1].Value).OrderBy(x => x).Distinct().ToList();
+
+        if (found[0] != BreakingGroupId)
+            throw new InvalidFooterPatternGroupIdException(BreakingGroupId, found[0]);
+        if (found[1] != TokenGroupId)
+            throw new InvalidFooterPatternGroupIdException(TokenGroupId, found[1]);
+        if (found.Count > 2)
+            throw new InvalidFooterPatternGroupIdException("", found[2]);
+    }
+
+    private class InvalidFooterPatternGroupIdException : Exception
+    {
+        public InvalidFooterPatternGroupIdException(string expected, string found)
+            : base(MessageFrom(expected, found))
+        {
+        }
+
+        private static string MessageFrom(string expected, string found)
+        {
+            return $"Expected token '{expected}' but found '{found}'";
+        }
     }
 }

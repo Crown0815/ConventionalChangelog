@@ -1,11 +1,7 @@
-using System.Text.RegularExpressions;
-
 namespace ConventionalChangelog.Configuration;
 
 internal class DefaultConfiguration : IConfiguration
 {
-    private const string TokenGroupId = "token";
-    private const string BreakingGroupId = "breaking";
 
     private static class Default
     {
@@ -47,19 +43,6 @@ internal class DefaultConfiguration : IConfiguration
             new("refactor", "", Relevance.Hide),
             new("test", "", Relevance.Hide),
         };
-
-        static Default()
-        {
-            var allGroupIds = Regex.Matches(FooterPattern, @"\?\<(\w+)\>");
-            var found = allGroupIds.Select(x => x.Groups[1].Value).OrderBy(x => x).Distinct().ToList();
-
-            if (found[0] != BreakingGroupId)
-                throw new InvalidFooterPatternGroupIdException(BreakingGroupId, found[0]);
-            if (found[1] != TokenGroupId)
-                throw new InvalidFooterPatternGroupIdException(TokenGroupId, found[1]);
-            if (found.Count > 2)
-                throw new InvalidFooterPatternGroupIdException("", found[2]);
-        }
     }
 
     public string FooterPattern => Default.FooterPattern;
@@ -71,16 +54,4 @@ internal class DefaultConfiguration : IConfiguration
     public string DropBoth => Default.DropBoth;
     public string DropOther => Default.DropOther;
     public string HeaderTypeDescriptionSeparator => Default.HeaderTypeDescriptionSeparator;
-}
-
-public class InvalidFooterPatternGroupIdException : Exception
-{
-    public InvalidFooterPatternGroupIdException(string expected, string found) : base(MessageWith(expected, found))
-    {
-    }
-
-    private static string MessageWith(string expected, string found)
-    {
-        return $"Expected token '{expected}' but found '{found}'";
-    }
 }
