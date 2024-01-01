@@ -10,4 +10,5 @@ public interface IConfiguration
     string DropSelf { get; }
     string DropBoth { get; }
     string DropOther { get; }
+    string HeaderTypeDescriptionSeparator { get; }
 }

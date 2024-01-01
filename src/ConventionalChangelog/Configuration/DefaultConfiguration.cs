@@ -25,6 +25,9 @@ internal class DefaultConfiguration : IConfiguration
 
         public const ChangelogOrder ChangelogOrder = default;
 
+        // see https://www.conventionalcommits.org/en/v1.0.0/#specification
+        public const string HeaderTypeDescriptionSeparator = ": ";
+
         public static readonly CommitType[] CommitTypes =
         {
             new("(?<inner>[a-z]+)!", "Breaking Changes", Relevance.Show),
@@ -49,4 +52,5 @@ internal class DefaultConfiguration : IConfiguration
     public string DropSelf => Default.DropSelf;
     public string DropBoth => Default.DropBoth;
     public string DropOther => Default.DropOther;
+    public string HeaderTypeDescriptionSeparator => Default.HeaderTypeDescriptionSeparator;
 }

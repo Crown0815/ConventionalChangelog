@@ -22,4 +22,5 @@ public class Configuration : IConfiguration
     public string DropSelf => _default.DropSelf;
     public string DropBoth => _default.DropBoth;
     public string DropOther => _default.DropOther;
+    public string HeaderTypeDescriptionSeparator => _default.HeaderTypeDescriptionSeparator;
 }

@@ -4,8 +4,6 @@ namespace ConventionalChangelog.Conventional;
 
 internal class Customization : ICustomization, IComparer<string>
 {
-    private const string ConventionalCommitSeparator = ": "; // see https://www.conventionalcommits.org/en/v1.0.0/#specification
-
     private readonly ImmutableArray<CommitType> _commitTypes;
     private readonly string _versionTagPrefix;
     private readonly ChangelogOrder _changelogOrder;
@@ -19,6 +17,7 @@ internal class Customization : ICustomization, IComparer<string>
         _changelogOrder = configuration.ChangelogOrder;
         _footerPattern = configuration.FooterPattern;
         _semanticVersionPattern = configuration.SemanticVersionPattern;
+        Separator = configuration.HeaderTypeDescriptionSeparator;
         Relationships = new Relationship[]
         {
             new(configuration.DropSelf, true, false),
@@ -27,7 +26,8 @@ internal class Customization : ICustomization, IComparer<string>
         };
     }
 
-    public string Separator => ConventionalCommitSeparator;
+    public string Separator { get; }
+
     public IReadOnlyCollection<Relationship> Relationships { get; }
 
     public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
