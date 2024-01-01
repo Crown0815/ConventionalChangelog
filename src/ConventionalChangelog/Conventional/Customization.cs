@@ -8,6 +8,11 @@ internal class Customization : ICustomization, IComparer<string>
     private const string BreakingGroupId = "breaking";
     private const string InnerGroupId = "inner";
 
+    // 'a' is a randomly chosen letter, the important thing is that the
+    // 'indicator' matches the breaking change pattern. The match is
+    // achieved by the '!' after the 'a'
+    private const string BreakingChangeIndicator = "a!";
+
     private readonly ImmutableArray<CommitType> _commitTypes;
     private readonly string _versionTagPrefix;
     private readonly ChangelogOrder _changelogOrder;
@@ -79,7 +84,7 @@ internal class Customization : ICustomization, IComparer<string>
         var isBreaking = match.Groups[BreakingGroupId].Success;
 
         return isBreaking
-            ? new PrintReadyFooter(token, value, "breaking!")
+            ? new PrintReadyFooter(token, value, BreakingChangeIndicator)
             : new CommitMessage.Footer(token, value);
     }
 
