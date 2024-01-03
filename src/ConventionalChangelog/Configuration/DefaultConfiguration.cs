@@ -54,5 +54,5 @@ internal class DefaultConfiguration : IConfiguration
     public string DropBoth => Default.DropBoth;
     public string DropOther => Default.DropOther;
     public string HeaderTypeDescriptionSeparator => Default.HeaderTypeDescriptionSeparator;
-    public bool IgnorePreRelease => false;
+    public bool IgnorePrerelease => false;
 }

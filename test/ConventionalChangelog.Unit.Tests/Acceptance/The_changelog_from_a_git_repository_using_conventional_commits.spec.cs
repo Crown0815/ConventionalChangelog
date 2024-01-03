@@ -170,7 +170,7 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
 
         var config = new Configuration.Configuration()
         {
-            IgnorePreRelease = true,
+            IgnorePrerelease = true,
         };
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 4, 3), config);
     }

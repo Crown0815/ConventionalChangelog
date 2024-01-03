@@ -15,7 +15,7 @@ public class Configuration : IConfiguration
     }
 
     public string SemanticVersionPattern => _default.SemanticVersionPattern;
-    public bool IgnorePreRelease { get; init; }
+    public bool IgnorePrerelease { get; init; }
 
     public IEnumerable<CommitType> CommitTypes => _default.CommitTypes;
 

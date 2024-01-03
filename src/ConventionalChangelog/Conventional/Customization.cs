@@ -19,7 +19,7 @@ internal class Customization : ICustomization, IComparer<string>
     private readonly ChangelogOrder _changelogOrder;
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
-    private readonly bool _ignorePreRelease;
+    private readonly bool _ignorePrerelease;
 
     public Customization(IConfiguration configuration)
     {
@@ -28,7 +28,7 @@ internal class Customization : ICustomization, IComparer<string>
         _changelogOrder = configuration.ChangelogOrder;
         _footerPattern = configuration.FooterPattern;
         _semanticVersionPattern = configuration.SemanticVersionPattern;
-        _ignorePreRelease = configuration.IgnorePreRelease;
+        _ignorePrerelease = configuration.IgnorePrerelease;
         Separator = configuration.HeaderTypeDescriptionSeparator;
         Relationships = new Relationship[]
         {
@@ -64,12 +64,12 @@ internal class Customization : ICustomization, IComparer<string>
     public bool IsVersionTag(string tagName)
     {
         var match = tagName.MatchWith($"^{_versionTagPrefix + _semanticVersionPattern}$");
-        if (_ignorePreRelease)
-            return match.Success && IsNotPreRelease(match);
+        if (_ignorePrerelease)
+            return match.Success && IsNotPrerelease(match);
         return match.Success;
     }
 
-    private static bool IsNotPreRelease(Match match)
+    private static bool IsNotPrerelease(Match match)
     {
         return match.Groups["prerelease"].Value == "";
     }

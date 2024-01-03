@@ -4,15 +4,18 @@ using ConventionalChangelog.Configuration;
 
 var output = (string?)null;
 var tagPrefix = (string?)null;
+var ignorePrereleases = false;
 var repositoryPath = args[^1];
 
 if (args[0] is "-o" or "--output") output = args[1];
 if (args[0] is "-t" or "--tag-prefix") tagPrefix = args[1];
+if (args[0] is "-i" or "--ignore-prereleases") ignorePrereleases = true;
 
 var configuration = new Configuration
 {
     ChangelogOrder = default,
     VersionTagPrefix = tagPrefix!,
+    IgnorePrerelease = ignorePrereleases,
 };
 var changelog = new Changelog(configuration).FromRepository(repositoryPath);
 
