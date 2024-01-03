@@ -7,21 +7,51 @@ namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 public sealed class The_cli_program_when_given_a_version_tag_prefix : CliTestsBase
 {
-    private const string TagPrefixKeyShort = "-t";
-    private const string TagPrefixKeyLong = "--tag-prefix";
+    private const string SemanticVersion = "1.0.0";
+    public static string[] TagPrefixKeys { get; } = { "-t", "--tag-prefix" };
 
-    public static TheoryData<string> OutputKeys => new() { TagPrefixKeyShort, TagPrefixKeyLong };
-
-    [Theory]
-    [MemberData(nameof(OutputKeys))]
-    public void prints_changelog_into_the_file_given_through_the(string argument)
+    [Theory, CombinatorialData]
+    public void literal_prints_changelog_from_last_commit_with_matching_version_tag(
+        [CombinatorialMemberData(nameof(TagPrefixKeys))] string argument,
+        [CombinatorialValues('t', 'r', "ver")] string prefix
+    )
     {
         Repository.Commit(Feature, "Before tag");
-        Repository.Commit(Feature, "Tagged commit").Tag("p1.0.0-alpha.1");
+        Repository.Commit(Feature, "Tagged commit").Tag($"{prefix}{SemanticVersion}");
         Repository.Commit(Feature, 1);
 
-        var output = OutputWithInput($"{argument} [p] {Repository.Path()}");
+        var output = OutputWithInput($"{argument} {prefix} {Repository.Path()}");
 
         output.Should().Be(A.Changelog.WithGroup(Feature, 1) + NewLine);
+    }
+
+    [Theory, CombinatorialData]
+    public void regular_expression_prints_changelog_from_last_commit_with_matching_version_tag(
+        [CombinatorialMemberData(nameof(TagPrefixKeys))] string argument,
+        [CombinatorialValues('t', 'r', "ver")] string prefix
+    )
+    {
+        Repository.Commit(Feature, "Before tag");
+        Repository.Commit(Feature, "Tagged commit").Tag($"{prefix}{SemanticVersion}");
+        Repository.Commit(Feature, 1);
+
+        var output = OutputWithInput($"{argument} [tr]|ver {Repository.Path()}");
+
+        output.Should().Be(A.Changelog.WithGroup(Feature, 1) + NewLine);
+    }
+
+    [Theory, CombinatorialData]
+    public void prints_changelog_while_ignoring_non_matching_version_tags(
+        [CombinatorialMemberData(nameof(TagPrefixKeys))] string argument,
+        [CombinatorialValues('t', 'r', "ver", "[tr]")] string pattern
+    )
+    {
+        Repository.Commit(Feature, -1);
+        Repository.Commit(Feature, 0).Tag($"v{SemanticVersion}");
+        Repository.Commit(Feature, 1);
+
+        var output = OutputWithInput($"{argument} {pattern} {Repository.Path()}");
+
+        output.Should().Be(A.Changelog.WithGroup(Feature, 1, 0, -1) + NewLine);
     }
 }

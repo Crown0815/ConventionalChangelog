@@ -3,11 +3,17 @@ using ConventionalChangelog.BuildSystems;
 using ConventionalChangelog.Configuration;
 
 var output = (string?)null;
+var tagPrefix = (string?)null;
 var repositoryPath = args[^1];
 
 if (args[0] is "-o" or "--output") output = args[1];
+if (args[0] is "-t" or "--tag-prefix") tagPrefix = args[1];
 
-var configuration = new Configuration { ChangelogOrder = default};
+var configuration = new Configuration
+{
+    ChangelogOrder = default,
+    VersionTagPrefix = tagPrefix!,
+};
 var changelog = new Changelog(configuration).FromRepository(repositoryPath);
 
 if (output is not null)

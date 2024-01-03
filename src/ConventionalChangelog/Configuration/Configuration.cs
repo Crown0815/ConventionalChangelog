@@ -4,10 +4,15 @@ public class Configuration : IConfiguration
 {
     private readonly IConfiguration _default = new DefaultConfiguration();
     private readonly ChangelogOrder? _changelogOrder;
+    private readonly string? _versionTagPrefix;
 
     public string FooterPattern => _default.FooterPattern;
 
-    public string VersionTagPrefix => _default.VersionTagPrefix;
+    public string VersionTagPrefix
+    {
+        get => _versionTagPrefix ?? _default.VersionTagPrefix;
+        init => _versionTagPrefix = value;
+    }
 
     public string SemanticVersionPattern => _default.SemanticVersionPattern;
 
