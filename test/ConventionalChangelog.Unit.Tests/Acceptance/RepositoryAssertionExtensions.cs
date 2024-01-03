@@ -38,25 +38,7 @@ internal static class RepositoryAssertionExtensions
                 .Given(() => conventionalChangelog.FromRepository(Subject.Path()))
                 .ForCondition(c => c == changelog)
                 .FailWith(ExpectedMatchingChangelogButDifferentWasFound,
-                    _ => changelog, c => c, _ => Environment.NewLine + LogGraphOf(Subject));
-        }
-
-        private static string LogGraphOf(Repository r)
-        {
-            using var process = new Process();
-
-            process.StartInfo.FileName = "git";
-            process.StartInfo.Arguments = $"-C {r.Path()} log --graph --all --oneline --decorate";
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.CreateNoWindow = true;
-
-            process.Start();
-            var output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-
-            return output;
+                    _ => changelog, c => c, _ => Environment.NewLine + Subject.LogGraph());
         }
     }
 }
