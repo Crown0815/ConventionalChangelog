@@ -115,7 +115,6 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         Repository.Commit(Feature, 4);
         var end = Repository.Commit(Feature, 5);
 
-        Repository.Checkout(root);
         Repository.CreateBranch("release/1.0.0", root);
         Repository.Checkout("release/1.0.0");
         Repository.Commit(Feature, 1).Tag(Version("1.0.0-beta.1"));
