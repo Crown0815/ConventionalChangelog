@@ -10,10 +10,7 @@ namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 public sealed class The_cli_program_when_given_an_output_file : CliTestsBase
 {
-    private const string OutputKeyShort = "-o";
-    private const string OutputKeyLong = "--output";
-
-    public static TheoryData<string> OutputKeys => new() { OutputKeyShort, OutputKeyLong };
+    public static TheoryData<string> OutputKeys => new() { "-o", "--output" };
     private readonly string _fileName = Guid.NewGuid().ToString();
 
     [Theory]
