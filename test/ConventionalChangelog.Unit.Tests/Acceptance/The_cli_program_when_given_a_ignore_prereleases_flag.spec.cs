@@ -9,9 +9,9 @@ public sealed class The_cli_program_when_given_a_ignore_prereleases_flag : CliTe
 {
     private const string SemanticVersion = "1.0.0";
     private const string SemanticPrereleaseVersion = "1.0.0-alpha";
-    public static TheoryData<string> IgnorePrereleaseKeys { get; } = new() { "-i", "--ignore-prereleases" };
+    public static TheoryData<string> IgnorePrereleaseKeysData { get; } = TheoryDataFrom(IgnorePrerelease);
 
-    [Theory, MemberData(nameof(IgnorePrereleaseKeys))]
+    [Theory, MemberData(nameof(IgnorePrereleaseKeysData))]
     public void literal_prints_changelog_from_last_commit_with_matching_version_tag(string argument)
     {
         Repository.Commit(Feature, "Before tag");

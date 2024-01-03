@@ -1,10 +1,17 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using Xunit;
 
 namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 public abstract class CliTestsBase : GitUsingTestsBase
 {
+    protected static readonly string[] OutputKeys = { "-o", "--output" };
+    public static readonly string[] TagPrefixKeys = { "-t", "--tag-prefix" };
+    protected static readonly string[] IgnorePrerelease = { "-i", "--ignore-prereleases" };
+
     protected static string OutputWithInput(string arguments, params (string, string)[] environmentVariables)
     {
         using var process = new Process();
@@ -23,5 +30,16 @@ public abstract class CliTestsBase : GitUsingTestsBase
         process.WaitForExit();
 
         return output;
+    }
+
+    protected static TheoryData<T> TheoryDataFrom<T>(IEnumerable<T> values)
+    {
+        return values.Aggregate(new TheoryData<T>(), Add);
+    }
+
+    private static TheoryData<T> Add<T>(TheoryData<T> theoryData, T value)
+    {
+        theoryData.Add(value);
+        return theoryData;
     }
 }

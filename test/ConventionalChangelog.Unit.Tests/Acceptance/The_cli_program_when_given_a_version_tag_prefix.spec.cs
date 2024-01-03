@@ -8,7 +8,6 @@ namespace ConventionalChangelog.Unit.Tests.Acceptance;
 public sealed class The_cli_program_when_given_a_version_tag_prefix : CliTestsBase
 {
     private const string SemanticVersion = "1.0.0";
-    public static string[] TagPrefixKeys { get; } = { "-t", "--tag-prefix" };
 
     [Theory, CombinatorialData]
     public void literal_prints_changelog_from_last_commit_with_matching_version_tag(
