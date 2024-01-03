@@ -14,7 +14,7 @@ internal class DefaultConfiguration : IConfiguration
         // language=regex
         public const string FooterPattern = $"^{BreakingChangeTokenPattern}|{TrailerTokenPattern}|{YouTrackTokenPattern}";
         // language=regex
-        public const string VersionTagPrefix = "[pv]";
+        public const string VersionTagPrefix = "v";
         // language=regex
         public const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
         // language=regex
