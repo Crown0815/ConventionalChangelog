@@ -34,12 +34,10 @@ public abstract class CliTestsBase : GitUsingTestsBase
 
     protected static TheoryData<T> TheoryDataFrom<T>(IEnumerable<T> values)
     {
-        return values.Aggregate(new TheoryData<T>(), Add);
-    }
-
-    private static TheoryData<T> Add<T>(TheoryData<T> theoryData, T value)
-    {
-        theoryData.Add(value);
-        return theoryData;
+        return values.Aggregate(new TheoryData<T>(), (theoryData, value) =>
+        {
+            theoryData.Add(value);
+            return theoryData;
+        });
     }
 }
