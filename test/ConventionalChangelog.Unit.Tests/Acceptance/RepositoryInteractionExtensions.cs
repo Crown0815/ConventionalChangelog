@@ -35,14 +35,21 @@ internal static class RepositoryInteractionExtensions
         target.Repository().Tags.Add(name, target);
     }
 
+    public static Branch CreateAndCheckoutBranch(this IRepository r, string id)
+    {
+        var branch = r.CreateBranch(id);
+        r.Checkout(id);
+        return branch;
+    }
+
     public static void Checkout(this IRepository r, string id)
     {
         Commands.Checkout(r, id);
     }
 
-    public static void Checkout(this IRepository r, GitCommit commit)
+    public static void Checkout(this IRepository r, Branch branch)
     {
-        Commands.Checkout(r, commit);
+        Commands.Checkout(r, branch.FriendlyName);
     }
 
     public static GitCommit Merge(this Repository r, Branch branch)

@@ -7,6 +7,7 @@ namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 public class The_changelog_from_a_git_repository_using_conventional_commits : GitUsingTestsBase
 {
+    private const string _defaultBranch = "master";
     private static string Version(string version) => $"v{version}";
 
     [Fact]
@@ -109,18 +110,17 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
     public void only_considers_commits_from_the_currently_checked_out_branch()
     {
         var root = Repository.Commit(Irrelevant, "Initial Commit");
-        Repository.CreateBranch("develop");
-        Repository.Checkout("develop");
+        var develop = Repository.CreateAndCheckoutBranch("develop");
         Repository.Commit(Feature, 3).Tag(Version("0.9.0-alpha.1"));
         Repository.Commit(Feature, 4);
-        var end = Repository.Commit(Feature, 5);
+        Repository.Commit(Feature, 5);
 
         Repository.CreateBranch("release/1.0.0", root);
         Repository.Checkout("release/1.0.0");
         Repository.Commit(Feature, 1).Tag(Version("1.0.0-beta.1"));
         Repository.Commit(Feature, 2);
 
-        Repository.Checkout(end);
+        Repository.Checkout(develop);
 
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 5, 4));
     }
@@ -133,7 +133,7 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         Repository.Checkout("develop");
         Repository.Commit(Feature, 1).Tag(Version("v0.1.0-alpha.1"));
         Repository.Commit(Feature, 2).Tag(Version("0.1.0-alpha.2"));
-        Repository.Checkout("master");
+        Repository.Checkout(_defaultBranch);
         Repository.Merge(develop);
 
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1));
@@ -147,13 +147,13 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         Repository.Checkout("develop");
         Repository.Commit(Feature, 1).Tag(Version("0.1.0-alpha.1"));
         Repository.Commit(Feature, 2).Tag(Version("0.1.0-alpha.2"));
-        Repository.Checkout("master");
+        Repository.Checkout(_defaultBranch);
         Repository.Merge(develop).Tag(Version("0.1.0"));
 
         Repository.Checkout("develop");
         Repository.Commit(Feature, 3).Tag(Version("0.2.0-alpha.1"));
         Repository.Commit(Feature, 4).Tag(Version("0.2.0-alpha.2"));
-        Repository.Checkout("master");
+        Repository.Checkout(_defaultBranch);
         Repository.Merge(develop);
 
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 4, 3));
