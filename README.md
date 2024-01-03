@@ -26,3 +26,9 @@ changelog "/path/to/repository" --output "changelog.md"
 ## Inspiration
 
 This tool was inspired by
+
+## Acknowledgements
+
+Thank you to
+
+- [Cocona](https://github.com/mayuki/Cocona#installing) for providing a great CLI framework
