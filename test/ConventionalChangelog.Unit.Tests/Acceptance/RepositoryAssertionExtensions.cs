@@ -31,9 +31,9 @@ internal static class RepositoryAssertionExtensions
         [ExcludeFromCodeCoverage]
         protected override string Identifier => "repo";
 
-        public void HaveChangelogMatching(string changelog, ChangelogOrder order = default)
+        public void HaveChangelogMatching(string changelog, IConfiguration? configuration = default)
         {
-            var conventionalChangelog = new Changelog(new Configuration.Configuration { ChangelogOrder = order});
+            var conventionalChangelog = new Changelog(configuration ?? new Configuration.Configuration());
             Execute.Assertion
                 .Given(() => conventionalChangelog.FromRepository(Subject.Path()))
                 .ForCondition(c => c == changelog)

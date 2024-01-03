@@ -42,7 +42,8 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
     public void when_requested_orders_the_messages_from(ChangelogOrder order, int[] expected)
     {
         3.Times(i => Repository.Commit(Feature, i));
-        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, expected), order);
+        var config = new Configuration.Configuration { ChangelogOrder = order };
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, expected), config);
     }
 
     [Theory]
