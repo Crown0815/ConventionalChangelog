@@ -161,6 +161,21 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
     }
 
     [Fact]
+    public void when_configured_to_ignore_pre_releases_then_only_non_release_version_tags_are_considered()
+    {
+        Repository.Commit(Feature, 1);
+        Repository.Commit(Feature, 2).Tag(Version("0.1.0"));
+        Repository.Commit(Feature, 3).Tag(Version("0.2.0-alpha.1"));
+        Repository.Commit(Feature, 4);
+
+        var config = new Configuration.Configuration()
+        {
+            IgnorePreRelease = true,
+        };
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 4, 3), config);
+    }
+
+    [Fact]
     public void when_the_repository_contains_a_file_overwriting_a_commit_message_the_overwriting_message_is_printed()
     {
         Repository.Commit(Irrelevant, "Initial Commit");

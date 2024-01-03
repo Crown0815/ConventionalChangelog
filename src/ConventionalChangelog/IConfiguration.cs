@@ -11,4 +11,5 @@ public interface IConfiguration
     string DropBoth { get; }
     string DropOther { get; }
     string HeaderTypeDescriptionSeparator { get; }
+    bool IgnorePreRelease { get; }
 }

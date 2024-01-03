@@ -16,7 +16,7 @@ internal class DefaultConfiguration : IConfiguration
         // language=regex
         public const string VersionTagPrefix = "v";
         // language=regex
-        public const string SemanticVersionPattern = @"([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?";
+        public const string SemanticVersionPattern = @"(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?";
         // language=regex
         public const string DropSelf = "fix(es|up)|enhances";
         // language=regex
@@ -54,4 +54,5 @@ internal class DefaultConfiguration : IConfiguration
     public string DropBoth => Default.DropBoth;
     public string DropOther => Default.DropOther;
     public string HeaderTypeDescriptionSeparator => Default.HeaderTypeDescriptionSeparator;
+    public bool IgnorePreRelease => false;
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text.RegularExpressions;
 
 namespace ConventionalChangelog.Conventional;
 
@@ -18,6 +19,7 @@ internal class Customization : ICustomization, IComparer<string>
     private readonly ChangelogOrder _changelogOrder;
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
+    private readonly bool _ignorePreRelease;
 
     public Customization(IConfiguration configuration)
     {
@@ -26,6 +28,7 @@ internal class Customization : ICustomization, IComparer<string>
         _changelogOrder = configuration.ChangelogOrder;
         _footerPattern = configuration.FooterPattern;
         _semanticVersionPattern = configuration.SemanticVersionPattern;
+        _ignorePreRelease = configuration.IgnorePreRelease;
         Separator = configuration.HeaderTypeDescriptionSeparator;
         Relationships = new Relationship[]
         {
@@ -58,8 +61,18 @@ internal class Customization : ICustomization, IComparer<string>
         return _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
     }
 
-    public bool IsVersionTag(string tagName) =>
-        tagName.Matches(_versionTagPrefix + _semanticVersionPattern);
+    public bool IsVersionTag(string tagName)
+    {
+        var match = tagName.MatchWith($"^{_versionTagPrefix + _semanticVersionPattern}$");
+        if (_ignorePreRelease)
+            return match.Success && IsNotPreRelease(match);
+        return match.Success;
+    }
+
+    private static bool IsNotPreRelease(Match match)
+    {
+        return match.Groups["prerelease"].Value == "";
+    }
 
     public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T : IHasCommitType
     {
