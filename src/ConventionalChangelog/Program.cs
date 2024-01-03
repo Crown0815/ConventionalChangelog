@@ -3,13 +3,9 @@ using ConventionalChangelog.BuildSystems;
 using ConventionalChangelog.Configuration;
 
 var output = (string?)null;
-var repositoryPath = args[0];
+var repositoryPath = args[^1];
 
-if (args[0] is "-o" or "--output")
-{
-    output = args[1];
-    repositoryPath = args[2];
-}
+if (args[0] is "-o" or "--output") output = args[1];
 
 var configuration = new Configuration { ChangelogOrder = default};
 var changelog = new Changelog(configuration).FromRepository(repositoryPath);
