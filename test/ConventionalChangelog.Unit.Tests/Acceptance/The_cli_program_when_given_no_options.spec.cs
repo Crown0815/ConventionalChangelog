@@ -6,7 +6,7 @@ using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
 namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
-public class The_cli_program : CliTestsBase
+public class The_cli_program_when_given_no_options : CliTestsBase
 {
     [Fact]
     public void prints_the_changelog_from_a_given_repository_to_the_console()
