@@ -6,7 +6,11 @@ using ConventionalChangelog.Configuration;
 CoconaLiteApp.Run(Execute);
 return;
 
-void Execute([Option('o')]string? output, [Option('t')]string? tagPrefix, [Option('i')]bool ignorePrereleases, [Argument]string repositoryPath)
+void Execute(
+    [Option('o')]string? output,
+    [Option('t')]string? tagPrefix,
+    [Option('i')]bool ignorePrereleases,
+    [Argument]string repositoryPath)
 {
     var configuration = new Configuration
     {
