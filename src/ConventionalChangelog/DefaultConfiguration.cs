@@ -1,4 +1,4 @@
-namespace ConventionalChangelog.Configuration;
+namespace ConventionalChangelog;
 
 internal class DefaultConfiguration : IConfiguration
 {

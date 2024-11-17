@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using ConventionalChangelog.Configuration;
 using static ConventionalChangelog.Conventional.CommitMessage;
 
 namespace ConventionalChangelog.Conventional;

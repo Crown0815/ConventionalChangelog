@@ -1,7 +1,6 @@
 ﻿using Cocona;
 using ConventionalChangelog;
 using ConventionalChangelog.BuildSystems;
-using ConventionalChangelog.Configuration;
 
 CoconaLiteApp.Run(Execute);
 return;
