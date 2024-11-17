@@ -7,7 +7,7 @@ namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 public class The_changelog_from_a_git_repository_using_conventional_commits : GitUsingTestsBase
 {
-    private const string _defaultBranch = "master";
+    private const string DefaultBranch = "master";
     private static string Version(string version) => $"v{version}";
 
     [Fact]
@@ -133,7 +133,7 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         Repository.Checkout("develop");
         Repository.Commit(Feature, 1).Tag(Version("v0.1.0-alpha.1"));
         Repository.Commit(Feature, 2).Tag(Version("0.1.0-alpha.2"));
-        Repository.Checkout(_defaultBranch);
+        Repository.Checkout(DefaultBranch);
         Repository.Merge(develop);
 
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 1));
@@ -147,13 +147,13 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         Repository.Checkout("develop");
         Repository.Commit(Feature, 1).Tag(Version("0.1.0-alpha.1"));
         Repository.Commit(Feature, 2).Tag(Version("0.1.0-alpha.2"));
-        Repository.Checkout(_defaultBranch);
+        Repository.Checkout(DefaultBranch);
         Repository.Merge(develop).Tag(Version("0.1.0"));
 
         Repository.Checkout("develop");
         Repository.Commit(Feature, 3).Tag(Version("0.2.0-alpha.1"));
         Repository.Commit(Feature, 4).Tag(Version("0.2.0-alpha.2"));
-        Repository.Checkout(_defaultBranch);
+        Repository.Checkout(DefaultBranch);
         Repository.Merge(develop);
 
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 4, 3));
