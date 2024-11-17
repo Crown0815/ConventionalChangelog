@@ -22,7 +22,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         }
 
         [Fact]
-        public void ignores_the_scope_if_it_is_empty()
+        public void when_the_scope_is_empty_ignores_the_scope()
         {
             var noScope = Feature.CommitWithDescription(1);
             var emptyScope = noScope.WithScope("");
@@ -31,7 +31,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         }
 
         [Fact]
-        public void ignores_the_scope_if_it_is_toggled_of_in_the_configuration()
+        public void when_scope_is_configured_to_be_ignored_ignores_the_scope()
         {
             var message = Feature.CommitWithDescription(1).WithScope("scope");
 
