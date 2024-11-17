@@ -6,5 +6,5 @@ internal static class The
 
     public static string ChangelogFrom(params Commit[] messages) => ConventionalChangelog.From(messages);
 
-    public static Changelog ChangelogWith(Configuration config) => new Changelog(config);
+    public static Changelog ChangelogWith(Configuration config) => new(config);
 }

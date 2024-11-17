@@ -56,9 +56,9 @@ public class MessageParser
         var indexOfOpeningParenthesis = typeIndicator.IndexOf('(');
         var scope = typeIndicator[(indexOfOpeningParenthesis + 1)..^1].Trim();
         var type = typeIndicator[..indexOfOpeningParenthesis].Trim();
-        if (scope is "") return (type, null);
-
-        return (type, scope);
+        return scope is ""
+            ? (type, null)
+            : (type, scope);
     }
 
     private (string, IReadOnlyCollection<Footer>) BodyFrom(TextReader reader)

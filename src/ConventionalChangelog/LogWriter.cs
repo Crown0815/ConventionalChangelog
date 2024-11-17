@@ -3,7 +3,7 @@ using static System.Environment;
 
 namespace ConventionalChangelog;
 
-internal class LogWriter
+internal class LogWriter(ICustomization customization)
 {
     private const string BulletPoint = "- ";
     private const string ChangelogTitle = "# Changelog";
@@ -13,39 +13,27 @@ internal class LogWriter
 
     private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
-    private readonly ICustomization _customization;
-
-
-    public LogWriter(ICustomization customization)
-    {
-        _customization = customization;
-    }
 
     public string Print(IEnumerable<IPrintReady> writable)
     {
         var writtenLog = new WrittenLog(EmptyChangelog);
-        if (_customization.IgnoreScope)
-            foreach (var printable in _customization.Ordered(writable))
-                writtenLog.Add(printable, _customization.TypeFor(printable.TypeIndicator), null);
+        if (customization.IgnoreScope)
+            foreach (var printable in customization.Ordered(writable))
+                writtenLog.Add(printable, customization.TypeFor(printable.TypeIndicator), null);
         else
-            foreach (var printable in _customization.Ordered(writable))
-                writtenLog.Add(printable, _customization.TypeFor(printable.TypeIndicator), printable.Scope);
+            foreach (var printable in customization.Ordered(writable))
+                writtenLog.Add(printable, customization.TypeFor(printable.TypeIndicator), printable.Scope);
         return writtenLog.Print();
     }
 
-    private class WrittenLog
+    private class WrittenLog(string emptyChangelog)
     {
-        private readonly StringBuilder _changelog;
+        private readonly StringBuilder _changelog = new(emptyChangelog);
 
         private string? _currentSection;
         private string? _currentSubSection;
         private bool _hasGeneralCodeImprovements;
         private bool _isEmpty = true;
-
-        public WrittenLog(string emptyChangelog)
-        {
-            _changelog = new StringBuilder(emptyChangelog);
-        }
 
         public void Add(IPrintReady printReady, ChangelogType type, string? subHeader)
         {

@@ -6,13 +6,9 @@ using Xunit.Sdk;
 
 namespace ConventionalChangelog.Unit.Tests;
 
-internal class CaseVariantDataAttribute: DataAttribute
+internal class CaseVariantDataAttribute(string source) : DataAttribute
 {
-    private readonly string _source;
-
-    public CaseVariantDataAttribute(string source) => _source = source;
-
-    public override IEnumerable<object[]> GetData(MethodInfo testMethod) => _source.TestCases();
+    public override IEnumerable<object[]> GetData(MethodInfo testMethod) => source.TestCases();
 }
 
 internal static class VariantsExtensions

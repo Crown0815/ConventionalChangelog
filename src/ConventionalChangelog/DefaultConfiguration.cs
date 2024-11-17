@@ -29,7 +29,7 @@ internal class DefaultConfiguration : IConfiguration
         public const string HeaderTypeDescriptionSeparator = ": ";
 
         public static readonly CommitType[] CommitTypes =
-        {
+        [
             new("(?<inner>[a-z]+)!", "Breaking Changes", Relevance.Show),
             new("feat", "Features", Relevance.Show),
             new("fix", "Bug Fixes", Relevance.Show),
@@ -41,7 +41,7 @@ internal class DefaultConfiguration : IConfiguration
             new("style", "", Relevance.Hide),
             new("refactor", "", Relevance.Hide),
             new("test", "", Relevance.Hide),
-        };
+        ];
     }
 
     public string FooterPattern => Default.FooterPattern;

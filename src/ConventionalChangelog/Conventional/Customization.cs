@@ -23,7 +23,7 @@ internal class Customization : ICustomization, IComparer<string>
 
     public Customization(IConfiguration configuration)
     {
-        _commitTypes = configuration.CommitTypes.ToImmutableArray();
+        _commitTypes = [..configuration.CommitTypes];
         _versionTagPrefix = configuration.VersionTagPrefix;
         _changelogOrder = configuration.ChangelogOrder;
         _footerPattern = configuration.FooterPattern;
@@ -31,12 +31,12 @@ internal class Customization : ICustomization, IComparer<string>
         _ignorePrerelease = configuration.IgnorePrerelease;
         Separator = configuration.HeaderTypeDescriptionSeparator;
         IgnoreScope = configuration.IgnoreScope;
-        Relationships = new Relationship[]
-        {
-            new(configuration.DropSelf, true, false),
-            new(configuration.DropOther, false, true),
-            new(configuration.DropBoth, true, true),
-        };
+        Relationships =
+        [
+            new Relationship(configuration.DropSelf, true, false),
+            new Relationship(configuration.DropOther, false, true),
+            new Relationship(configuration.DropBoth, true, true),
+        ];
 
         Validate(_footerPattern);
     }
@@ -123,13 +123,9 @@ internal class Customization : ICustomization, IComparer<string>
             throw new InvalidFooterPatternGroupIdException("", found[2]);
     }
 
-    private class InvalidFooterPatternGroupIdException : Exception
+    private class InvalidFooterPatternGroupIdException(string expected, string found)
+        : Exception(MessageFrom(expected, found))
     {
-        public InvalidFooterPatternGroupIdException(string expected, string found)
-            : base(MessageFrom(expected, found))
-        {
-        }
-
         private static string MessageFrom(string expected, string found)
         {
             return $"Expected token '{expected}' but found '{found}'";

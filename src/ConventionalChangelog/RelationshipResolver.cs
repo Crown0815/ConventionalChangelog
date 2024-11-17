@@ -4,18 +4,11 @@ namespace ConventionalChangelog;
 
 internal record Relationship(string Token, bool DropSelf, bool DropOther);
 
-internal class RelationshipResolver
+internal class RelationshipResolver(ICustomization customization)
 {
-    private readonly ICustomization _customization;
-
-    public RelationshipResolver(ICustomization customization)
-    {
-        _customization = customization;
-    }
-
     public IEnumerable<CommitMessage> ResolveRelationshipsBetween(IEnumerable<CommitMessage> messages)
     {
-        return _customization.Relationships.Aggregate(messages, Reduce);
+        return customization.Relationships.Aggregate(messages, Reduce);
     }
 
     private static IEnumerable<CommitMessage> Reduce(IEnumerable<CommitMessage> messages, Relationship relationship)
@@ -23,15 +16,13 @@ internal class RelationshipResolver
         return messages.Aggregate(new Resolver(relationship), (c, m) => c.Add(m)).Messages;
     }
 
-    private class Resolver
+    private class Resolver(Relationship relationship)
     {
         private readonly record struct Rule(string Token, bool Add, bool Register, bool Remove);
 
-        private readonly Rule _rule;
-        private readonly List<CommitMessage> _messages = new();
+        private readonly Rule _rule = AsRule(relationship);
+        private readonly List<CommitMessage> _messages = [];
         private readonly Dictionary<string, List<CommitMessage>> _references = new();
-
-        public Resolver(Relationship relationship) => _rule = AsRule(relationship);
 
         private static Rule AsRule(Relationship relationship) => new
         (
@@ -65,7 +56,7 @@ internal class RelationshipResolver
         private void CacheReference(CommitMessage source, string target)
         {
             if (!_references.ContainsKey(target))
-                _references.Add(target, new List<CommitMessage>());
+                _references.Add(target, []);
             _references[target].Add(source);
         }
 

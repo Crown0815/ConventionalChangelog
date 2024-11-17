@@ -10,7 +10,8 @@ internal static class RepositoryAssertionExtensions
 {
     public static RepositoryChangelogAssertions Should(this Repository instance) => new(instance);
 
-    public class RepositoryChangelogAssertions : ReferenceTypeAssertions<Repository, RepositoryChangelogAssertions>
+    public class RepositoryChangelogAssertions(Repository subject)
+        : ReferenceTypeAssertions<Repository, RepositoryChangelogAssertions>(subject)
     {
 #if NET6_0
         private const string ExpectedMatchingChangelogButDifferentWasFound = "Expected {context:repo} to have changelog {0}, but found {1}.";
@@ -22,10 +23,6 @@ internal static class RepositoryAssertionExtensions
                     {2}
                     """;
 #endif
-
-        public RepositoryChangelogAssertions(Repository subject) : base(subject)
-        {
-        }
 
         [ExcludeFromCodeCoverage]
         protected override string Identifier => "repo";

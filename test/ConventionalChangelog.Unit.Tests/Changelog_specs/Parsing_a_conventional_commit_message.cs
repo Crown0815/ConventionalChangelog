@@ -94,24 +94,24 @@ public class Parsing_a_conventional_commit_message
             new Footer("token-5", $"value{Lb}{Lb}with blank line"));
     }
 
-    public static readonly string[] Separators = { ": ", " #" };
+    public static readonly string[] Separators = [": ", " #"];
 
     public static readonly string[] Values =
-    {
+    [
         "value",
         "value with spaces",
         "value	with	tabs",
         $"value with{Lb}linebreak",
         $"value with{Lb}{Lb}blank line",
-    };
+    ];
 
     public static readonly string[] Tokens =
-    {
+    [
         "token",
         "token-with-dash",
         "BREAKING CHANGE",
         "BREAKING-CHANGE",
-    };
+    ];
 
     [Theory, CombinatorialData]
     public void extracts_the_parts_from_a_footer_formatted_using_a(
@@ -127,17 +127,17 @@ public class Parsing_a_conventional_commit_message
     }
 
     public static readonly string[] YouTrackValues =
-    {
+    [
         "",
         "command",
         "command1 command2",
-    };
+    ];
 
     public static readonly string[] YouTrackTokens =
-    {
+    [
         "SWX-1234",
         "DZE-12",
-    };
+    ];
 
     [Theory, CombinatorialData]
     public void extracts_the_parts_from_a_youtrack_footer_consisting_of(

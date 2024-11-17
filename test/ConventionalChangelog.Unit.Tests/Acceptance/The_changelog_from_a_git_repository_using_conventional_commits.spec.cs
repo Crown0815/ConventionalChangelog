@@ -167,7 +167,7 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         Repository.Commit(Feature, 3).Tag(Version("0.2.0-alpha.1"));
         Repository.Commit(Feature, 4);
 
-        var config = new Configuration()
+        var config = new Configuration
         {
             IgnorePrerelease = true,
         };
