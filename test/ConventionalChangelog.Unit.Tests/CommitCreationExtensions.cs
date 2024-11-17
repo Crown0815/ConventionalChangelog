@@ -18,6 +18,8 @@ internal static class CommitCreationExtensions
         commitMessage.WithFooter(token, A.Description(seed));
 
     public static Commit WithFooter(this Commit commitMessage, string token, string value) =>
-        commitMessage with {Message = commitMessage.Message + Environment.NewLine + Environment.NewLine + $"{token}: {value}"};
         commitMessage with {Message = commitMessage.Message + BlankLine + $"{token}{TokenValueSeparator} {value}"};
+
+    public static Commit WithScope(this Commit commitMessage, string scope) =>
+        commitMessage with {Message = commitMessage.Message.Insert(commitMessage.Message.IndexOf(TypeDescriptionSeparator), $"({scope})")};
 }

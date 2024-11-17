@@ -28,10 +28,11 @@ public class MessageParser
     private CommitMessage Read(TextReader lines)
     {
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine());
+        typeIndicator = WithoutScope(typeIndicator);
         var (body, footers) = BodyFrom(lines);
         typeIndicator = _customization.Sanitize(typeIndicator, footers);
 
-        return new CommitMessage(typeIndicator, description, body, footers);
+        return new CommitMessage(typeIndicator, null, description, body, footers);
     }
 
 #if NET6_0
@@ -48,6 +49,15 @@ public class MessageParser
             ? (first,second.Trim())
             : ("", "");
 #endif
+
+    private static string WithoutScope(string typeIndicator)
+    {
+        if (!typeIndicator.EndsWith(')')) return typeIndicator;
+        var indexOfOpeningParenthesis = typeIndicator.IndexOf('(');
+        _ = typeIndicator[(indexOfOpeningParenthesis + 1)..^1];
+        var type = typeIndicator[..indexOfOpeningParenthesis].Trim();
+        return type;
+    }
 
     private (string, IReadOnlyCollection<Footer>) BodyFrom(TextReader reader)
     {
