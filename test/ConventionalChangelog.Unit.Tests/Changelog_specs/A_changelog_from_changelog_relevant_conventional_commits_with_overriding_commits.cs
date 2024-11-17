@@ -74,7 +74,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         [InlineData("coverride")]
         [InlineData("overwrite")]
         [InlineData("overrider")]
-        public void does_not_commits_as_overriding_if_they_contain_(string footer)
+        public void does_not_recognize_commits_as_overriding_if_they_contain_(string footer)
         {
             var overridingOverriding = CommitTypeFor.Feature.CommitWithDescription(2).WithFooter(footer, _overridden.Hash);
             var changelog = The.ChangelogFrom(overridingOverriding, _overridden);
