@@ -15,7 +15,10 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
 
             var changelog = The.ChangelogFrom(message);
 
-            changelog.Should().Be(A.Changelog.WithGroup(Feature, 1));
+            changelog.Should().Be(A.Changelog
+                .WithGroup(Feature)
+                .WithScope("scope")
+                .WithBulletPoint(1));
         }
 
         [Theory]

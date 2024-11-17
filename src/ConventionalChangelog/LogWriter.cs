@@ -9,6 +9,7 @@ internal class LogWriter
     private const string ChangelogTitle = "# Changelog";
     private const string GeneralCodeImprovementsMessage = "*General Code Improvements*";
     private const string GroupHeaderPrefix = "## ";
+    private const string ScopeHeaderPrefix = "### ";
 
     private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
@@ -24,7 +25,7 @@ internal class LogWriter
     {
         var writtenLog = new WrittenLog(EmptyChangelog);
         foreach (var printable in _customization.Ordered(writable))
-            writtenLog.Add(printable, _customization.TypeFor(printable.TypeIndicator));
+            writtenLog.Add(printable, _customization.TypeFor(printable.TypeIndicator), printable.Scope);
         return writtenLog.Print();
     }
 
@@ -33,6 +34,7 @@ internal class LogWriter
         private readonly StringBuilder _changelog;
 
         private string? _currentSection;
+        private string? _currentSubSection;
         private bool _hasGeneralCodeImprovements;
         private bool _isEmpty = true;
 
@@ -41,12 +43,12 @@ internal class LogWriter
             _changelog = new StringBuilder(emptyChangelog);
         }
 
-        public void Add(IPrintReady printReady, ChangelogType type)
+        public void Add(IPrintReady printReady, ChangelogType type, string? subHeader)
         {
             switch (type.Relevance)
             {
                 case Relevance.Show:
-                    AddBullet(type.GroupHeader, printReady.Description);
+                    AddBullet(type.GroupHeader, subHeader, printReady.Description);
                     break;
                 case Relevance.Hide:
                     AddGeneralCodeImprovement();
@@ -58,10 +60,12 @@ internal class LogWriter
             }
         }
 
-        private void AddBullet(string header, string text)
+        private void AddBullet(string header, string? subHeader, string text)
         {
             if (_currentSection != header)
                 StartNewSection(header);
+            if (_currentSubSection != subHeader)
+                StartNewSubSection(subHeader);
             AddBullet(text);
         }
 
@@ -69,6 +73,12 @@ internal class LogWriter
         {
             _currentSection = header;
             _changelog.AppendFormat(null, "{0}{1}{2}{0}{0}", NewLine, GroupHeaderPrefix, header);
+        }
+
+        private void StartNewSubSection(string? header)
+        {
+            _currentSubSection = header;
+            _changelog.AppendFormat(null, "{1}{2}{0}{0}", NewLine, ScopeHeaderPrefix, header);
         }
 
         private void AddBullet(string text)

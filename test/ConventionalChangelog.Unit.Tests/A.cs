@@ -28,12 +28,17 @@ internal static class A
         }
 
         private Changelog WithGroup(string groupHeader) =>
-            With(NewLine + Group(groupHeader) + HeaderSeparator);
+            With(NewLine + Level2Header(groupHeader) + HeaderSeparator);
 
-        private static string Group(string groupHeader) => $"## {groupHeader}";
+        public Changelog WithScope(string scopeHeader) =>
+            With(Level3Header(scopeHeader) + HeaderSeparator);
 
-        private static Changelog AddBulletPoint(Changelog c, int seed) =>
-            c.With($"- {Description(seed)}{NewLine}");
+        private static string Level2Header(string header) => $"## {header}";
+        private static string Level3Header(string header) => $"### {header}";
+
+        private static Changelog AddBulletPoint(Changelog c, int seed) => c.WithBulletPoint(seed);
+
+        public Changelog WithBulletPoint(int seed) => With($"- {Description(seed)}{NewLine}");
 
         private Changelog With(string text)
         {

@@ -104,6 +104,7 @@ internal class Customization : ICustomization, IComparer<string>
     private record PrintReadyFooter(string Token, string Value, string TypeIndicator)
         : CommitMessage.Footer(Token, Value), IPrintReady
     {
+        public string? Scope => null;
         public string Description => Value;
     }
 
