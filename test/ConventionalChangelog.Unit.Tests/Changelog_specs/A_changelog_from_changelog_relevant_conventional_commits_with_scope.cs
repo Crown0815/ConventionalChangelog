@@ -17,5 +17,20 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
 
             changelog.Should().Be(A.Changelog.WithGroup(Feature, 1));
         }
+
+        [Theory]
+        [InlineData(" (scope)")]
+        [InlineData("(scope) ")]
+        [InlineData("( scope)")]
+        [InlineData("(scope )")]
+        [InlineData(" ( scope ) ")]
+        [InlineData("     (     scope     )    ")]
+        public void produces_the_same_result_independent_of_spaces_before_after_or_within_the_scope(string withSpaces)
+        {
+            var reference = new Commit($"{Feature.Indicator}(scope): whatever");
+            var sample = new Commit($"{Feature.Indicator}{withSpaces}: whatever");
+
+            The.ChangelogFrom(reference).Should().Be(The.ChangelogFrom(sample));
+        }
     }
 }

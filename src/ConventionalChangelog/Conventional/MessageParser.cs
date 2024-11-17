@@ -40,13 +40,13 @@ public class MessageParser
     {
         var twoParts = header?.Split(_customization.Separator);
         return twoParts?.Length == 2
-            ? (twoParts.First(), twoParts.Last().Trim())
+            ? (twoParts.First().Trim(), twoParts.Last().Trim())
             : ("", "");
     }
 #elif NET7_0_OR_GREATER
     private (string, string) HeaderFrom(string? header) =>
         header?.Split(_customization.Separator) is [var first, var second]
-            ? (first,second.Trim())
+            ? (first.Trim(),second.Trim())
             : ("", "");
 #endif
 
