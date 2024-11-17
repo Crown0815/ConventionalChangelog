@@ -53,9 +53,12 @@ public class MessageParser
     private static (string, string?) ScopeFrom(string typeIndicator)
     {
         if (!typeIndicator.EndsWith(')')) return (typeIndicator, null);
+
         var indexOfOpeningParenthesis = typeIndicator.IndexOf('(');
         var scope = typeIndicator[(indexOfOpeningParenthesis + 1)..^1].Trim();
         var type = typeIndicator[..indexOfOpeningParenthesis].Trim();
+        if (scope is "") return (type, null);
+
         return (type, scope);
     }
 

@@ -21,6 +21,15 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
                 .WithBulletPoint(1));
         }
 
+        [Fact]
+        public void ignores_the_scope_if_it_is_empty()
+        {
+            var noScope = Feature.CommitWithDescription(1);
+            var emptyScope = noScope.WithScope("");
+
+            The.ChangelogFrom(noScope).Should().Be(The.ChangelogFrom(emptyScope));
+        }
+
         [Theory]
         [InlineData(" (scope)")]
         [InlineData("(scope) ")]
