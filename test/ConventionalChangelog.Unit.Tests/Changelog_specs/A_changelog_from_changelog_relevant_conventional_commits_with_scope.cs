@@ -30,6 +30,17 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             The.ChangelogFrom(noScope).Should().Be(The.ChangelogFrom(emptyScope));
         }
 
+        [Fact]
+        public void ignores_the_scope_if_it_is_toggled_of_in_the_configuration()
+        {
+            var message = Feature.CommitWithDescription(1).WithScope("scope");
+
+            var configuration = new Configuration(ignoreScope: true);
+            var changelog = The.ChangelogWith(configuration).From([message]);
+
+            changelog.Should().Be(A.Changelog.WithGroup(Feature, 1));
+        }
+
         [Theory]
         [InlineData(" (scope)")]
         [InlineData("(scope) ")]

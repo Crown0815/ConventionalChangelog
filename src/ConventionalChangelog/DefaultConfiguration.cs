@@ -2,7 +2,6 @@ namespace ConventionalChangelog;
 
 internal class DefaultConfiguration : IConfiguration
 {
-
     private static class Default
     {
         // language=regex
@@ -55,4 +54,5 @@ internal class DefaultConfiguration : IConfiguration
     public string DropOther => Default.DropOther;
     public string HeaderTypeDescriptionSeparator => Default.HeaderTypeDescriptionSeparator;
     public bool IgnorePrerelease => false;
+    public bool IgnoreScope => false;
 }

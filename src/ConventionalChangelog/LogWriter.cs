@@ -24,8 +24,12 @@ internal class LogWriter
     public string Print(IEnumerable<IPrintReady> writable)
     {
         var writtenLog = new WrittenLog(EmptyChangelog);
-        foreach (var printable in _customization.Ordered(writable))
-            writtenLog.Add(printable, _customization.TypeFor(printable.TypeIndicator), printable.Scope);
+        if (_customization.IgnoreScope)
+            foreach (var printable in _customization.Ordered(writable))
+                writtenLog.Add(printable, _customization.TypeFor(printable.TypeIndicator), null);
+        else
+            foreach (var printable in _customization.Ordered(writable))
+                writtenLog.Add(printable, _customization.TypeFor(printable.TypeIndicator), printable.Scope);
         return writtenLog.Print();
     }
 

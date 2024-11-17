@@ -1,6 +1,6 @@
 namespace ConventionalChangelog;
 
-public class Configuration : IConfiguration
+public class Configuration(bool? ignoreScope = null) : IConfiguration
 {
     private readonly IConfiguration _default = new DefaultConfiguration();
     private readonly ChangelogOrder? _changelogOrder;
@@ -29,4 +29,5 @@ public class Configuration : IConfiguration
     public string DropBoth => _default.DropBoth;
     public string DropOther => _default.DropOther;
     public string HeaderTypeDescriptionSeparator => _default.HeaderTypeDescriptionSeparator;
+    public bool IgnoreScope => ignoreScope ?? _default.IgnoreScope;
 }

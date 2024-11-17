@@ -30,6 +30,7 @@ internal class Customization : ICustomization, IComparer<string>
         _semanticVersionPattern = configuration.SemanticVersionPattern;
         _ignorePrerelease = configuration.IgnorePrerelease;
         Separator = configuration.HeaderTypeDescriptionSeparator;
+        IgnoreScope = configuration.IgnoreScope;
         Relationships = new Relationship[]
         {
             new(configuration.DropSelf, true, false),
@@ -41,6 +42,7 @@ internal class Customization : ICustomization, IComparer<string>
     }
 
     public string Separator { get; }
+    public bool IgnoreScope { get; }
 
     public IReadOnlyCollection<Relationship> Relationships { get; }
 

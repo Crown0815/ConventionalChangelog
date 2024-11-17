@@ -12,4 +12,5 @@ public interface IConfiguration
     string DropOther { get; }
     string HeaderTypeDescriptionSeparator { get; }
     bool IgnorePrerelease { get; }
+    bool IgnoreScope { get; }
 }

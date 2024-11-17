@@ -16,4 +16,5 @@ internal interface ICustomization
 
     string Separator { get; }
     IReadOnlyCollection<Relationship> Relationships { get; }
+    bool IgnoreScope { get; }
 }
