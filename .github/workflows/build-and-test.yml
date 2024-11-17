@@ -35,7 +35,8 @@ jobs:
         run: dotnet test --no-restore --verbosity normal
 
       - name: Publish
-        run: dotnet publish src/ConventionalChangelog/ConventionalChangelog.csproj --framework net7.0 --configuration Release --output release --nologo
+        run: dotnet publish src/ConventionalChangelog/ConventionalChangelog.csproj --framework net8.0 --configuration
+          Release --output release --nologo
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
