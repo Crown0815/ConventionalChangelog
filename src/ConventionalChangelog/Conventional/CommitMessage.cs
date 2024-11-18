@@ -4,7 +4,7 @@ namespace ConventionalChangelog.Conventional;
 
 public record CommitMessage(
     string TypeIndicator,
-    string? Scope,
+    string Scope,
     string Description,
     string Body,
     IReadOnlyCollection<Footer> Footers) : IPrintReady

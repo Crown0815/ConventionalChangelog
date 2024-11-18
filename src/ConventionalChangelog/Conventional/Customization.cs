@@ -20,6 +20,7 @@ internal class Customization : ICustomization, IComparer<string>
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
     private readonly bool _ignorePrerelease;
+    private readonly ImmutableDictionary<string, Scope> _scopes;
 
     public Customization(IConfiguration configuration)
     {
@@ -31,7 +32,7 @@ internal class Customization : ICustomization, IComparer<string>
         _ignorePrerelease = configuration.IgnorePrerelease;
         Separator = configuration.HeaderTypeDescriptionSeparator;
         IgnoreScope = configuration.IgnoreScope;
-        Scopes = configuration.Scopes.ToDictionary(x => x.Indicator, x => x);
+        _scopes = configuration.Scopes.ToImmutableDictionary(x => x.Indicator, x => x);
         Relationships =
         [
             new Relationship(configuration.DropSelf, true, false),
@@ -45,13 +46,10 @@ internal class Customization : ICustomization, IComparer<string>
 
     public string Separator { get; }
     public bool IgnoreScope { get; }
-    public IReadOnlyDictionary<string,Scope> Scopes { get; }
 
-    public Scope ScopeFor(string? scopeIndicator)
+    public Scope ScopeFor(string scopeIndicator)
     {
-        if (scopeIndicator is null) return Scope.None;
-
-        return Scopes.TryGetValue(scopeIndicator, out var scope)
+        return _scopes.TryGetValue(scopeIndicator, out var scope)
             ? scope
             : new Scope(scopeIndicator, scopeIndicator);
     }
@@ -121,7 +119,7 @@ internal class Customization : ICustomization, IComparer<string>
     private record PrintReadyFooter(string Token, string Value, string TypeIndicator)
         : CommitMessage.Footer(Token, Value), IPrintReady
     {
-        public string? Scope => null;
+        public string Scope => "";
         public string Description => Value;
     }
 

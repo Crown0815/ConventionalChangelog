@@ -49,16 +49,14 @@ public class MessageParser
             : ("", "");
 #endif
 
-    private static (string, string?) ScopeFrom(string typeIndicator)
+    private static (string, string) ScopeFrom(string typeIndicator)
     {
-        if (!typeIndicator.EndsWith(')')) return (typeIndicator, null);
+        if (!typeIndicator.EndsWith(')')) return (typeIndicator, "");
 
         var indexOfOpeningParenthesis = typeIndicator.IndexOf('(');
         var scope = typeIndicator[(indexOfOpeningParenthesis + 1)..^1].Trim();
         var type = typeIndicator[..indexOfOpeningParenthesis].Trim();
-        return scope is ""
-            ? (type, null)
-            : (type, scope);
+        return (type, scope);
     }
 
     private (string, IReadOnlyCollection<Footer>) BodyFrom(TextReader reader)

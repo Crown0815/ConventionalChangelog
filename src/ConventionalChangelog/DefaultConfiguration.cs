@@ -42,6 +42,8 @@ internal class DefaultConfiguration : IConfiguration
             new("refactor", "", Relevance.Hide),
             new("test", "", Relevance.Hide),
         ];
+
+        public static readonly Scope[] Scopes = [Scope.None];
     }
 
     public string FooterPattern => Default.FooterPattern;
@@ -55,5 +57,5 @@ internal class DefaultConfiguration : IConfiguration
     public string HeaderTypeDescriptionSeparator => Default.HeaderTypeDescriptionSeparator;
     public bool IgnorePrerelease => false;
     public bool IgnoreScope => false;
-    public IEnumerable<Scope> Scopes => Array.Empty<Scope>();
+    public IEnumerable<Scope> Scopes => Default.Scopes;
 }

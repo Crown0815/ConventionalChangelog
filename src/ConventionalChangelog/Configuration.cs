@@ -33,8 +33,3 @@ public class Configuration(IReadOnlyCollection<Scope>? scopes = null, bool? igno
     public string HeaderTypeDescriptionSeparator => _default.HeaderTypeDescriptionSeparator;
     public bool IgnoreScope => ignoreScope ?? _default.IgnoreScope;
 }
-
-public record Scope(string Indicator, string GroupHeader)
-{
-    public static Scope None { get; } = new("", null);
-}
