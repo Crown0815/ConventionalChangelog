@@ -16,7 +16,7 @@ internal class LogWriter(ICustomization customization)
 
     public string Print(IEnumerable<IPrintReady> writable)
     {
-        var writtenLog = new WrittenLog(EmptyChangelog);
+        var writtenLog = new WrittenLog();
         foreach (var printable in customization.Ordered(writable))
             writtenLog.Add(
                 printable,
@@ -27,9 +27,9 @@ internal class LogWriter(ICustomization customization)
         return writtenLog.Print();
     }
 
-    private class WrittenLog(string emptyChangelog)
+    private class WrittenLog
     {
-        private readonly StringBuilder _changelog = new(emptyChangelog);
+        private readonly StringBuilder _changelog = new(EmptyChangelog);
 
         private string? _currentSection;
         private string? _currentSubSection;
