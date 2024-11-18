@@ -22,6 +22,36 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         }
 
         [Fact]
+        public void by_default_groups_messages_by_type_and_alphabetical_scope()
+        {
+            const string scope2 = "scope2";
+            const string scope1 = "scope1";
+            var changelog = The.ChangelogFrom(
+                Bugfix.CommitWithDescription(0).WithScope(scope2),
+                Feature.CommitWithDescription(1).WithScope(scope2),
+                Feature.CommitWithDescription(2).WithScope(scope1),
+                Feature.CommitWithDescription(3).WithScope(scope2),
+                Feature.CommitWithDescription(4).WithScope(scope1),
+                Feature.CommitWithDescription(5).WithScope(scope2),
+                Bugfix.CommitWithDescription(6).WithScope(scope1),
+                Bugfix.CommitWithDescription(7).WithScope(scope1),
+                Bugfix.CommitWithDescription(8).WithScope(scope2)
+            );
+
+            changelog.Should().Be(A.Changelog
+                .WithGroup(Feature)
+                .WithScope(scope1)
+                .WithBulletPoint(2).WithBulletPoint(4)
+                .WithScope2(scope2)
+                .WithBulletPoint(1).WithBulletPoint(3).WithBulletPoint(5)
+                .WithGroup(Bugfix)
+                .WithScope(scope1)
+                .WithBulletPoint(6).WithBulletPoint(7)
+                .WithScope2(scope2)
+                .WithBulletPoint(0).WithBulletPoint(8));
+        }
+
+        [Fact]
         public void when_the_scope_is_empty_ignores_the_scope()
         {
             var noScope = Feature.CommitWithDescription(1);

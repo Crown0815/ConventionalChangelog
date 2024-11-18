@@ -10,7 +10,7 @@ internal interface ICustomization
     bool IsFooter(string line);
     CommitMessage.Footer FooterFrom(string line);
 
-    IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IHasCommitType;
+    IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T: IPrintReady;
 
     bool IsVersionTag(string tagName);
 

@@ -55,23 +55,26 @@ internal class LogWriter(ICustomization customization)
 
         private void AddBullet(string header, string? subHeader, string text)
         {
+            var isNewList = _currentSection != header || _currentSubSection != subHeader;
             if (_currentSection != header)
                 StartNewSection(header);
             if (_currentSubSection != subHeader)
                 StartNewSubSection(subHeader);
+            if (isNewList)
+                _changelog.AppendLine();
             AddBullet(text);
         }
 
         private void StartNewSection(string header)
         {
             _currentSection = header;
-            _changelog.AppendFormat(null, "{0}{1}{2}{0}{0}", NewLine, GroupHeaderPrefix, header);
+            _changelog.AppendFormat(null, "{0}{1}{2}{0}", NewLine, GroupHeaderPrefix, header);
         }
 
         private void StartNewSubSection(string? header)
         {
             _currentSubSection = header;
-            _changelog.AppendFormat(null, "{1}{2}{0}{0}", NewLine, ScopeHeaderPrefix, header);
+            _changelog.AppendFormat(null, "{0}{1}{2}{0}", NewLine, ScopeHeaderPrefix, header);
         }
 
         private void AddBullet(string text)

@@ -27,11 +27,16 @@ internal static class A
             return seeds.Aggregate(WithGroup(type.GroupHeader), AddBulletPoint);
         }
 
+        public Changelog WithGroup(ChangelogType type) => WithGroup(type.GroupHeader);
+
         private Changelog WithGroup(string groupHeader) =>
             With(NewLine + Level2Header(groupHeader) + HeaderSeparator);
 
         public Changelog WithScope(string scopeHeader) =>
             With(Level3Header(scopeHeader) + HeaderSeparator);
+
+        public Changelog WithScope2(string scopeHeader) =>
+            With(NewLine + Level3Header(scopeHeader) + HeaderSeparator);
 
         private static string Level2Header(string header) => $"## {header}";
         private static string Level3Header(string header) => $"### {header}";

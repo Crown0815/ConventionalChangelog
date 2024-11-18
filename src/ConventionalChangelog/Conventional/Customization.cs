@@ -76,11 +76,14 @@ internal class Customization : ICustomization, IComparer<string>
         return match.Groups["prerelease"].Value == "";
     }
 
-    public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T : IHasCommitType
+    public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T : IPrintReady
     {
         if (_changelogOrder == ChangelogOrder.OldestToNewest)
             logEntries = logEntries.Reverse();
-        return logEntries.OrderBy(x => x.TypeIndicator, this);
+
+        return logEntries
+            .OrderBy(x => x.TypeIndicator, this)
+            .ThenBy(x => x.Scope);
     }
 
     public int Compare(string? x, string? y) => IndexOf(x).CompareTo(IndexOf(y));
