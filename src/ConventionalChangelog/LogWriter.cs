@@ -34,11 +34,13 @@ internal class LogWriter(ICustomization customization)
         public void Add(IPrintReady printReady)
         {
             var type = customization.TypeFor(printReady.TypeIndicator);
-            var scope = customization.IgnoreScope ? null : customization.ScopeFor(printReady.Scope);
+            var scope = customization.IgnoreScope ? Scope.None : customization.ScopeFor(printReady.Scope);
+            if (scope.GroupHeader is "")
+                scope = Scope.None;
             switch (type.Relevance)
             {
                 case Relevance.Show:
-                    AddBullet(type.GroupHeader, scope?.GroupHeader, printReady.Description);
+                    AddBullet(type.GroupHeader, scope.GroupHeader, printReady.Description);
                     break;
                 case Relevance.Hide:
                     AddGeneralCodeImprovement();

@@ -72,13 +72,48 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         }
 
         [Fact]
-        public void when_scopes_are_configured_to_be_mapped_uses_mapped_names_as_subsection_headers()
+        public void when_non_empty_scopes_are_mapped_uses_the_mapped_names_as_subsection_headers()
         {
             const string scopeHeader = "My Scope";
             const string scope = "scope";
             var message = Feature.CommitWithDescription(1).WithScope(scope);
 
             var configuration = new Configuration(scopes: [new Scope(scope, scopeHeader)]);
+            var changelog = The.ChangelogWith(configuration).From([message]);
+
+            changelog.Should().Be(A.Changelog
+                .WithGroup(Feature)
+                .WithScope(scopeHeader)
+                .WithBulletPoint(1));
+        }
+
+        [Fact]
+        public void when_non_empty_scopes_are_mapped_leaves_empty_scopes_without_subsection()
+        {
+            const string scopeHeader = "My Scope";
+            const string scope = "scope";
+            var messageWithoutScope = Feature.CommitWithDescription(2);
+            var messageWithScope = Feature.CommitWithDescription(1).WithScope(scope);
+
+            var configuration = new Configuration(scopes: [new Scope(scope, scopeHeader)]);
+            var changelog = The.ChangelogWith(configuration).From([
+                messageWithScope,
+                messageWithoutScope]);
+
+            changelog.Should().Be(A.Changelog
+                .WithGroup(Feature, 2)
+                .WithScope2(scopeHeader)
+                .WithBulletPoint(1));
+        }
+
+        [Fact]
+        public void when_empty_scope_is_mapped_uses_mapped_names_as_subsection_headers()
+        {
+            const string scopeHeader = "My Scope";
+            const string emptyScope = "";
+            var message = Feature.CommitWithDescription(1);
+
+            var configuration = new Configuration(scopes: [new Scope(emptyScope, scopeHeader)]);
             var changelog = The.ChangelogWith(configuration).From([message]);
 
             changelog.Should().Be(A.Changelog
