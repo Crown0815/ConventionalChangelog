@@ -17,12 +17,13 @@ internal class LogWriter(ICustomization customization)
     public string Print(IEnumerable<IPrintReady> writable)
     {
         var writtenLog = new WrittenLog(EmptyChangelog);
-        if (customization.IgnoreScope)
-            foreach (var printable in customization.Ordered(writable))
-                writtenLog.Add(printable, customization.TypeFor(printable.TypeIndicator), null);
-        else
-            foreach (var printable in customization.Ordered(writable))
-                writtenLog.Add(printable, customization.TypeFor(printable.TypeIndicator), printable.Scope);
+        foreach (var printable in customization.Ordered(writable))
+            writtenLog.Add(
+                printable,
+                customization.TypeFor(printable.TypeIndicator),
+                customization.IgnoreScope
+                    ? null
+                    : printable.Scope);
         return writtenLog.Print();
     }
 
