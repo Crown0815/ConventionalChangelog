@@ -13,16 +13,12 @@ internal static class RepositoryAssertionExtensions
     public class RepositoryChangelogAssertions(Repository subject)
         : ReferenceTypeAssertions<Repository, RepositoryChangelogAssertions>(subject)
     {
-#if NET6_0
-        private const string ExpectedMatchingChangelogButDifferentWasFound = "Expected {context:repo} to have changelog {0}, but found {1}.";
-#elif NET7_0_OR_GREATER
         private const string ExpectedMatchingChangelogButDifferentWasFound = """
                     Expected {context:repo} to have changelog {0}, but found {1}.
 
                     GitGraph:
                     {2}
                     """;
-#endif
 
         [ExcludeFromCodeCoverage]
         protected override string Identifier => "repo";

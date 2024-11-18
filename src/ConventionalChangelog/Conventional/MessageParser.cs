@@ -34,20 +34,10 @@ public class MessageParser
         return new CommitMessage(typeIndicator, scope, description, body, footers);
     }
 
-#if NET6_0
-    private (string, string) HeaderFrom(string? header)
-    {
-        var twoParts = header?.Split(_customization.Separator);
-        return twoParts?.Length == 2
-            ? (twoParts.First().Trim(), twoParts.Last().Trim())
-            : ("", "");
-    }
-#elif NET7_0_OR_GREATER
     private (string, string) HeaderFrom(string? header) =>
         header?.Split(_customization.Separator) is [var first, var second]
             ? (first.Trim(),second.Trim())
             : ("", "");
-#endif
 
     private static (string, string) ScopeFrom(string typeIndicator)
     {
