@@ -43,7 +43,7 @@ internal class DefaultConfiguration : IConfiguration
             new("test", "", Relevance.Hide),
         ];
 
-        public static readonly Scope[] Scopes = [Scope.None];
+        public static readonly Scope[] Scopes = [];
     }
 
     public string FooterPattern => Default.FooterPattern;
