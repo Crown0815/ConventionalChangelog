@@ -4,7 +4,7 @@ namespace ConventionalChangelog;
 
 internal record Relationship(string Token, bool DropSelf, bool DropOther);
 
-internal class RelationshipResolver(ICustomization customization)
+internal class RelationshipResolver(Customization customization)
 {
     public IEnumerable<CommitMessage> ResolveRelationshipsBetween(IEnumerable<CommitMessage> messages)
     {

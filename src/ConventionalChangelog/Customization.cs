@@ -1,9 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using ConventionalChangelog.Conventional;
 
-namespace ConventionalChangelog.Conventional;
+namespace ConventionalChangelog;
 
-internal class Customization : ICustomization, IComparer<string>
+internal class Customization : IComparer<string>
 {
     private const string TokenGroupId = "token";
     private const string BreakingGroupId = "breaking";

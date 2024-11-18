@@ -3,7 +3,7 @@ using static System.Environment;
 
 namespace ConventionalChangelog;
 
-internal class LogWriter(ICustomization customization)
+internal class LogWriter(Customization customization)
 {
     private const string BulletPoint = "- ";
     private const string ChangelogTitle = "# Changelog";
@@ -22,7 +22,7 @@ internal class LogWriter(ICustomization customization)
         return writtenLog.Print();
     }
 
-    private class WrittenLog(ICustomization customization)
+    private class WrittenLog(Customization customization)
     {
         private readonly StringBuilder _changelog = new(EmptyChangelog);
 

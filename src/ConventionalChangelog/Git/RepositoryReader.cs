@@ -2,7 +2,7 @@ using LibGit2Sharp;
 
 namespace ConventionalChangelog.Git;
 
-internal class RepositoryReader(ICustomization customization)
+internal class RepositoryReader(Customization customization)
 {
     public IEnumerable<Commit> CommitsFrom(string path)
     {

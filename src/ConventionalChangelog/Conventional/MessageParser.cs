@@ -5,13 +5,13 @@ namespace ConventionalChangelog.Conventional;
 
 public class MessageParser
 {
-    private readonly ICustomization _customization;
+    private readonly Customization _customization;
 
     public MessageParser() : this(new Customization(new DefaultConfiguration()))
     {
     }
 
-    internal MessageParser(ICustomization customization) => _customization = customization;
+    internal MessageParser(Customization customization) => _customization = customization;
 
     public CommitMessage Parse(Commit commit)
     {
