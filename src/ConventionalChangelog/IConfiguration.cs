@@ -13,4 +13,5 @@ public interface IConfiguration
     string HeaderTypeDescriptionSeparator { get; }
     bool IgnorePrerelease { get; }
     bool IgnoreScope { get; }
+    IEnumerable<Scope> Scopes { get; }
 }

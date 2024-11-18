@@ -71,6 +71,22 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             changelog.Should().Be(A.Changelog.WithGroup(Feature, 1));
         }
 
+        [Fact]
+        public void when_scopes_are_configured_to_be_mapped_uses_mapped_names_as_subsection_headers()
+        {
+            const string scopeHeader = "My Scope";
+            const string scope = "scope";
+            var message = Feature.CommitWithDescription(1).WithScope(scope);
+
+            var configuration = new Configuration(scopes: [new Scope(scope, scopeHeader)]);
+            var changelog = The.ChangelogWith(configuration).From([message]);
+
+            changelog.Should().Be(A.Changelog
+                .WithGroup(Feature)
+                .WithScope(scopeHeader)
+                .WithBulletPoint(1));
+        }
+
         [Theory]
         [InlineData(" (scope)")]
         [InlineData("(scope) ")]

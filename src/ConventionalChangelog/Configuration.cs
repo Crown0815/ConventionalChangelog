@@ -1,6 +1,6 @@
 namespace ConventionalChangelog;
 
-public class Configuration(bool? ignoreScope = null) : IConfiguration
+public class Configuration(IReadOnlyCollection<Scope>? scopes = null, bool? ignoreScope = null) : IConfiguration
 {
     private readonly IConfiguration _default = new DefaultConfiguration();
     private readonly ChangelogOrder? _changelogOrder;
@@ -19,6 +19,8 @@ public class Configuration(bool? ignoreScope = null) : IConfiguration
 
     public IEnumerable<CommitType> CommitTypes => _default.CommitTypes;
 
+    public IEnumerable<Scope> Scopes => scopes ?? _default.Scopes;
+
     public ChangelogOrder ChangelogOrder
     {
         get => _changelogOrder ?? _default.ChangelogOrder;
@@ -30,4 +32,9 @@ public class Configuration(bool? ignoreScope = null) : IConfiguration
     public string DropOther => _default.DropOther;
     public string HeaderTypeDescriptionSeparator => _default.HeaderTypeDescriptionSeparator;
     public bool IgnoreScope => ignoreScope ?? _default.IgnoreScope;
+}
+
+public record Scope(string Indicator, string GroupHeader)
+{
+    public static Scope None { get; } = new("", null);
 }

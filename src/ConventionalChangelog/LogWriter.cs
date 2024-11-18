@@ -16,18 +16,13 @@ internal class LogWriter(ICustomization customization)
 
     public string Print(IEnumerable<IPrintReady> writable)
     {
-        var writtenLog = new WrittenLog();
+        var writtenLog = new WrittenLog(customization);
         foreach (var printable in customization.Ordered(writable))
-            writtenLog.Add(
-                printable,
-                customization.TypeFor(printable.TypeIndicator),
-                customization.IgnoreScope
-                    ? null
-                    : printable.Scope);
+            writtenLog.Add(printable);
         return writtenLog.Print();
     }
 
-    private class WrittenLog
+    private class WrittenLog(ICustomization customization)
     {
         private readonly StringBuilder _changelog = new(EmptyChangelog);
 
@@ -36,12 +31,14 @@ internal class LogWriter(ICustomization customization)
         private bool _hasGeneralCodeImprovements;
         private bool _isEmpty = true;
 
-        public void Add(IPrintReady printReady, ChangelogType type, string? subHeader)
+        public void Add(IPrintReady printReady)
         {
+            var type = customization.TypeFor(printReady.TypeIndicator);
+            var scope = customization.IgnoreScope ? null : customization.ScopeFor(printReady.Scope);
             switch (type.Relevance)
             {
                 case Relevance.Show:
-                    AddBullet(type.GroupHeader, subHeader, printReady.Description);
+                    AddBullet(type.GroupHeader, scope?.GroupHeader, printReady.Description);
                     break;
                 case Relevance.Hide:
                     AddGeneralCodeImprovement();

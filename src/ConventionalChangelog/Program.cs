@@ -12,7 +12,7 @@ void Execute(
     [Option('s')]bool ignoreScope,
     [Argument]string repositoryPath)
 {
-    var configuration = new Configuration(ignoreScope)
+    var configuration = new Configuration(ignoreScope: ignoreScope)
     {
         ChangelogOrder = default,
         VersionTagPrefix = tagPrefix!,

@@ -55,4 +55,5 @@ internal class DefaultConfiguration : IConfiguration
     public string HeaderTypeDescriptionSeparator => Default.HeaderTypeDescriptionSeparator;
     public bool IgnorePrerelease => false;
     public bool IgnoreScope => false;
+    public IEnumerable<Scope> Scopes => Array.Empty<Scope>();
 }

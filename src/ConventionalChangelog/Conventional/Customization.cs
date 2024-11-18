@@ -31,6 +31,7 @@ internal class Customization : ICustomization, IComparer<string>
         _ignorePrerelease = configuration.IgnorePrerelease;
         Separator = configuration.HeaderTypeDescriptionSeparator;
         IgnoreScope = configuration.IgnoreScope;
+        Scopes = configuration.Scopes.ToDictionary(x => x.Indicator, x => x);
         Relationships =
         [
             new Relationship(configuration.DropSelf, true, false),
@@ -41,8 +42,19 @@ internal class Customization : ICustomization, IComparer<string>
         Validate(_footerPattern);
     }
 
+
     public string Separator { get; }
     public bool IgnoreScope { get; }
+    public IReadOnlyDictionary<string,Scope> Scopes { get; }
+
+    public Scope ScopeFor(string? scopeIndicator)
+    {
+        if (scopeIndicator is null) return Scope.None;
+
+        return Scopes.TryGetValue(scopeIndicator, out var scope)
+            ? scope
+            : new Scope(scopeIndicator, scopeIndicator);
+    }
 
     public IReadOnlyCollection<Relationship> Relationships { get; }
 
