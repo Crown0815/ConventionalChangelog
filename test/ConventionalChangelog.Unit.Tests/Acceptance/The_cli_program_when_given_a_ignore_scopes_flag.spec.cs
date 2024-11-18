@@ -27,8 +27,6 @@ public sealed class The_cli_program_when_given_a_ignore_scopes_flag : CliTestsBa
         var output = OutputWithInput($"{Repository.Path()}");
 
         output.Should().Be(A.Changelog
-            .WithGroup(Feature)
-            .WithScope("scope")
-            .WithBulletPoint(1) + NewLine);
+            .WithGroup(Feature, "scope", 1) + NewLine);
     }
 }

@@ -15,10 +15,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
 
             var changelog = The.ChangelogFrom(message);
 
-            changelog.Should().Be(A.Changelog
-                .WithGroup(Feature)
-                .WithScope("scope")
-                .WithBulletPoint(1));
+            changelog.Should().Be(A.Changelog.WithGroup(Feature, "scope", 1));
         }
 
         [Fact]
@@ -39,16 +36,10 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             );
 
             changelog.Should().Be(A.Changelog
-                .WithGroup(Feature)
-                .WithScope(scope1)
-                .WithBulletPoint(2).WithBulletPoint(4)
-                .WithScope2(scope2)
-                .WithBulletPoint(1).WithBulletPoint(3).WithBulletPoint(5)
-                .WithGroup(Bugfix)
-                .WithScope(scope1)
-                .WithBulletPoint(6).WithBulletPoint(7)
-                .WithScope2(scope2)
-                .WithBulletPoint(0).WithBulletPoint(8));
+                .WithGroup(Feature, scope1, 2, 4)
+                .AndScope(scope2, 1, 3, 5)
+                .And(Bugfix, scope1, 6, 7)
+                .AndScope(scope2, 0, 8));
         }
 
         [Fact]
@@ -81,10 +72,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             var configuration = new Configuration(scopes: [new Scope(scope, scopeHeader)]);
             var changelog = The.ChangelogWith(configuration).From([message]);
 
-            changelog.Should().Be(A.Changelog
-                .WithGroup(Feature)
-                .WithScope(scopeHeader)
-                .WithBulletPoint(1));
+            changelog.Should().Be(A.Changelog.WithGroup(Feature, scopeHeader, 1));
         }
 
         [Fact]
@@ -102,8 +90,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
 
             changelog.Should().Be(A.Changelog
                 .WithGroup(Feature, 2)
-                .WithScope2(scopeHeader)
-                .WithBulletPoint(1));
+                .AndScope(scopeHeader, 1));
         }
 
         [Fact]
@@ -116,10 +103,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             var configuration = new Configuration(scopes: [new Scope(emptyScope, scopeHeader)]);
             var changelog = The.ChangelogWith(configuration).From([message]);
 
-            changelog.Should().Be(A.Changelog
-                .WithGroup(Feature)
-                .WithScope(scopeHeader)
-                .WithBulletPoint(1));
+            changelog.Should().Be(A.Changelog.WithGroup(Feature, scopeHeader, 1));
         }
 
         [Theory]
