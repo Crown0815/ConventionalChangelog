@@ -47,11 +47,14 @@ internal class Customization : ICustomization, IComparer<string>
     public string Separator { get; }
     public bool IgnoreScope { get; }
 
+
     public Scope ScopeFor(string scopeIndicator)
     {
-        return _scopes.TryGetValue(scopeIndicator, out var scope)
-            ? scope
-            : new Scope(scopeIndicator, scopeIndicator);
+        if (IgnoreScope) return Scope.None;
+
+        return !_scopes.TryGetValue(scopeIndicator, out var scope)
+            ? new Scope(scopeIndicator, scopeIndicator)
+            : scope;
     }
 
     public IReadOnlyCollection<Relationship> Relationships { get; }
