@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Cocona.Lite" Version="2.2.0" />
-    <PackageReference Include="LibGit2Sharp" Version="0.29.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
   </ItemGroup>
 
   <ItemGroup>
