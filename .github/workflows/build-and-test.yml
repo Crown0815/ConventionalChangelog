@@ -39,7 +39,7 @@ jobs:
           Release --output release --nologo
 
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Application_${{ matrix.os }}
           path: release
