@@ -7,7 +7,7 @@ Conventional Changelog is a CLI-tool to generate a changelog from [conventional 
 Main features:
 
 - Changelog generation from [conventional commits][ccommits-url]
-- Changelog fine tuning using commit relationships
+- Changelog fine-tuning using commit relationships
 - Changelog corrections by overriding commit messages
 - Deep customization of keywords (coming soon)
 
