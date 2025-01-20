@@ -1,9 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using ConventionalChangelog.Conventional;
 
-namespace ConventionalChangelog.Conventional;
+namespace ConventionalChangelog;
 
-internal class Customization : ICustomization, IComparer<string>
+internal class Customization : IComparer<string>
 {
     private const string TokenGroupId = "token";
     private const string BreakingGroupId = "breaking";
@@ -20,27 +21,42 @@ internal class Customization : ICustomization, IComparer<string>
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
     private readonly bool _ignorePrerelease;
+    private readonly ImmutableDictionary<string, Scope> _scopes;
 
     public Customization(IConfiguration configuration)
     {
-        _commitTypes = configuration.CommitTypes.ToImmutableArray();
+        _commitTypes = [..configuration.CommitTypes];
         _versionTagPrefix = configuration.VersionTagPrefix;
         _changelogOrder = configuration.ChangelogOrder;
         _footerPattern = configuration.FooterPattern;
         _semanticVersionPattern = configuration.SemanticVersionPattern;
         _ignorePrerelease = configuration.IgnorePrerelease;
         Separator = configuration.HeaderTypeDescriptionSeparator;
-        Relationships = new Relationship[]
-        {
-            new(configuration.DropSelf, true, false),
-            new(configuration.DropOther, false, true),
-            new(configuration.DropBoth, true, true),
-        };
+        IgnoreScope = configuration.IgnoreScope;
+        _scopes = configuration.Scopes.ToImmutableDictionary(x => x.Indicator, x => x);
+        Relationships =
+        [
+            new Relationship(configuration.DropSelf, true, false),
+            new Relationship(configuration.DropOther, false, true),
+            new Relationship(configuration.DropBoth, true, true),
+        ];
 
         Validate(_footerPattern);
     }
 
+
     public string Separator { get; }
+    public bool IgnoreScope { get; }
+
+
+    public Scope ScopeFor(string scopeIndicator)
+    {
+        if (IgnoreScope) return Scope.None;
+
+        return !_scopes.TryGetValue(scopeIndicator, out var scope)
+            ? new Scope(scopeIndicator, scopeIndicator)
+            : scope;
+    }
 
     public IReadOnlyCollection<Relationship> Relationships { get; }
 
@@ -74,11 +90,14 @@ internal class Customization : ICustomization, IComparer<string>
         return match.Groups["prerelease"].Value == "";
     }
 
-    public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T : IHasCommitType
+    public IEnumerable<T> Ordered<T>(IEnumerable<T> logEntries) where T : IPrintReady
     {
         if (_changelogOrder == ChangelogOrder.OldestToNewest)
             logEntries = logEntries.Reverse();
-        return logEntries.OrderBy(x => x.TypeIndicator, this);
+
+        return logEntries
+            .OrderBy(x => x.TypeIndicator, this)
+            .ThenBy(x => x.Scope);
     }
 
     public int Compare(string? x, string? y) => IndexOf(x).CompareTo(IndexOf(y));
@@ -104,6 +123,7 @@ internal class Customization : ICustomization, IComparer<string>
     private record PrintReadyFooter(string Token, string Value, string TypeIndicator)
         : CommitMessage.Footer(Token, Value), IPrintReady
     {
+        public string Scope => "";
         public string Description => Value;
     }
 
@@ -120,13 +140,9 @@ internal class Customization : ICustomization, IComparer<string>
             throw new InvalidFooterPatternGroupIdException("", found[2]);
     }
 
-    private class InvalidFooterPatternGroupIdException : Exception
+    private class InvalidFooterPatternGroupIdException(string expected, string found)
+        : Exception(MessageFrom(expected, found))
     {
-        public InvalidFooterPatternGroupIdException(string expected, string found)
-            : base(MessageFrom(expected, found))
-        {
-        }
-
         private static string MessageFrom(string expected, string found)
         {
             return $"Expected token '{expected}' but found '{found}'";

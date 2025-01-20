@@ -22,10 +22,6 @@ public class Parsing_a_conventional_commit_message
         public const string Type = "feat";
         public const string Description = "description";
 
-#if NET6_0
-        public static readonly string Body = $"Body with{Lb}newlines \t tabs{Lb}{Lb}   and some spaces{Lb}{Lb}{Lb}and multiple blank lines";
-        public static readonly string Message = $"{Type}: {Description}{Lb}{Lb}{Body}{Lb}{Lb}{Footer}" ;
-#elif NET7_0_OR_GREATER
         public const string Body = """
             Body with
             newlines 	 tabs
@@ -43,7 +39,6 @@ public class Parsing_a_conventional_commit_message
 
             {Footer}
             """ ;
-#endif
 
         public const string FooterToken = "token";
         public const string FooterValue = "value";
@@ -94,24 +89,24 @@ public class Parsing_a_conventional_commit_message
             new Footer("token-5", $"value{Lb}{Lb}with blank line"));
     }
 
-    public static readonly string[] Separators = { ": ", " #" };
+    public static readonly string[] Separators = [": ", " #"];
 
     public static readonly string[] Values =
-    {
+    [
         "value",
         "value with spaces",
         "value	with	tabs",
         $"value with{Lb}linebreak",
         $"value with{Lb}{Lb}blank line",
-    };
+    ];
 
     public static readonly string[] Tokens =
-    {
+    [
         "token",
         "token-with-dash",
         "BREAKING CHANGE",
         "BREAKING-CHANGE",
-    };
+    ];
 
     [Theory, CombinatorialData]
     public void extracts_the_parts_from_a_footer_formatted_using_a(
@@ -127,17 +122,17 @@ public class Parsing_a_conventional_commit_message
     }
 
     public static readonly string[] YouTrackValues =
-    {
+    [
         "",
         "command",
         "command1 command2",
-    };
+    ];
 
     public static readonly string[] YouTrackTokens =
-    {
+    [
         "SWX-1234",
         "DZE-12",
-    };
+    ];
 
     [Theory, CombinatorialData]
     public void extracts_the_parts_from_a_youtrack_footer_consisting_of(

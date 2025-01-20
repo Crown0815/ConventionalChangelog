@@ -20,6 +20,11 @@ internal static class RepositoryInteractionExtensions
         return r.Commit(type.CommitWith(message));
     }
 
+    public static void Commit(this Repository r, CommitType type, string scope, string message)
+    {
+        r.Commit(type.CommitWith(message).WithScope(scope));
+    }
+
     private static GitCommit Commit(this Repository r, Commit message)
     {
         return r.Commit(message.Message);

@@ -1,18 +1,17 @@
 ﻿using System.Text;
-using ConventionalChangelog.Configuration;
 using static ConventionalChangelog.Conventional.CommitMessage;
 
 namespace ConventionalChangelog.Conventional;
 
 public class MessageParser
 {
-    private readonly ICustomization _customization;
+    private readonly Customization _customization;
 
     public MessageParser() : this(new Customization(new DefaultConfiguration()))
     {
     }
 
-    internal MessageParser(ICustomization customization) => _customization = customization;
+    internal MessageParser(Customization customization) => _customization = customization;
 
     public CommitMessage Parse(Commit commit)
     {
@@ -28,26 +27,27 @@ public class MessageParser
     private CommitMessage Read(TextReader lines)
     {
         var (typeIndicator, description) = HeaderFrom(lines.ReadLine());
+        (typeIndicator, var scope) = ScopeFrom(typeIndicator);
         var (body, footers) = BodyFrom(lines);
         typeIndicator = _customization.Sanitize(typeIndicator, footers);
 
-        return new CommitMessage(typeIndicator, description, body, footers);
+        return new CommitMessage(typeIndicator, scope, description, body, footers);
     }
 
-#if NET6_0
-    private (string, string) HeaderFrom(string? header)
-    {
-        var twoParts = header?.Split(_customization.Separator);
-        return twoParts?.Length == 2
-            ? (twoParts.First(), twoParts.Last().Trim())
-            : ("", "");
-    }
-#elif NET7_0_OR_GREATER
     private (string, string) HeaderFrom(string? header) =>
         header?.Split(_customization.Separator) is [var first, var second]
-            ? (first,second.Trim())
+            ? (first.Trim(),second.Trim())
             : ("", "");
-#endif
+
+    private static (string, string) ScopeFrom(string typeIndicator)
+    {
+        if (!typeIndicator.EndsWith(')')) return (typeIndicator, "");
+
+        var indexOfOpeningParenthesis = typeIndicator.IndexOf('(');
+        var scope = typeIndicator[(indexOfOpeningParenthesis + 1)..^1].Trim();
+        var type = typeIndicator[..indexOfOpeningParenthesis].Trim();
+        return (type, scope);
+    }
 
     private (string, IReadOnlyCollection<Footer>) BodyFrom(TextReader reader)
     {

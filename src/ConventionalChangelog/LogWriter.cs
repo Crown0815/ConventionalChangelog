@@ -3,50 +3,44 @@ using static System.Environment;
 
 namespace ConventionalChangelog;
 
-internal class LogWriter
+internal class LogWriter(Customization customization)
 {
     private const string BulletPoint = "- ";
     private const string ChangelogTitle = "# Changelog";
     private const string GeneralCodeImprovementsMessage = "*General Code Improvements*";
     private const string GroupHeaderPrefix = "## ";
+    private const string ScopeHeaderPrefix = "### ";
 
     private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
-    private readonly ICustomization _customization;
-
-
-    public LogWriter(ICustomization customization)
-    {
-        _customization = customization;
-    }
 
     public string Print(IEnumerable<IPrintReady> writable)
     {
-        var writtenLog = new WrittenLog(EmptyChangelog);
-        foreach (var printable in _customization.Ordered(writable))
-            writtenLog.Add(printable, _customization.TypeFor(printable.TypeIndicator));
+        var writtenLog = new WrittenLog(customization);
+        foreach (var printable in customization.Ordered(writable))
+            writtenLog.Add(printable);
         return writtenLog.Print();
     }
 
-    private class WrittenLog
+    private class WrittenLog(Customization customization)
     {
-        private readonly StringBuilder _changelog;
+        private readonly StringBuilder _changelog = new(EmptyChangelog);
 
         private string? _currentSection;
+        private string? _currentSubSection;
         private bool _hasGeneralCodeImprovements;
         private bool _isEmpty = true;
 
-        public WrittenLog(string emptyChangelog)
+        public void Add(IPrintReady printReady)
         {
-            _changelog = new StringBuilder(emptyChangelog);
-        }
-
-        public void Add(IPrintReady printReady, ChangelogType type)
-        {
+            var type = customization.TypeFor(printReady.TypeIndicator);
+            var scope = customization.ScopeFor(printReady.Scope);
+            if (scope.GroupHeader is "")
+                scope = Scope.None;
             switch (type.Relevance)
             {
                 case Relevance.Show:
-                    AddBullet(type.GroupHeader, printReady.Description);
+                    AddBullet(type.GroupHeader, scope.GroupHeader, printReady.Description);
                     break;
                 case Relevance.Hide:
                     AddGeneralCodeImprovement();
@@ -58,17 +52,28 @@ internal class LogWriter
             }
         }
 
-        private void AddBullet(string header, string text)
+        private void AddBullet(string header, string? subHeader, string text)
         {
+            var isNewList = _currentSection != header || _currentSubSection != subHeader;
             if (_currentSection != header)
                 StartNewSection(header);
+            if (_currentSubSection != subHeader)
+                StartNewSubSection(subHeader);
+            if (isNewList)
+                _changelog.AppendLine();
             AddBullet(text);
         }
 
         private void StartNewSection(string header)
         {
             _currentSection = header;
-            _changelog.AppendFormat(null, "{0}{1}{2}{0}{0}", NewLine, GroupHeaderPrefix, header);
+            _changelog.AppendFormat(null, "{0}{1}{2}{0}", NewLine, GroupHeaderPrefix, header);
+        }
+
+        private void StartNewSubSection(string? header)
+        {
+            _currentSubSection = header;
+            _changelog.AppendFormat(null, "{0}{1}{2}{0}", NewLine, ScopeHeaderPrefix, header);
         }
 
         private void AddBullet(string text)

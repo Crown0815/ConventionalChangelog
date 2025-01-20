@@ -2,40 +2,26 @@ using LibGit2Sharp;
 
 namespace ConventionalChangelog.Git;
 
-internal class RepositoryReader
+internal class RepositoryReader(Customization customization)
 {
-    private readonly ICustomization _customization;
-
-    public RepositoryReader(ICustomization customization)
-    {
-        _customization = customization;
-    }
-
     public IEnumerable<Commit> CommitsFrom(string path)
     {
         using var repository = new RepositoryWrapper(path);
-        return repository.AllCommitsSinceLastTagMatching(_customization.IsVersionTag);
+        return repository.AllCommitsSinceLastTagMatching(customization.IsVersionTag);
     }
 
 
-    private class RepositoryWrapper : IDisposable
+    private class RepositoryWrapper(string path) : IDisposable
     {
-        private readonly string _path;
-        private readonly IRepository _inner;
+        private readonly Repository _inner = new(path);
 
-        public RepositoryWrapper(string path)
-        {
-            _path = path;
-            _inner = new Repository(path);
-        }
-
-        public IEnumerable<Commit> AllCommitsSinceLastTagMatching(Func<string, bool> condition)
+        public Commit[] AllCommitsSinceLastTagMatching(Func<string, bool> condition)
         {
             var lastTaggedCommit = FirstCommitFromHeadWithTagMatching(condition);
             return AllCommitsSince(lastTaggedCommit);
         }
 
-        private object? FirstCommitFromHeadWithTagMatching(Func<string, bool> condition)
+        private LibGit2Sharp.Commit? FirstCommitFromHeadWithTagMatching(Func<string, bool> condition)
         {
             var taggedCommits = CommitsWithTagMatching(condition);
             return FirstCommitFromHeadContainedIn(taggedCommits);
@@ -63,7 +49,7 @@ internal class RepositoryReader
             IncludeReachableFrom = anchor,
         };
 
-        private IEnumerable<Commit> AllCommitsSince(object? referenceCommit)
+        private Commit[] AllCommitsSince(object? referenceCommit)
         {
             return _inner.Commits
                 .QueryBy(AllSince(referenceCommit))
@@ -85,7 +71,7 @@ internal class RepositoryReader
 
         private string MessageFor(LibGit2Sharp.Commit c)
         {
-            var overwrite = Path.Combine(_path, ".conventional-changelog", c.Sha);
+            var overwrite = Path.Combine(path, ".conventional-changelog", c.Sha);
             return File.Exists(overwrite)
                 ? File.ReadAllText(overwrite)
                 : c.Message;

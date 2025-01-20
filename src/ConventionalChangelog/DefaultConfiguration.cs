@@ -1,8 +1,7 @@
-namespace ConventionalChangelog.Configuration;
+namespace ConventionalChangelog;
 
 internal class DefaultConfiguration : IConfiguration
 {
-
     private static class Default
     {
         // language=regex
@@ -30,7 +29,7 @@ internal class DefaultConfiguration : IConfiguration
         public const string HeaderTypeDescriptionSeparator = ": ";
 
         public static readonly CommitType[] CommitTypes =
-        {
+        [
             new("(?<inner>[a-z]+)!", "Breaking Changes", Relevance.Show),
             new("feat", "Features", Relevance.Show),
             new("fix", "Bug Fixes", Relevance.Show),
@@ -42,7 +41,9 @@ internal class DefaultConfiguration : IConfiguration
             new("style", "", Relevance.Hide),
             new("refactor", "", Relevance.Hide),
             new("test", "", Relevance.Hide),
-        };
+        ];
+
+        public static readonly Scope[] Scopes = [];
     }
 
     public string FooterPattern => Default.FooterPattern;
@@ -55,4 +56,6 @@ internal class DefaultConfiguration : IConfiguration
     public string DropOther => Default.DropOther;
     public string HeaderTypeDescriptionSeparator => Default.HeaderTypeDescriptionSeparator;
     public bool IgnorePrerelease => false;
+    public bool IgnoreScope => false;
+    public IEnumerable<Scope> Scopes => Default.Scopes;
 }

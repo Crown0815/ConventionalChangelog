@@ -22,18 +22,34 @@ internal static class A
         public static Changelog WithGroup(ChangelogType type, params int[] seeds) =>
             Empty.And(type, seeds);
 
+        public static Changelog WithGroup(ChangelogType type, string scope, params int[] seeds) =>
+            Empty.And(type, scope, seeds);
+
         public Changelog And(ChangelogType type, params int[] seeds)
         {
             return seeds.Aggregate(WithGroup(type.GroupHeader), AddBulletPoint);
         }
 
+        public Changelog And(ChangelogType type, string scope, params int[] seeds)
+        {
+            return seeds.Aggregate(WithGroup(type.GroupHeader).WithScope(scope), AddBulletPoint);
+        }
+
         private Changelog WithGroup(string groupHeader) =>
-            With(NewLine + Group(groupHeader) + HeaderSeparator);
+            With(NewLine + Level2Header(groupHeader) + HeaderSeparator);
 
-        private static string Group(string groupHeader) => $"## {groupHeader}";
+        private Changelog WithScope(string scopeHeader) =>
+            With(Level3Header(scopeHeader) + HeaderSeparator);
 
-        private static Changelog AddBulletPoint(Changelog c, int seed) =>
-            c.With($"- {Description(seed)}{NewLine}");
+        public Changelog AndScope(string scopeHeader, params int[] seeds) =>
+            seeds.Aggregate(With(NewLine).WithScope(scopeHeader), AddBulletPoint);
+
+        private static string Level2Header(string header) => $"## {header}";
+        private static string Level3Header(string header) => $"### {header}";
+
+        private static Changelog AddBulletPoint(Changelog c, int seed) => c.WithBulletPoint(seed);
+
+        private Changelog WithBulletPoint(int seed) => With($"- {Description(seed)}{NewLine}");
 
         private Changelog With(string text)
         {

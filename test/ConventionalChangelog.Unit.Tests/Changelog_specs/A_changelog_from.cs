@@ -6,12 +6,12 @@ namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public class A_changelog_from
 {
-    public static readonly TheoryData<Commit[]> NullCases = new()
-    {
+    public static readonly TheoryData<Commit[]> NullCases =
+    [
         new Commit[] { null! },
         new Commit[] { null!, null! },
-        new Commit[] { new (""), null!, new ("") },
-    };
+        new Commit[] { new(""), null!, new("") },
+    ];
 
     [Theory]
     [MemberData(nameof(NullCases))]
@@ -21,12 +21,12 @@ public class A_changelog_from
         fromNull.Should().Throw<Exception>();
     }
 
-    public static readonly TheoryData<Commit[]> EmptyCases = new()
-    {
+    public static readonly TheoryData<Commit[]> EmptyCases =
+    [
         Array.Empty<Commit>(),
         new Commit[] { new("") },
         new Commit[] { new(""), new("") },
-    };
+    ];
 
     [Theory]
     [MemberData(nameof(EmptyCases))]

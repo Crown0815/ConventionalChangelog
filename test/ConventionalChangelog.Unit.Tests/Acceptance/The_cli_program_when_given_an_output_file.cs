@@ -22,7 +22,9 @@ public sealed class The_cli_program_when_given_an_output_file : CliTestsBase
         var output = OutputWithInput($"{argument} {_fileName} {Repository.Path()}");
 
         output.Should().BeEmpty();
-        File.ReadAllText(_fileName).Should().Be(A.Changelog.WithGroup(Feature, 1) + NewLine);
+
+        var expectedFilePath = Path.Combine(Directory.GetCurrentDirectory(), _fileName);
+        File.ReadAllText(expectedFilePath).Should().Be(A.Changelog.WithGroup(Feature, 1) + NewLine);
     }
 
     [Theory]
