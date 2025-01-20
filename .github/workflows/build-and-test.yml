@@ -23,6 +23,9 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
         with:
+          dotnet-version: |
+            8.0.X
+            9.0.X
           global-json-file: global.json
 
       - name: Restore
@@ -32,7 +35,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test
-        run: dotnet test --no-restore --verbosity normal
+        run: dotnet test --no-restore --verbosity quiet
 
       - name: Publish
         run: dotnet publish src/ConventionalChangelog/ConventionalChangelog.csproj --framework net8.0 --configuration
