@@ -21,6 +21,7 @@ internal class Customization : IComparer<string>
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
     private readonly bool _ignorePrerelease;
+    private readonly bool _ignoreScope;
     private readonly ImmutableDictionary<string, Scope> _scopes;
 
     public Customization(IConfiguration configuration)
@@ -32,7 +33,7 @@ internal class Customization : IComparer<string>
         _semanticVersionPattern = configuration.SemanticVersionPattern;
         _ignorePrerelease = configuration.IgnorePrerelease;
         Separator = configuration.HeaderTypeDescriptionSeparator;
-        IgnoreScope = configuration.IgnoreScope;
+        _ignoreScope = configuration.IgnoreScope;
         _scopes = configuration.Scopes.ToImmutableDictionary(x => x.Indicator, x => x);
         Relationships =
         [
@@ -46,12 +47,11 @@ internal class Customization : IComparer<string>
 
 
     public string Separator { get; }
-    public bool IgnoreScope { get; }
 
 
     public Scope ScopeFor(string scopeIndicator)
     {
-        if (IgnoreScope) return Scope.None;
+        if (_ignoreScope) return Scope.None;
 
         return !_scopes.TryGetValue(scopeIndicator, out var scope)
             ? new Scope(scopeIndicator, scopeIndicator)
