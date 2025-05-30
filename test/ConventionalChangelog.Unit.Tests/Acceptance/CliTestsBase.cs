@@ -25,6 +25,8 @@ public abstract class CliTestsBase : GitUsingTestsBase
         process.StartInfo.RedirectStandardError = true;
         process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
         process.StartInfo.CreateNoWindow = true;
+        process.StartInfo.EnvironmentVariables["DOTNET_ROOT"] = Path.GetDirectoryName(Environment.ProcessPath);
+
         foreach (var (name, value) in environmentVariables)
             process.StartInfo.EnvironmentVariables[name] = value;
 
