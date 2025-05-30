@@ -21,6 +21,7 @@ internal class Customization : IComparer<string>
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
     private readonly bool _ignorePrerelease;
+    private readonly string _separator;
     private readonly bool _ignoreScope;
     private readonly ImmutableDictionary<string, Scope> _scopes;
 
@@ -32,7 +33,7 @@ internal class Customization : IComparer<string>
         _footerPattern = configuration.FooterPattern;
         _semanticVersionPattern = configuration.SemanticVersionPattern;
         _ignorePrerelease = configuration.IgnorePrerelease;
-        Separator = configuration.HeaderTypeDescriptionSeparator;
+        _separator = configuration.HeaderTypeDescriptionSeparator;
         _ignoreScope = configuration.IgnoreScope;
         _scopes = configuration.Scopes.ToImmutableDictionary(x => x.Indicator, x => x);
         Relationships =
@@ -44,9 +45,6 @@ internal class Customization : IComparer<string>
 
         Validate(_footerPattern);
     }
-
-
-    public string Separator { get; }
 
 
     public Scope ScopeFor(string scopeIndicator)
@@ -148,4 +146,9 @@ internal class Customization : IComparer<string>
             return $"Expected token '{expected}' but found '{found}'";
         }
     }
+
+    public (string, string) HeaderFrom(string? firstLine) =>
+        firstLine?.Split(_separator) is [var first, var second]
+            ? (first.Trim(),second.Trim())
+            : ("", "");
 }
