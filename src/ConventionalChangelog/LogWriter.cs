@@ -6,12 +6,9 @@ namespace ConventionalChangelog;
 internal class LogWriter(Customization customization)
 {
     private const string BulletPoint = "- ";
-    private const string ChangelogTitle = "# Changelog";
     private const string GeneralCodeImprovementsMessage = "*General Code Improvements*";
     private const string GroupHeaderPrefix = "## ";
     private const string ScopeHeaderPrefix = "### ";
-
-    private static readonly string EmptyChangelog = ChangelogTitle + NewLine;
 
 
     public string Print(IEnumerable<IPrintReady> writable)
@@ -24,7 +21,7 @@ internal class LogWriter(Customization customization)
 
     private class WrittenLog(Customization customization)
     {
-        private readonly StringBuilder _changelog = new(EmptyChangelog);
+        private readonly StringBuilder _changelog = new(customization.Title);
 
         private string? _currentSection;
         private string? _currentSubSection;

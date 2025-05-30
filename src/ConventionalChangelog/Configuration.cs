@@ -1,8 +1,12 @@
 namespace ConventionalChangelog;
 
-public class Configuration(IReadOnlyCollection<Scope>? scopes = null, bool? ignoreScope = null) : IConfiguration
+public class Configuration(
+    bool? skipTitle = null,
+    IReadOnlyCollection<Scope>? scopes = null,
+    bool? ignoreScope = null)
+    : IConfiguration
 {
-    private readonly IConfiguration _default = new DefaultConfiguration();
+    private readonly DefaultConfiguration _default = new();
     private readonly ChangelogOrder? _changelogOrder;
     private readonly string? _versionTagPrefix;
 
@@ -32,4 +36,5 @@ public class Configuration(IReadOnlyCollection<Scope>? scopes = null, bool? igno
     public string DropOther => _default.DropOther;
     public string HeaderTypeDescriptionSeparator => _default.HeaderTypeDescriptionSeparator;
     public bool IgnoreScope => ignoreScope ?? _default.IgnoreScope;
+    public bool SkipTitle => skipTitle ?? _default.SkipTitle;
 }

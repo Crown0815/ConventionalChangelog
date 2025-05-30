@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text;
 using System.Text.RegularExpressions;
 using ConventionalChangelog.Conventional;
 
@@ -24,6 +25,7 @@ internal class Customization : IComparer<string>
     private readonly string _separator;
     private readonly bool _ignoreScope;
     private readonly ImmutableDictionary<string, Scope> _scopes;
+    private readonly bool _skipTitle;
 
     public Customization(IConfiguration configuration)
     {
@@ -36,6 +38,7 @@ internal class Customization : IComparer<string>
         _separator = configuration.HeaderTypeDescriptionSeparator;
         _ignoreScope = configuration.IgnoreScope;
         _scopes = configuration.Scopes.ToImmutableDictionary(x => x.Indicator, x => x);
+        _skipTitle = configuration.SkipTitle;
         Relationships =
         [
             new Relationship(configuration.DropSelf, true, false),
@@ -57,6 +60,7 @@ internal class Customization : IComparer<string>
     }
 
     public IReadOnlyCollection<Relationship> Relationships { get; }
+    public string Title => _skipTitle ? "" : "# Changelog" + Environment.NewLine;
 
     public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {
