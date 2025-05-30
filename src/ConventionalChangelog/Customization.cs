@@ -10,7 +10,7 @@ internal class Customization : IComparer<string>
     private const string BreakingGroupId = "breaking";
     private const string InnerGroupId = "inner";
 
-    // 'a' is a randomly chosen letter, the important thing is that the
+    // The letter 'a' is randomly chosen. The important thing is that the
     // 'indicator' matches the breaking change pattern. The match is
     // achieved by the '!' after the 'a'
     private const string BreakingChangeIndicator = "a!";
