@@ -10,9 +10,10 @@ void Execute(
     [Option('t')]string? tagPrefix,
     [Option('i')]bool ignorePrereleases,
     [Option('s')]bool ignoreScope,
+    [Option('r')]bool skipTitle,
     [Argument]string repositoryPath)
 {
-    var configuration = new Configuration(ignoreScope: ignoreScope)
+    var configuration = new Configuration(skipTitle: skipTitle, ignoreScope: ignoreScope)
     {
         ChangelogOrder = default,
         VersionTagPrefix = tagPrefix!,
