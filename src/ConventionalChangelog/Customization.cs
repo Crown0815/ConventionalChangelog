@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text;
 using System.Text.RegularExpressions;
 using ConventionalChangelog.Conventional;
 
@@ -10,7 +11,7 @@ internal class Customization : IComparer<string>
     private const string BreakingGroupId = "breaking";
     private const string InnerGroupId = "inner";
 
-    // 'a' is a randomly chosen letter, the important thing is that the
+    // The letter 'a' is randomly chosen. The important thing is that the
     // 'indicator' matches the breaking change pattern. The match is
     // achieved by the '!' after the 'a'
     private const string BreakingChangeIndicator = "a!";
@@ -21,7 +22,10 @@ internal class Customization : IComparer<string>
     private readonly string _footerPattern;
     private readonly string _semanticVersionPattern;
     private readonly bool _ignorePrerelease;
+    private readonly string _separator;
+    private readonly bool _ignoreScope;
     private readonly ImmutableDictionary<string, Scope> _scopes;
+    private readonly bool _skipTitle;
 
     public Customization(IConfiguration configuration)
     {
@@ -31,9 +35,10 @@ internal class Customization : IComparer<string>
         _footerPattern = configuration.FooterPattern;
         _semanticVersionPattern = configuration.SemanticVersionPattern;
         _ignorePrerelease = configuration.IgnorePrerelease;
-        Separator = configuration.HeaderTypeDescriptionSeparator;
-        IgnoreScope = configuration.IgnoreScope;
+        _separator = configuration.HeaderTypeDescriptionSeparator;
+        _ignoreScope = configuration.IgnoreScope;
         _scopes = configuration.Scopes.ToImmutableDictionary(x => x.Indicator, x => x);
+        _skipTitle = configuration.SkipTitle;
         Relationships =
         [
             new Relationship(configuration.DropSelf, true, false),
@@ -45,13 +50,9 @@ internal class Customization : IComparer<string>
     }
 
 
-    public string Separator { get; }
-    public bool IgnoreScope { get; }
-
-
     public Scope ScopeFor(string scopeIndicator)
     {
-        if (IgnoreScope) return Scope.None;
+        if (_ignoreScope) return Scope.None;
 
         return !_scopes.TryGetValue(scopeIndicator, out var scope)
             ? new Scope(scopeIndicator, scopeIndicator)
@@ -59,6 +60,7 @@ internal class Customization : IComparer<string>
     }
 
     public IReadOnlyCollection<Relationship> Relationships { get; }
+    public string Title => _skipTitle ? "" : "# Changelog" + Environment.NewLine;
 
     public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {
@@ -148,4 +150,9 @@ internal class Customization : IComparer<string>
             return $"Expected token '{expected}' but found '{found}'";
         }
     }
+
+    public (string, string) HeaderFrom(string? firstLine) =>
+        firstLine?.Split(_separator) is [var first, var second]
+            ? (first.Trim(),second.Trim())
+            : ("", "");
 }

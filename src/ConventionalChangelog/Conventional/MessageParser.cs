@@ -26,18 +26,13 @@ public class MessageParser
 
     private CommitMessage Read(TextReader lines)
     {
-        var (typeIndicator, description) = HeaderFrom(lines.ReadLine());
+        var (typeIndicator, description) = _customization.HeaderFrom(lines.ReadLine());
         (typeIndicator, var scope) = ScopeFrom(typeIndicator);
         var (body, footers) = BodyFrom(lines);
         typeIndicator = _customization.Sanitize(typeIndicator, footers);
 
         return new CommitMessage(typeIndicator, scope, description, body, footers);
     }
-
-    private (string, string) HeaderFrom(string? header) =>
-        header?.Split(_customization.Separator) is [var first, var second]
-            ? (first.Trim(),second.Trim())
-            : ("", "");
 
     private static (string, string) ScopeFrom(string typeIndicator)
     {

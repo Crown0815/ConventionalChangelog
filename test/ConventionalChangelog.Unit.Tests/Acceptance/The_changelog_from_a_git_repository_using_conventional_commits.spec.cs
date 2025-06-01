@@ -175,6 +175,16 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
     }
 
     [Fact]
+    public void when_configured_to_skip_title_then_title_and_blank_line_are_excluded()
+    {
+        Repository.Commit(Feature, 1);
+        Repository.Commit(Feature, 2);
+
+        var config = new Configuration(skipTitle: true);
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithoutTitle().And(Feature, 2, 1), config);
+    }
+
+    [Fact]
     public void when_the_repository_contains_a_file_overwriting_a_commit_message_the_overwriting_message_is_printed()
     {
         Repository.Commit(Irrelevant, "Initial Commit");

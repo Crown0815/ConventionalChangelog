@@ -58,4 +58,5 @@ internal class DefaultConfiguration : IConfiguration
     public bool IgnorePrerelease => false;
     public bool IgnoreScope => false;
     public IEnumerable<Scope> Scopes => Default.Scopes;
+    public bool SkipTitle => false;
 }

@@ -16,6 +16,13 @@ internal static class A
 
         public static Changelog Empty => new();
 
+        public static Changelog WithoutTitle()
+        {
+            var changelog = Empty;
+            changelog._text = "";
+            return changelog;
+        }
+
         public static string WithGeneralCodeImprovementsMessage() =>
             Empty.With(NewLine + GeneralCodeImprovementsMessage);
 

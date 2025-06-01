@@ -14,4 +14,5 @@ public interface IConfiguration
     bool IgnorePrerelease { get; }
     bool IgnoreScope { get; }
     IEnumerable<Scope> Scopes { get; }
+    bool SkipTitle { get; }
 }
