@@ -24,20 +24,15 @@ void Execute(
     if (output is not null)
     {
         File.WriteAllText(output, changelog + Environment.NewLine);
-        if (IsRunningInTeamCityCi())
+        if (TeamCity.IsCurrentCi())
             Console.WriteLine(TeamCityParameterMessageFrom(changelog));
     }
     else
     {
-        Console.WriteLine(IsRunningInTeamCityCi()
+        Console.WriteLine(TeamCity.IsCurrentCi()
             ? TeamCityParameterMessageFrom(changelog)
             : changelog);
     }
-}
-
-bool IsRunningInTeamCityCi()
-{
-    return Environment.GetEnvironmentVariable(TeamCity.EnvironmentVariable) is not null;
 }
 
 string TeamCityParameterMessageFrom(string s)

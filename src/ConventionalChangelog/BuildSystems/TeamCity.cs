@@ -14,6 +14,11 @@ public static class TeamCity
         return $"##teamcity[setParameter name='{name}' value='{Escaped(value)}']";
     }
 
+    public static bool IsCurrentCi()
+    {
+        return Environment.GetEnvironmentVariable(EnvironmentVariable) is not null;
+    }
+
     private static string Escaped(string raw) => raw
         .Replace("|", "||")
         .Replace("'", "|'")
