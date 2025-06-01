@@ -1,21 +1,17 @@
-﻿using System;
-using ConventionalChangelog.Conventional;
+﻿using ConventionalChangelog.Conventional;
 using FluentAssertions;
 using Xunit;
+using static System.Environment;
 using static ConventionalChangelog.Conventional.CommitMessage;
 
 namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public class Parsing_a_conventional_commit_message
 {
+    // Based on: https://www.conventionalcommits.org/en/v1.0.0/#specification
+
     private static readonly MessageParser MessageParser = new();
     private static CommitMessage Parsed(string message) => MessageParser.Parse(message);
-
-    // Lb = Linebreak. The abbreviation was chosen to keep string definitions short
-    private static readonly string Lb = Environment.NewLine;
-
-    // Conventional commit specification:
-    // https://www.conventionalcommits.org/en/v1.0.0/#specification
 
     private static class TestCommit
     {
@@ -74,9 +70,18 @@ public class Parsing_a_conventional_commit_message
     [Fact]
     public void with_multiple_footers_extracts_all_footers()
     {
-        var footers = $"token1: value1{Lb}token-2: value 2{Lb}{Lb}token3 " +
-                      $"#value 3{Lb}token-4 #value{Lb}with extra line{Lb}{Lb}" +
-                      $"token-5: value{Lb}{Lb}with blank line";
+        const string footers = """
+                               token1: value1
+                               token-2: value 2
+
+                               token3 #value 3
+                               token-4 #value
+                               with extra line
+
+                               token-5: value
+
+                               with blank line
+                               """;
 
         var message = TestCommit.Message.Replace(TestCommit.Footer, footers);
         var parsed = Parsed(message);
@@ -85,8 +90,8 @@ public class Parsing_a_conventional_commit_message
             new Footer("token1", "value1"),
             new Footer("token-2", "value 2"),
             new Footer("token3", "value 3"),
-            new Footer("token-4", $"value{Lb}with extra line"),
-            new Footer("token-5", $"value{Lb}{Lb}with blank line"));
+            new Footer("token-4", $"value{NewLine}with extra line"),
+            new Footer("token-5", $"value{NewLine}{NewLine}with blank line"));
     }
 
     public static readonly string[] Separators = [": ", " #"];
@@ -96,8 +101,8 @@ public class Parsing_a_conventional_commit_message
         "value",
         "value with spaces",
         "value	with	tabs",
-        $"value with{Lb}linebreak",
-        $"value with{Lb}{Lb}blank line",
+        $"value with{NewLine}linebreak",
+        $"value with{NewLine}{NewLine}blank line",
     ];
 
     public static readonly string[] Tokens =
