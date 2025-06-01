@@ -11,6 +11,7 @@ void Execute(
     [Option('i')]bool ignorePrereleases,
     [Option('s')]bool ignoreScope,
     [Option('r')]bool skipTitle,
+    [Option('c')]string? changelogOrder,
     [Argument]string repositoryPath)
 {
     var configuration = new Configuration(
@@ -19,7 +20,7 @@ void Execute(
         versionTagPrefix: tagPrefix,
         ignorePrerelease: ignorePrereleases)
     {
-        ChangelogOrder = default,
+        ChangelogOrder = changelogOrder is not null ? Enum.Parse<ChangelogOrder>(changelogOrder) : default,
     };
     var changelog = new Changelog(configuration).FromRepository(repositoryPath);
 
