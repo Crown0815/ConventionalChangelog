@@ -11,11 +11,12 @@ on:
 jobs:
   build-and-test:
 
-    name: build-and-test-${{matrix.os}}
+    name: build-and-test-${{matrix.os}}-${{matrix.dotnet}}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        dotnet: [ 8.0.X, 9.0.X ]
 
     steps:
       - uses: actions/checkout@v4
@@ -23,9 +24,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: |
-            8.0.X
-            9.0.X
+          dotnet-version: ${{ matrix.dotnet }}
           global-json-file: global.json
 
       - name: Restore
@@ -42,6 +41,7 @@ jobs:
           Release --output release --nologo
 
       - name: Upload Build Artifact
+        if: matrix.dotnet == '9.0.X'
         uses: actions/upload-artifact@v4
         with:
           name: Application_${{ matrix.os }}
