@@ -1,6 +1,8 @@
 namespace ConventionalChangelog;
 
 public class Configuration(
+    bool? ignorePrerelease = null,
+    string? versionTagPrefix = null,
     bool? skipTitle = null,
     IReadOnlyCollection<Scope>? scopes = null,
     bool? ignoreScope = null)
@@ -8,21 +10,16 @@ public class Configuration(
 {
     private readonly DefaultConfiguration _default = new();
     private readonly ChangelogOrder? _changelogOrder;
-    private readonly string? _versionTagPrefix;
 
     public string FooterPattern => _default.FooterPattern;
 
-    public string VersionTagPrefix
-    {
-        get => _versionTagPrefix ?? _default.VersionTagPrefix;
-        init => _versionTagPrefix = value;
-    }
+    public string VersionTagPrefix => versionTagPrefix ?? _default.VersionTagPrefix;
 
     public string SemanticVersionPattern => _default.SemanticVersionPattern;
-    public bool IgnorePrerelease { get; init; }
+
+    public bool IgnorePrerelease => ignorePrerelease ?? false;
 
     public IEnumerable<CommitType> CommitTypes => _default.CommitTypes;
-
     public IEnumerable<Scope> Scopes => scopes ?? _default.Scopes;
 
     public ChangelogOrder ChangelogOrder

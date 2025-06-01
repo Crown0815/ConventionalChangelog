@@ -13,11 +13,13 @@ void Execute(
     [Option('r')]bool skipTitle,
     [Argument]string repositoryPath)
 {
-    var configuration = new Configuration(skipTitle: skipTitle, ignoreScope: ignoreScope)
+    var configuration = new Configuration(
+        skipTitle: skipTitle,
+        ignoreScope: ignoreScope,
+        versionTagPrefix: tagPrefix,
+        ignorePrerelease: ignorePrereleases)
     {
         ChangelogOrder = default,
-        VersionTagPrefix = tagPrefix!,
-        IgnorePrerelease = ignorePrereleases,
     };
     var changelog = new Changelog(configuration).FromRepository(repositoryPath);
 
