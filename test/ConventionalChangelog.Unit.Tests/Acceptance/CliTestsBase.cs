@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace ConventionalChangelog.Unit.Tests.Acceptance;
@@ -37,9 +38,35 @@ public abstract class CliTestsBase : GitUsingTestsBase
         process.WaitForExit();
 
         if (process.ExitCode != 0)
-            throw new ApplicationException($"Process failed with exit code {process.ExitCode}: {error}");
+            ProvideDebugInformationAndThrow(process, error);
 
         return output;
+    }
+
+    private static void ProvideDebugInformationAndThrow(Process process, string error)
+    {
+        var writer = new StringBuilder();
+        writer.AppendLine($"Process failed with exit code {process.ExitCode}");
+        writer.AppendLine(error);
+        writer.AppendLine();
+        writer.AppendLine("EnvironmentVariables:");
+        writer.AppendLine(EnvironmentVariables(process));
+        writer.AppendLine();
+        writer.AppendLine("Other values:");
+        writer.AppendLine($"Environment.ProcessPath: {Environment.ProcessPath}");
+
+        throw new ApplicationException(writer.ToString());
+    }
+
+    private static string EnvironmentVariables(Process process)
+    {
+        return string.Join(Environment.NewLine, EnvironmentVariablesLines(process));
+    }
+
+    private static IEnumerable<string> EnvironmentVariablesLines(Process process)
+    {
+        foreach (string key in process.StartInfo.EnvironmentVariables.Keys)
+            yield return $"- {key}: {process.StartInfo.EnvironmentVariables[key]}";
     }
 
     protected static TheoryData<T> TheoryDataFrom<T>(IEnumerable<T> values)
