@@ -35,7 +35,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test
-        run: dotnet test --no-restore --verbosity quiet
+        run: dotnet test --no-restore
 
       - name: Publish
         run: dotnet publish src/ConventionalChangelog/ConventionalChangelog.csproj --framework net8.0 --configuration
