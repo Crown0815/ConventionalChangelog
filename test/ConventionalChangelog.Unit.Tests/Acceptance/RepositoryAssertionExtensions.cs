@@ -1,25 +1,30 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using FluentAssertions.Primitives;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
+using AwesomeAssertions.Primitives;
 using LibGit2Sharp;
 
 namespace ConventionalChangelog.Unit.Tests.Acceptance;
 
 internal static class RepositoryAssertionExtensions
 {
-    public static RepositoryChangelogAssertions Should(this Repository instance) => new(instance);
-
-    public class RepositoryChangelogAssertions(Repository subject)
-        : ReferenceTypeAssertions<Repository, RepositoryChangelogAssertions>(subject)
+    public static RepositoryChangelogAssertions Should(this Repository instance)
     {
-        private const string ExpectedMatchingChangelogButDifferentWasFound = """
-                    Expected {context:repo} to have changelog {0}, but found {1}.
+        return new RepositoryChangelogAssertions(instance, AssertionChain.GetOrCreate());
+    }
 
-                    GitGraph:
-                    {2}
-                    """;
+    public class RepositoryChangelogAssertions(Repository subject, AssertionChain chain)
+        : ReferenceTypeAssertions<Repository, RepositoryChangelogAssertions>(subject, chain)
+    {
+        private readonly AssertionChain _chain = chain;
+
+        private const string ExpectedMatchingChangelogButDifferentWasFound = """
+                                                                             Expected {context:repo} to have changelog {0}, but found {1}.
+
+                                                                             GitGraph:
+                                                                             {2}
+                                                                             """;
 
         [ExcludeFromCodeCoverage]
         protected override string Identifier => "repo";
@@ -27,7 +32,7 @@ internal static class RepositoryAssertionExtensions
         public void HaveChangelogMatching(string changelog, IConfiguration? configuration = default)
         {
             var conventionalChangelog = new Changelog(configuration ?? new Configuration());
-            Execute.Assertion
+            _chain
                 .Given(() => conventionalChangelog.FromRepository(Subject.Path()))
                 .ForCondition(c => c == changelog)
                 .FailWith(ExpectedMatchingChangelogButDifferentWasFound,

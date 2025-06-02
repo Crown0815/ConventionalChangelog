@@ -1,5 +1,5 @@
 ﻿using ConventionalChangelog.Conventional;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 using static System.Environment;
 using static ConventionalChangelog.Conventional.CommitMessage;

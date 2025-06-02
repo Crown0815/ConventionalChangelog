@@ -1,5 +1,5 @@
 ﻿using ConventionalChangelog.BuildSystems;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace ConventionalChangelog.Unit.Tests.BuildSystem;
