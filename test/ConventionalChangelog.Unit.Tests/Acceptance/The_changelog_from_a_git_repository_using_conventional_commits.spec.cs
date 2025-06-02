@@ -187,14 +187,14 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         Repository.Commit(Irrelevant, "Initial Commit");
         var commit = Repository.Commit(Feature, 1);
 
-        var file = CorrectUsingFile(commit, Feature.CommitWithDescription(3));
+        var file = OverwriteMessageWithFile(commit, Feature.CommitWithDescription(3));
         Commands.Stage(Repository, file);
         Repository.Commit(Feature, 2);
 
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 3));
     }
 
-    private string CorrectUsingFile(GitObject commit, Commit newCommit)
+    private string OverwriteMessageWithFile(GitObject commit, Commit newCommit)
     {
         var directory = Path.Combine(Repository.Path(), ".conventional-changelog");
         Directory.CreateDirectory(directory);
