@@ -2,20 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
+using Xunit;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace ConventionalChangelog.Unit.Tests;
 
 internal class CaseVariantDataAttribute(string source) : DataAttribute
 {
-    public override IEnumerable<object[]> GetData(MethodInfo testMethod) => source.TestCases();
+    public override ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
+    {
+        return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(source.TestCases());
+    }
+
+    public override bool SupportsDiscoveryEnumeration() => true;
 }
 
 internal static class VariantsExtensions
 {
-    public static IEnumerable<object[]> TestCases(this string source)
+    public static IReadOnlyCollection<ITheoryDataRow> TestCases(this string source)
     {
-        return CaseVariantsFrom(source).Select(x => new object[] { x });
+        return CaseVariantsFrom(source).Select(x => new TheoryDataRow<string>(x)).ToList();
     }
 
     private static IEnumerable<string> CaseVariantsFrom(string original) =>

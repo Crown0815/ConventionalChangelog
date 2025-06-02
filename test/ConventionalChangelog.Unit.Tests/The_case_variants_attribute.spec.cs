@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace ConventionalChangelog.Unit.Tests;
 
 public class The_case_variants_attribute
 {
-    private static IEnumerable<object[]> AttributeCasesFrom(string source)
+    private static IEnumerable<object?[]> AttributeCasesFrom(string source)
     {
-        return new CaseVariantDataAttribute(source).GetData(default!);
+        var theories = new CaseVariantDataAttribute(source).GetData(default!, default!).Result;
+        return theories.Select(x => x.GetData());
     }
 
     [Theory]
@@ -68,9 +69,9 @@ public class The_case_variants_attribute
             .SatisfyRespectively(TestCases(expected));
     }
 
-    private static IEnumerable<Action<object[]>> TestCases(IEnumerable<string> cases) =>
+    private static IEnumerable<Action<object?[]>> TestCases(IEnumerable<string> cases) =>
         cases.Select(TestCase);
 
-    private static Action<object[]> TestCase(string arg) =>
+    private static Action<object?[]> TestCase(string arg) =>
         o => o.Should().Equal(arg);
 }

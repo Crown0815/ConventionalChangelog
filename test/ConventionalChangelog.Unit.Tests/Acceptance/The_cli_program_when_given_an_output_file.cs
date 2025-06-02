@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using ConventionalChangelog.BuildSystems;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 using static System.Environment;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;

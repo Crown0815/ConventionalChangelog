@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using Xunit;
 using static System.Environment;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
