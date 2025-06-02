@@ -11,19 +11,19 @@ void Execute(
     [Option('i')]bool ignorePrereleases,
     [Option('s')]bool ignoreScope,
     [Option('r')]bool skipTitle,
-    [Option('c')]string? changelogOrder,
+    [Option('c')]ChangelogOrder? changelogOrder,
     [Option('x')]string? referenceCommit,
     [Argument]string repositoryPath)
 {
     var configuration = new Configuration(
+        ignorePrerelease: ignorePrereleases,
+        versionTagPrefix: tagPrefix,
         skipTitle: skipTitle,
         ignoreScope: ignoreScope,
-        versionTagPrefix: tagPrefix,
-        ignorePrerelease: ignorePrereleases,
-        referenceCommit: referenceCommit)
-    {
-        ChangelogOrder = changelogOrder is not null ? Enum.Parse<ChangelogOrder>(changelogOrder) : default,
-    };
+        referenceCommit: referenceCommit,
+        changelogOrder: changelogOrder
+        );
+
     var changelog = new Changelog(configuration).FromRepository(repositoryPath);
 
     if (output is not null)
