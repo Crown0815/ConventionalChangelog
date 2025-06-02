@@ -12,13 +12,15 @@ void Execute(
     [Option('s')]bool ignoreScope,
     [Option('r')]bool skipTitle,
     [Option('c')]string? changelogOrder,
+    [Option('x')]string? referenceCommit,
     [Argument]string repositoryPath)
 {
     var configuration = new Configuration(
         skipTitle: skipTitle,
         ignoreScope: ignoreScope,
         versionTagPrefix: tagPrefix,
-        ignorePrerelease: ignorePrereleases)
+        ignorePrerelease: ignorePrereleases,
+        referenceCommit: referenceCommit)
     {
         ChangelogOrder = changelogOrder is not null ? Enum.Parse<ChangelogOrder>(changelogOrder) : default,
     };
