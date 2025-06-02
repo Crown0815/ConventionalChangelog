@@ -11,33 +11,31 @@ void Execute(
     [Option('i')]bool ignorePrereleases,
     [Option('s')]bool ignoreScope,
     [Option('r')]bool skipTitle,
+    [Option('c')]string? changelogOrder,
     [Argument]string repositoryPath)
 {
-    var configuration = new Configuration(skipTitle: skipTitle, ignoreScope: ignoreScope)
+    var configuration = new Configuration(
+        skipTitle: skipTitle,
+        ignoreScope: ignoreScope,
+        versionTagPrefix: tagPrefix,
+        ignorePrerelease: ignorePrereleases)
     {
-        ChangelogOrder = default,
-        VersionTagPrefix = tagPrefix!,
-        IgnorePrerelease = ignorePrereleases,
+        ChangelogOrder = changelogOrder is not null ? Enum.Parse<ChangelogOrder>(changelogOrder) : default,
     };
     var changelog = new Changelog(configuration).FromRepository(repositoryPath);
 
     if (output is not null)
     {
         File.WriteAllText(output, changelog + Environment.NewLine);
-        if (IsRunningInTeamCityCi())
+        if (TeamCity.IsCurrentCi())
             Console.WriteLine(TeamCityParameterMessageFrom(changelog));
     }
     else
     {
-        Console.WriteLine(IsRunningInTeamCityCi()
+        Console.WriteLine(TeamCity.IsCurrentCi()
             ? TeamCityParameterMessageFrom(changelog)
             : changelog);
     }
-}
-
-bool IsRunningInTeamCityCi()
-{
-    return Environment.GetEnvironmentVariable(TeamCity.EnvironmentVariable) is not null;
 }
 
 string TeamCityParameterMessageFrom(string s)
