@@ -37,7 +37,7 @@ jobs:
 
       - name: Generate Release Notes
         run: |-
-          dotnet tool install --global ConventionalChangelog --version 0.8.0
+          dotnet tool install --global ConventionalChangelog --version 0.9.1
           changelog "${{ github.workspace }}" >> "changelog.md"
 
       - name: Create a Release
