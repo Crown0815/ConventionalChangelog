@@ -6,12 +6,12 @@ namespace ConventionalChangelog.Unit.Tests.Changelog_specs;
 
 public partial class A_changelog_from_changelog_relevant_conventional_commits
 {
-    public static readonly TheoryData<CommitType> ChangelogRelevantCommitTypes = new()
-    {
+    public static readonly TheoryData<CommitType> ChangelogRelevantCommitTypes =
+    [
         Feature,
         Bugfix,
         PerformanceImprovement,
-    };
+    ];
 
     [Theory]
     [MemberData(nameof(ChangelogRelevantCommitTypes))]
