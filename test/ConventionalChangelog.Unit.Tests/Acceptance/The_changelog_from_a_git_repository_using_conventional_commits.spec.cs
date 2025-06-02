@@ -216,6 +216,23 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
     }
 
     [Fact]
+    public void when_configured_with_a_sidestream_reference_commit_then_all_commits_after_the_branching_commit_are_considered()
+    {
+        Repository.Commit(Irrelevant, "Initial Commit");
+        Repository.Commit(Feature, 0);
+        Repository.CreateAndCheckoutBranch("reference");
+        Repository.Commit(Feature, 1);
+        var referenceCommit = Repository.Commit(Feature, 2);
+
+        Repository.Checkout(DefaultBranch);
+        Repository.Commit(Feature, 3);
+        Repository.Commit(Feature, 4);
+
+        var config = new Configuration(referenceCommit: referenceCommit.Sha);
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 4, 3), config);
+    }
+
+    [Fact]
     public void when_configured_with_a_custom_non_existing_reference_commit_then_an_exception_is_thrown()
     {
         Repository.Commit(Feature, 1).Tag(Version("0.1.0"));
