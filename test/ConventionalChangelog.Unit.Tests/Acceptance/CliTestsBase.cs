@@ -13,6 +13,7 @@ public abstract class CliTestsBase : GitUsingTestsBase
     protected static readonly string[] OutputKeys = ["-o", "--output"];
     public static readonly string[] TagPrefixKeys = ["-t", "--tag-prefix"];
     protected static readonly string[] ChangelogOrderKeys = ["-c", "--changelog-order"];
+    protected static readonly string[] ReferenceCommitKeys = ["-x", "--reference-commit"];
     protected static readonly string[] IgnorePrerelease = ["-i", "--ignore-prereleases"];
     protected static readonly string[] SkipTitleFlag = ["-r", "--skip-title"];
     protected static readonly string[] IgnoreScope = ["-s", "--ignore-scope"];

@@ -15,4 +15,5 @@ public interface IConfiguration
     bool IgnoreScope { get; }
     IEnumerable<Scope> Scopes { get; }
     bool SkipTitle { get; }
+    string? ReferenceCommit { get; }
 }

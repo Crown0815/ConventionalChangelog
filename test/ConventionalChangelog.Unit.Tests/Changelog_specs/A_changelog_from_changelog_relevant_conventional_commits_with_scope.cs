@@ -118,7 +118,7 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             var reference = new Commit($"{Feature.Indicator}(scope): whatever");
             var sample = new Commit($"{Feature.Indicator}{withSpaces}: whatever");
 
-            The.ChangelogFrom(reference).Should().Be(The.ChangelogFrom(sample));
+            The.ChangelogFrom(sample).Should().Be(The.ChangelogFrom(reference));
         }
     }
 }

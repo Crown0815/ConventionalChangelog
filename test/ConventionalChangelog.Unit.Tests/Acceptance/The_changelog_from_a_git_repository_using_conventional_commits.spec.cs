@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using ConventionalChangelog.Git;
 using LibGit2Sharp;
 using Xunit;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
@@ -143,8 +144,7 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
     public void when_encountering_merge_commits_considers_version_tags_on_merged_commits()
     {
         Repository.Commit(Irrelevant, "Initial Commit");
-        var develop = Repository.CreateBranch("develop");
-        Repository.Checkout("develop");
+        var develop = Repository.CreateAndCheckoutBranch("develop");
         Repository.Commit(Feature, 1).Tag(Version("0.1.0-alpha.1"));
         Repository.Commit(Feature, 2).Tag(Version("0.1.0-alpha.2"));
         Repository.Checkout(DefaultBranch);
@@ -187,19 +187,60 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         Repository.Commit(Irrelevant, "Initial Commit");
         var commit = Repository.Commit(Feature, 1);
 
-        var file = CorrectUsingFile(commit, Feature.CommitWithDescription(3));
+        var file = OverwriteMessageWithFile(commit, Feature.CommitWithDescription(3));
         Commands.Stage(Repository, file);
         Repository.Commit(Feature, 2);
 
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 3));
+        return;
+
+        string OverwriteMessageWithFile(GitObject aCommit, Commit newCommit)
+        {
+            var directory = Path.Combine(Repository.Path(), ".conventional-changelog");
+            Directory.CreateDirectory(directory);
+            var aFile = Path.Combine(directory, $"{aCommit.Sha}");
+            File.WriteAllText(aFile, newCommit.Message);
+            return aFile;
+        }
     }
 
-    private string CorrectUsingFile(GitObject commit, Commit newCommit)
+    [Fact]
+    public void when_configured_with_an_upstream_reference_commit_then_all_commits_after_the_reference_commit_are_considered()
     {
-        var directory = Path.Combine(Repository.Path(), ".conventional-changelog");
-        Directory.CreateDirectory(directory);
-        var file = Path.Combine(directory, $"{commit.Sha}");
-        File.WriteAllText(file, newCommit.Message);
-        return file;
+        var referenceCommit = Repository.Commit(Feature, 1);
+        Repository.Commit(Feature, 2).Tag(Version("0.1.0"));
+        Repository.Commit(Feature, 3);
+
+        var config = new Configuration(referenceCommit: referenceCommit.Sha);
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 3, 2), config);
+    }
+
+    [Fact]
+    public void when_configured_with_a_sidestream_reference_commit_then_all_commits_after_the_branching_commit_are_considered()
+    {
+        Repository.Commit(Irrelevant, "Initial Commit");
+        Repository.Commit(Feature, 0);
+        Repository.CreateAndCheckoutBranch("reference");
+        Repository.Commit(Feature, 1);
+        var referenceCommit = Repository.Commit(Feature, 2);
+
+        Repository.Checkout(DefaultBranch);
+        Repository.Commit(Feature, 3);
+        Repository.Commit(Feature, 4);
+
+        var config = new Configuration(referenceCommit: referenceCommit.Sha);
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 4, 3), config);
+    }
+
+    [Fact]
+    public void when_configured_with_a_custom_non_existing_reference_commit_then_an_exception_is_thrown()
+    {
+        Repository.Commit(Feature, 1).Tag(Version("0.1.0"));
+        Repository.Commit(Feature, 2);
+
+        const string randomCommitSha = "0000000000000000000000000000000000000000";
+
+        var config = new Configuration(referenceCommit: randomCommitSha);
+        Repository.Should().ThrowWhenCreatingChangelog<RepositoryReadFailedException>(config);
     }
 }

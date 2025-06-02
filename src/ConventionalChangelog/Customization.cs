@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Text;
 using System.Text.RegularExpressions;
 using ConventionalChangelog.Conventional;
 
@@ -39,6 +38,7 @@ internal class Customization : IComparer<string>
         _ignoreScope = configuration.IgnoreScope;
         _scopes = configuration.Scopes.ToImmutableDictionary(x => x.Indicator, x => x);
         _skipTitle = configuration.SkipTitle;
+        ReferenceCommit = configuration.ReferenceCommit;
         Relationships =
         [
             new Relationship(configuration.DropSelf, true, false),
@@ -49,6 +49,7 @@ internal class Customization : IComparer<string>
         Validate(_footerPattern);
     }
 
+    public string? ReferenceCommit { get; }
 
     public Scope ScopeFor(string scopeIndicator)
     {
