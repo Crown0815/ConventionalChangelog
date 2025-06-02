@@ -192,14 +192,17 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         Repository.Commit(Feature, 2);
 
         Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 2, 3));
+        return;
+
+        string OverwriteMessageWithFile(GitObject aCommit, Commit newCommit)
+        {
+            var directory = Path.Combine(Repository.Path(), ".conventional-changelog");
+            Directory.CreateDirectory(directory);
+            var aFile = Path.Combine(directory, $"{aCommit.Sha}");
+            File.WriteAllText(aFile, newCommit.Message);
+            return aFile;
+        }
     }
 
-    private string OverwriteMessageWithFile(GitObject commit, Commit newCommit)
-    {
-        var directory = Path.Combine(Repository.Path(), ".conventional-changelog");
-        Directory.CreateDirectory(directory);
-        var file = Path.Combine(directory, $"{commit.Sha}");
-        File.WriteAllText(file, newCommit.Message);
-        return file;
-    }
+
 }
