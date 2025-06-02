@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using ConventionalChangelog.Git;
 using LibGit2Sharp;
 using Xunit;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
@@ -204,5 +205,26 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
         }
     }
 
+    [Fact]
+    public void when_configured_with_an_upstream_reference_commit_then_all_commits_after_the_reference_commit_are_considered()
+    {
+        var referenceCommit = Repository.Commit(Feature, 1);
+        Repository.Commit(Feature, 2).Tag(Version("0.1.0"));
+        Repository.Commit(Feature, 3);
 
+        var config = new Configuration(referenceCommit: referenceCommit.Sha);
+        Repository.Should().HaveChangelogMatching(A.Changelog.WithGroup(Feature, 3, 2), config);
+    }
+
+    [Fact]
+    public void when_configured_with_a_custom_non_existing_reference_commit_then_an_exception_is_thrown()
+    {
+        Repository.Commit(Feature, 1).Tag(Version("0.1.0"));
+        Repository.Commit(Feature, 2);
+
+        const string randomCommitSha = "0000000000000000000000000000000000000000";
+
+        var config = new Configuration(referenceCommit: randomCommitSha);
+        Repository.Should().ThrowWhenCreatingChangelog<RepositoryReadFailedException>(config);
+    }
 }

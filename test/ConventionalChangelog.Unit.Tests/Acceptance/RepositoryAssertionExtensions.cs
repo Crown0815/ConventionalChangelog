@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 using LibGit2Sharp;
@@ -31,6 +32,13 @@ internal static class RepositoryAssertionExtensions
                 .ForCondition(c => c == changelog)
                 .FailWith(ExpectedMatchingChangelogButDifferentWasFound,
                     _ => changelog, c => c, _ => Environment.NewLine + Subject.LogGraph());
+        }
+
+        public void ThrowWhenCreatingChangelog<T>(IConfiguration? configuration = default) where T : Exception
+        {
+            var conventionalChangelog = new Changelog(configuration ?? new Configuration());
+            var creatingChangelog = () => conventionalChangelog.FromRepository(Subject.Path());
+            creatingChangelog.Should().Throw<T>();
         }
     }
 }

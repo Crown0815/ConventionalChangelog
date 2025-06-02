@@ -59,4 +59,5 @@ internal class DefaultConfiguration : IConfiguration
     public bool IgnoreScope => false;
     public IEnumerable<Scope> Scopes => Default.Scopes;
     public bool SkipTitle => false;
+    public string? ReferenceCommit => null;
 }

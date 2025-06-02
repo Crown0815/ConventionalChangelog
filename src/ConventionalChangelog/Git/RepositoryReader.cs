@@ -6,18 +6,27 @@ internal class RepositoryReader(Customization customization)
 {
     public IEnumerable<Commit> CommitsFrom(string path)
     {
-        using var repository = new RepositoryWrapper(path);
+        using var repository = new RepositoryWrapper(path, customization);
         return repository.AllCommitsSinceLastTagMatching(customization.IsVersionTag);
     }
 
 
-    private class RepositoryWrapper(string path) : IDisposable
+    private class RepositoryWrapper(string path, Customization customization) : IDisposable
     {
         private readonly Repository _inner = new(path);
 
         public Commit[] AllCommitsSinceLastTagMatching(Func<string, bool> condition)
         {
-            var lastTaggedCommit = FirstCommitFromHeadWithTagMatching(condition);
+            object? lastTaggedCommit;
+            if (customization.ReferenceCommit is null)
+            {
+                lastTaggedCommit = FirstCommitFromHeadWithTagMatching(condition);
+            }
+            else
+            {
+                lastTaggedCommit = customization.ReferenceCommit;
+            }
+
             return AllCommitsSince(lastTaggedCommit);
         }
 
@@ -50,6 +59,18 @@ internal class RepositoryReader(Customization customization)
         };
 
         private Commit[] AllCommitsSince(object? referenceCommit)
+        {
+            try
+            {
+                return ReadAllCommitsSince(referenceCommit);
+            }
+            catch (LibGit2SharpException e)
+            {
+                throw new RepositoryReadFailedException($"{nameof(ReadAllCommitsSince)} failed", e);
+            }
+        }
+
+        private Commit[] ReadAllCommitsSince(object? referenceCommit)
         {
             return _inner.Commits
                 .QueryBy(AllSince(referenceCommit))

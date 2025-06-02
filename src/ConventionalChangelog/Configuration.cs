@@ -5,7 +5,8 @@ public class Configuration(
     string? versionTagPrefix = null,
     bool? skipTitle = null,
     IReadOnlyCollection<Scope>? scopes = null,
-    bool? ignoreScope = null)
+    bool? ignoreScope = null,
+    string? referenceCommit = null)
     : IConfiguration
 {
     private readonly DefaultConfiguration _default = new();
@@ -16,6 +17,7 @@ public class Configuration(
     public string VersionTagPrefix => versionTagPrefix ?? _default.VersionTagPrefix;
 
     public string SemanticVersionPattern => _default.SemanticVersionPattern;
+    public string? ReferenceCommit => referenceCommit;
 
     public bool IgnorePrerelease => ignorePrerelease ?? false;
 
