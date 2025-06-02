@@ -144,8 +144,7 @@ public class The_changelog_from_a_git_repository_using_conventional_commits : Gi
     public void when_encountering_merge_commits_considers_version_tags_on_merged_commits()
     {
         Repository.Commit(Irrelevant, "Initial Commit");
-        var develop = Repository.CreateBranch("develop");
-        Repository.Checkout("develop");
+        var develop = Repository.CreateAndCheckoutBranch("develop");
         Repository.Commit(Feature, 1).Tag(Version("0.1.0-alpha.1"));
         Repository.Commit(Feature, 2).Tag(Version("0.1.0-alpha.2"));
         Repository.Checkout(DefaultBranch);
