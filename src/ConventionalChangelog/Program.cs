@@ -30,17 +30,12 @@ void Execute(
     {
         File.WriteAllText(output, changelog + Environment.NewLine);
         if (TeamCity.IsCurrentCi())
-            Console.WriteLine(TeamCityParameterMessageFrom(changelog));
+            Console.WriteLine(TeamCity.SetParameterCommand(Output.Changelog, changelog));
     }
     else
     {
         Console.WriteLine(TeamCity.IsCurrentCi()
-            ? TeamCityParameterMessageFrom(changelog)
+            ? TeamCity.SetParameterCommand(Output.Changelog, changelog)
             : changelog);
     }
-}
-
-string TeamCityParameterMessageFrom(string s)
-{
-    return TeamCity.SetParameterCommand("CRN.Changelog", s);
 }
