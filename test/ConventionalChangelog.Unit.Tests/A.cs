@@ -9,6 +9,8 @@ internal static class A
     {
         private const string ChangelogTitle = "# Changelog";
         private const string GeneralCodeImprovementsMessage = "*General Code Improvements*";
+        private const string HeaderL2 = "## {0}";
+        private const string HeaderL3 = "### {0}";
 
         private static readonly string HeaderSeparator = NewLine + NewLine;
 
@@ -43,16 +45,13 @@ internal static class A
         }
 
         private Changelog WithGroup(string groupHeader) =>
-            With(NewLine + Level2Header(groupHeader) + HeaderSeparator);
+            With(NewLine + string.Format(HeaderL2, groupHeader) + HeaderSeparator);
 
         private Changelog WithScope(string scopeHeader) =>
-            With(Level3Header(scopeHeader) + HeaderSeparator);
+            With(string.Format(HeaderL3, scopeHeader) + HeaderSeparator);
 
         public Changelog AndScope(string scopeHeader, params int[] seeds) =>
             seeds.Aggregate(With(NewLine).WithScope(scopeHeader), AddBulletPoint);
-
-        private static string Level2Header(string header) => $"## {header}";
-        private static string Level3Header(string header) => $"### {header}";
 
         private static Changelog AddBulletPoint(Changelog c, int seed) => c.WithBulletPoint(seed);
 
