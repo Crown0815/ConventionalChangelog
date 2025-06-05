@@ -67,7 +67,7 @@ internal class Customization : IComparer<string>
 
     public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {
-        if (footers.OfType<IPrintReady>().SingleOrDefault() is {} p)
+        if (footers.OfType<BreakingChangeFooter>().SingleOrDefault() is {} p)
             return typeIndicator.ReplaceWith(InnerTypeFor(p.TypeIndicator).Indicator, InnerGroupId);
         return typeIndicator;
     }
@@ -121,16 +121,15 @@ internal class Customization : IComparer<string>
         var isBreaking = match.Groups[BreakingGroupId].Success;
 
         return isBreaking
-            ? new PrintReadyFooter(token, value, BreakingChangeIndicator)
+            ? new BreakingChangeFooter(token, value, BreakingChangeIndicator)
             : new CommitMessage.Footer(token, value);
     }
 
-    private record PrintReadyFooter(string Token, string Value, string TypeIndicator)
-        : CommitMessage.Footer(Token, Value), IPrintReady
+    private record BreakingChangeFooter(string Token, string Value, string TypeIndicator)
+        : CommitMessage.Footer(Token, Value), IPrintPreparable
     {
-        public string Scope => "";
-        public string Description => Value;
-        public string Hash { get; init; } = "";
+        public IPrintReady Prepare(CommitMessage context) => new Printable(TypeIndicator, "", Value, context.Hash);
+        private record Printable(string TypeIndicator, string Scope, string Description, string Hash) : IPrintReady;
     }
 
     private static void Validate(string footerPattern)

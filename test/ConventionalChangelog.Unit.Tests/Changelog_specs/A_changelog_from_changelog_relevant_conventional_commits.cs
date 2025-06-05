@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using System.Linq;
+using AwesomeAssertions;
 using Xunit;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
@@ -67,6 +68,20 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         var changelog = The.ChangelogWith(config).From([message1, message2]);
 
         changelog.Should().Be(A.Changelog
+            .WithGroup(Feature, (1, message1.Hash), (2, message2.Hash)));
+    }
+
+    [Fact]
+    public void with_breaking_changes_when_set_to_show_commit_sha_appends_sha_in_parenthesis()
+    {
+        var message1 = Feature.CommitWithDescription(1).WithFooter(The_constant.BreakingChangeFooterTokens.First().Data, 0);
+        var message2 = Feature.CommitWithDescription(2);
+
+        var config = new Configuration(showHash: true);;
+        var changelog = The.ChangelogWith(config).From([message1, message2]);
+
+        changelog.Should().Be(A.Changelog
+            .WithGroup(BreakingChange, (0, message1.Hash))
             .WithGroup(Feature, (1, message1.Hash), (2, message2.Hash)));
     }
 }

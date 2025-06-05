@@ -31,6 +31,7 @@ public class MessageParser
         var (body, footers) = BodyFrom(lines);
         typeIndicator = _customization.Sanitize(typeIndicator, footers);
 
+
         return new CommitMessage(typeIndicator, scope, description, body, footers);
     }
 
