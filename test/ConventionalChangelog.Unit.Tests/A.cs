@@ -36,7 +36,7 @@ internal static class A
         public ChangelogBuilder WithGroup(ChangelogType type, string scope, params int[] seeds) =>
             Empty.And(type, scope, seeds);
 
-        public string WithGroup(CommitType type, params (int, string)[] message)
+        public ChangelogBuilder WithGroup(CommitType type, params (int, string)[] message)
         {
             return message.Aggregate(WithGroup(type.GroupHeader), AddBulletPoint);
         }
