@@ -10,7 +10,7 @@ public class A_changelog_from
     [
         new Commit[] { null! },
         new Commit[] { null!, null! },
-        new Commit[] { new(""), null!, new("") },
+        new[] { A.Commit(""), null!, A.Commit("") },
     ];
 
     [Theory]
@@ -24,8 +24,8 @@ public class A_changelog_from
     public static readonly TheoryData<Commit[]> EmptyCases =
     [
         Array.Empty<Commit>(),
-        new Commit[] { new("") },
-        new Commit[] { new(""), new("") },
+        new[] { A.Commit("") },
+        new[] { A.Commit(""),  A.Commit("") },
     ];
 
     [Theory]
@@ -41,7 +41,7 @@ public class A_changelog_from
     [InlineData("1234: abc")]
     public void non_conventional_commits_is_empty(string nonConventionalCommitMessage)
     {
-        var changelog = The.ChangelogFrom(new Commit(nonConventionalCommitMessage));
+        var changelog = The.ChangelogFrom(A.Commit(nonConventionalCommitMessage));
         changelog.Should().Be(A.Changelog.Empty);
     }
 

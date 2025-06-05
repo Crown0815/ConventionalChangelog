@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using static System.Environment;
 
 namespace ConventionalChangelog.Unit.Tests;
@@ -77,4 +78,5 @@ internal static class A
     }
 
     public static string Description(int seed) => $"Some Description {seed}";
+    public static Commit Commit(string message) => new(message, Guid.NewGuid().ToString());
 }
