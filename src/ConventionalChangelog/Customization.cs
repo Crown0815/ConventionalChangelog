@@ -126,9 +126,9 @@ internal class Customization : IComparer<string>
     }
 
     private record BreakingChangeFooter(string Token, string Value, string TypeIndicator)
-        : CommitMessage.Footer(Token, Value), IPrintPreparable
+        : CommitMessage.Footer(Token, Value), IPrintRelevant
     {
-        public IPrintReady Prepare(CommitMessage context) => new Printable(TypeIndicator, "", Value, context.Hash);
+        public IPrintReady Prepare(string hash) => new Printable(TypeIndicator, "", Value, hash);
         private record Printable(string TypeIndicator, string Scope, string Description, string Hash) : IPrintReady;
     }
 

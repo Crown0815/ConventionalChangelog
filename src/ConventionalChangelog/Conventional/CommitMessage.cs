@@ -7,8 +7,8 @@ public record CommitMessage(
     string Scope,
     string Description,
     string Body,
-    IReadOnlyCollection<Footer> Footers) : IPrintReady
+    IReadOnlyCollection<Footer> Footers,
+    string Hash) : IPrintReady
 {
     public record Footer(string Token, string Value);
-    public string Hash { get; internal init; } = Guid.NewGuid().ToString();
 }

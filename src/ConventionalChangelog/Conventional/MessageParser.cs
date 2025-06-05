@@ -15,16 +15,11 @@ public class MessageParser
 
     public CommitMessage Parse(Commit commit)
     {
-        return Parse(commit.Message) with { Hash = commit.Hash };
+        using var lines = new StringReader(commit.Message);
+        return Read(lines, commit.Hash);
     }
 
-    public CommitMessage Parse(string rawMessage)
-    {
-        using var lines = new StringReader(rawMessage);
-        return Read(lines);
-    }
-
-    private CommitMessage Read(TextReader lines)
+    private CommitMessage Read(TextReader lines, string hash)
     {
         var (typeIndicator, description) = _customization.HeaderFrom(lines.ReadLine());
         (typeIndicator, var scope) = ScopeFrom(typeIndicator);
@@ -32,7 +27,7 @@ public class MessageParser
         typeIndicator = _customization.Sanitize(typeIndicator, footers);
 
 
-        return new CommitMessage(typeIndicator, scope, description, body, footers);
+        return new CommitMessage(typeIndicator, scope, description, body, footers, hash);
     }
 
     private static (string, string) ScopeFrom(string typeIndicator)

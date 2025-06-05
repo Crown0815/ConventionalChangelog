@@ -1,5 +1,3 @@
-using ConventionalChangelog.Conventional;
-
 namespace ConventionalChangelog;
 
 public interface IPrintReady : IHasCommitType
@@ -9,7 +7,7 @@ public interface IPrintReady : IHasCommitType
     public string Hash { get; }
 }
 
-public interface IPrintPreparable
+public interface IPrintRelevant
 {
-    public IPrintReady Prepare(CommitMessage context);
+    public IPrintReady Prepare(string hash);
 }

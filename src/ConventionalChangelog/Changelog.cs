@@ -45,8 +45,10 @@ public class Changelog
 
     private static IEnumerable<IPrintReady> AsPrintReady(CommitMessage message)
     {
-        var printableFooters = message.Footers.OfType<IPrintPreparable>();
+        var printableFooters = message.Footers
+            .OfType<IPrintRelevant>()
+            .Select(x => x.Prepare(message.Hash));
 
-        return printableFooters.Select(x => x.Prepare(message)).Prepend(message);
+        return printableFooters.Prepend(message);
     }
 }
