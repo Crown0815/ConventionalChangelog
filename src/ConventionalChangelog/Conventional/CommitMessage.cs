@@ -10,6 +10,5 @@ public record CommitMessage(
     IReadOnlyCollection<Footer> Footers) : IPrintReady
 {
     public record Footer(string Token, string Value);
-
     public string Hash { get; internal init; } = Guid.NewGuid().ToString();
 }

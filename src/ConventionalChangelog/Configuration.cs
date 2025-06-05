@@ -1,6 +1,7 @@
 namespace ConventionalChangelog;
 
 public class Configuration(
+    bool? showHash = null,
     ChangelogOrder? changelogOrder = null,
     bool? ignorePrerelease = null,
     string? versionTagPrefix = null,
@@ -10,6 +11,7 @@ public class Configuration(
     string? referenceCommit = null)
     : IConfiguration
 {
+    public bool ShowHash => showHash ?? false;
     private readonly DefaultConfiguration _default = new();
 
     public string FooterPattern => _default.FooterPattern;

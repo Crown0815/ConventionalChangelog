@@ -37,7 +37,7 @@ internal class LogWriter(Customization customization)
             switch (type.Relevance)
             {
                 case Relevance.Show:
-                    AddBullet(type.GroupHeader, scope.GroupHeader, printReady.Description);
+                    AddBullet(type.GroupHeader, scope.GroupHeader, EntryFor(printReady));
                     break;
                 case Relevance.Hide:
                     AddGeneralCodeImprovement();
@@ -47,6 +47,11 @@ internal class LogWriter(Customization customization)
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
             }
+        }
+
+        private string EntryFor(IPrintReady printReady)
+        {
+            return customization.DescriptionFor(printReady);
         }
 
         private void AddBullet(string header, string? subHeader, string text)

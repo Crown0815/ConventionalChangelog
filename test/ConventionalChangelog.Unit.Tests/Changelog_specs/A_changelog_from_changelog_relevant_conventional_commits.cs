@@ -56,4 +56,17 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
             .And(Bugfix, 2, 6)
             .And(PerformanceImprovement, 3, 5));
     }
+
+    [Fact]
+    public void when_set_to_show_commit_sha_appends_sha_in_parenthesis()
+    {
+        var message1 = Feature.CommitWithDescription(1);
+        var message2 = Feature.CommitWithDescription(2);
+
+        var config = new Configuration(showHash: true);;
+        var changelog = The.ChangelogWith(config).From([message1, message2]);
+
+        changelog.Should().Be(A.Changelog
+            .WithGroup(Feature, (1, message1.Hash), (2, message2.Hash)));
+    }
 }
