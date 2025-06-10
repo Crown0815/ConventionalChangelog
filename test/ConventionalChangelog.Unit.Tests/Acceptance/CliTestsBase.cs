@@ -17,6 +17,7 @@ public abstract class CliTestsBase : GitUsingTestsBase
     protected static readonly string[] IgnorePrerelease = ["-i", "--ignore-prereleases"];
     protected static readonly string[] SkipTitleFlag = ["-r", "--skip-title"];
     protected static readonly string[] IgnoreScope = ["-s", "--ignore-scope"];
+    protected static readonly string[] ShowHash = ["-a", "--show-hash"];
 
     protected static string OutputWithInput(string arguments, params (string, string)[] environmentVariables)
     {

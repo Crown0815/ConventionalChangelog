@@ -11,6 +11,7 @@ void Execute(
     [Option('i')]bool ignorePrereleases,
     [Option('s')]bool ignoreScope,
     [Option('r')]bool skipTitle,
+    [Option('a')]bool showHash,
     [Option('c')]ChangelogOrder? changelogOrder,
     [Option('x')]string? referenceCommit,
     [Argument]string repositoryPath)
@@ -21,7 +22,8 @@ void Execute(
         skipTitle: skipTitle,
         ignoreScope: ignoreScope,
         referenceCommit: referenceCommit,
-        changelogOrder: changelogOrder
+        changelogOrder: changelogOrder,
+        showHash: showHash
         );
 
     var changelog = new Changelog(configuration).FromRepository(repositoryPath);
