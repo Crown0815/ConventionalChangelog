@@ -115,8 +115,8 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
         [InlineData("     (     scope     )    ")]
         public void produces_the_same_result_independent_of_spaces_before_after_or_within_the_scope(string withSpaces)
         {
-            var reference = new Commit($"{Feature.Indicator}(scope): whatever");
-            var sample = new Commit($"{Feature.Indicator}{withSpaces}: whatever");
+            var reference = A.Commit($"{Feature.Indicator}(scope): whatever");
+            var sample = A.Commit($"{Feature.Indicator}{withSpaces}: whatever");
 
             The.ChangelogFrom(sample).Should().Be(The.ChangelogFrom(reference));
         }

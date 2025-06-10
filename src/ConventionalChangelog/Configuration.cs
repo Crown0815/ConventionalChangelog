@@ -1,6 +1,8 @@
 namespace ConventionalChangelog;
 
 public class Configuration(
+    bool? showHash = null,
+    ChangelogOrder? changelogOrder = null,
     bool? ignorePrerelease = null,
     string? versionTagPrefix = null,
     bool? skipTitle = null,
@@ -9,8 +11,8 @@ public class Configuration(
     string? referenceCommit = null)
     : IConfiguration
 {
+    public bool ShowHash => showHash ?? false;
     private readonly DefaultConfiguration _default = new();
-    private readonly ChangelogOrder? _changelogOrder;
 
     public string FooterPattern => _default.FooterPattern;
 
@@ -24,11 +26,7 @@ public class Configuration(
     public IEnumerable<CommitType> CommitTypes => _default.CommitTypes;
     public IEnumerable<Scope> Scopes => scopes ?? _default.Scopes;
 
-    public ChangelogOrder ChangelogOrder
-    {
-        get => _changelogOrder ?? _default.ChangelogOrder;
-        init => _changelogOrder = value;
-    }
+    public ChangelogOrder ChangelogOrder => changelogOrder ?? _default.ChangelogOrder;
 
     public string DropSelf => _default.DropSelf;
     public string DropBoth => _default.DropBoth;

@@ -16,4 +16,5 @@ public interface IConfiguration
     IEnumerable<Scope> Scopes { get; }
     bool SkipTitle { get; }
     string? ReferenceCommit { get; }
+    bool ShowHash { get; }
 }

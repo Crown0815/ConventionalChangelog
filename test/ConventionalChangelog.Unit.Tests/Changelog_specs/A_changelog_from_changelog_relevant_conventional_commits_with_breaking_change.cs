@@ -8,11 +8,9 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
 {
     public class With_breaking_change
     {
-        private const string BreakingChangesHeader = "Breaking Changes";
-        private static readonly CommitType BreakingChange = new("", BreakingChangesHeader, Relevance.Show);
-
         private const string BreakingChangeIndicator = "!";
         private static CommitType Breaking(CommitType t) => new(t.Indicator + BreakingChangeIndicator, "", Relevance.Show);
+        public static readonly TheoryData<string> BreakingChangeFooterTokens = The_constant.BreakingChangeFooterTokens;
 
         [Fact]
         public void commit_type_contains_message_within_special_breaking_changes_group()
@@ -38,11 +36,6 @@ public partial class A_changelog_from_changelog_relevant_conventional_commits
                 .And(Feature, 2));
         }
 
-        public static readonly TheoryData<string> BreakingChangeFooterTokens =
-        [
-            "BREAKING CHANGE",
-            "BREAKING-CHANGE",
-        ];
 
         [Theory]
         [MemberData(nameof(BreakingChangeFooterTokens))]

@@ -11,36 +11,33 @@ void Execute(
     [Option('i')]bool ignorePrereleases,
     [Option('s')]bool ignoreScope,
     [Option('r')]bool skipTitle,
-    [Option('c')]string? changelogOrder,
+    [Option('a')]bool showHash,
+    [Option('c')]ChangelogOrder? changelogOrder,
     [Option('x')]string? referenceCommit,
     [Argument]string repositoryPath)
 {
     var configuration = new Configuration(
+        ignorePrerelease: ignorePrereleases,
+        versionTagPrefix: tagPrefix,
         skipTitle: skipTitle,
         ignoreScope: ignoreScope,
-        versionTagPrefix: tagPrefix,
-        ignorePrerelease: ignorePrereleases,
-        referenceCommit: referenceCommit)
-    {
-        ChangelogOrder = changelogOrder is not null ? Enum.Parse<ChangelogOrder>(changelogOrder) : default,
-    };
+        referenceCommit: referenceCommit,
+        changelogOrder: changelogOrder,
+        showHash: showHash
+        );
+
     var changelog = new Changelog(configuration).FromRepository(repositoryPath);
 
     if (output is not null)
     {
         File.WriteAllText(output, changelog + Environment.NewLine);
         if (TeamCity.IsCurrentCi())
-            Console.WriteLine(TeamCityParameterMessageFrom(changelog));
+            Console.WriteLine(TeamCity.SetParameterCommand(Output.Changelog, changelog));
     }
     else
     {
         Console.WriteLine(TeamCity.IsCurrentCi()
-            ? TeamCityParameterMessageFrom(changelog)
+            ? TeamCity.SetParameterCommand(Output.Changelog, changelog)
             : changelog);
     }
-}
-
-string TeamCityParameterMessageFrom(string s)
-{
-    return TeamCity.SetParameterCommand("CRN.Changelog", s);
 }

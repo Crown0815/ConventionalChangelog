@@ -25,6 +25,7 @@ internal class Customization : IComparer<string>
     private readonly bool _ignoreScope;
     private readonly ImmutableDictionary<string, Scope> _scopes;
     private readonly bool _skipTitle;
+    private readonly IConfiguration _configuration;
 
     public Customization(IConfiguration configuration)
     {
@@ -39,6 +40,7 @@ internal class Customization : IComparer<string>
         _scopes = configuration.Scopes.ToImmutableDictionary(x => x.Indicator, x => x);
         _skipTitle = configuration.SkipTitle;
         ReferenceCommit = configuration.ReferenceCommit;
+        _configuration = configuration;
         Relationships =
         [
             new Relationship(configuration.DropSelf, true, false),
@@ -65,7 +67,7 @@ internal class Customization : IComparer<string>
 
     public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {
-        if (footers.OfType<IPrintReady>().SingleOrDefault() is {} p)
+        if (footers.OfType<BreakingChangeFooter>().SingleOrDefault() is {} p)
             return typeIndicator.ReplaceWith(InnerTypeFor(p.TypeIndicator).Indicator, InnerGroupId);
         return typeIndicator;
     }
@@ -119,15 +121,15 @@ internal class Customization : IComparer<string>
         var isBreaking = match.Groups[BreakingGroupId].Success;
 
         return isBreaking
-            ? new PrintReadyFooter(token, value, BreakingChangeIndicator)
+            ? new BreakingChangeFooter(token, value, BreakingChangeIndicator)
             : new CommitMessage.Footer(token, value);
     }
 
-    private record PrintReadyFooter(string Token, string Value, string TypeIndicator)
-        : CommitMessage.Footer(Token, Value), IPrintReady
+    private record BreakingChangeFooter(string Token, string Value, string TypeIndicator)
+        : CommitMessage.Footer(Token, Value), IPrintRelevant
     {
-        public string Scope => "";
-        public string Description => Value;
+        public IPrintReady Prepare(string hash) => new Printable(TypeIndicator, "", Value, hash);
+        private record Printable(string TypeIndicator, string Scope, string Description, string Hash) : IPrintReady;
     }
 
     private static void Validate(string footerPattern)
@@ -156,4 +158,11 @@ internal class Customization : IComparer<string>
         firstLine?.Split(_separator) is [var first, var second]
             ? (first.Trim(),second.Trim())
             : ("", "");
+
+    public string DescriptionFor(IPrintReady printReady)
+    {
+        return _configuration.ShowHash
+            ? $"{printReady.Description} ({printReady.Hash})"
+            : printReady.Description;
+    }
 }

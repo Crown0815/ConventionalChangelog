@@ -12,7 +12,7 @@ internal static class CommitCreationExtensions
         type.CommitWith(A.Description(seed));
 
     public static Commit CommitWith(this CommitType type, string description) =>
-        new($"{type.Indicator}{TypeDescriptionSeparator} {description}");
+        A.Commit($"{type.Indicator}{TypeDescriptionSeparator} {description}");
 
     public static Commit WithFooter(this Commit commitMessage, string token, int seed) =>
         commitMessage.WithFooter(token, A.Description(seed));
