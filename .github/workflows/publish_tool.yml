@@ -11,14 +11,13 @@ jobs:
 
     steps:
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.0.X
           global-json-file: global.json
 
       - name: Install GitVersion
@@ -37,7 +36,7 @@ jobs:
 
       - name: Generate Release Notes
         run: |-
-          dotnet tool install --global ConventionalChangelog --version 0.9.1
+          dotnet tool install --global ConventionalChangelog --version 0.11.0
           changelog "${{ github.workspace }}" >> "changelog.md"
 
       - name: Create a Release
