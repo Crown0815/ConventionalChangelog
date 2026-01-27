@@ -16,13 +16,13 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest, macOS-latest ]
-        dotnet: [ 8.0.X, 9.0.X ]
+        dotnet: [ "8.0", "9.0", "10.0" ]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ matrix.dotnet }}
           global-json-file: global.json
@@ -31,18 +31,18 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build --no-restore --framework net${{ matrix.dotnet }}
 
       - name: Test
-        run: dotnet test --no-restore
+        run: dotnet test --no-restore --framework net${{ matrix.dotnet }}
 
       - name: Publish
-        run: dotnet publish src/ConventionalChangelog/ConventionalChangelog.csproj --framework net8.0 --configuration
+        run: dotnet publish src/ConventionalChangelog/ConventionalChangelog.csproj --framework net${{ matrix.dotnet }} --configuration
           Release --output release --nologo
 
       - name: Upload Build Artifact
-        if: matrix.dotnet == '9.0.X'
+        if: matrix.dotnet == '10.0'
         uses: actions/upload-artifact@v4
         with:
-          name: Application_${{ matrix.os }}
+          name: Tool_${{ matrix.os }}
           path: release

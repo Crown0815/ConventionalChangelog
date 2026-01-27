@@ -22,7 +22,7 @@ changelog "/path/to/repository" --output "changelog.md"
 
 ## Inspiration
 
-This tool was inspired by
+This tool was inspired by [ap0llo/changelog](https://github.com/ap0llo/changelog).
 
 ## Acknowledgements
 
