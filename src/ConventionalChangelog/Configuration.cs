@@ -8,10 +8,12 @@ public class Configuration(
     bool? skipTitle = null,
     IReadOnlyCollection<Scope>? scopes = null,
     bool? ignoreScope = null,
-    string? referenceCommit = null)
+    string? referenceCommit = null,
+    IReadOnlyCollection<string>? includeDirectories = null)
     : IConfiguration
 {
     public bool ShowHash => showHash ?? false;
+    public IReadOnlyCollection<string> IncludeDirectories => includeDirectories ?? [];
     private readonly DefaultConfiguration _default = new();
 
     public string FooterPattern => _default.FooterPattern;
