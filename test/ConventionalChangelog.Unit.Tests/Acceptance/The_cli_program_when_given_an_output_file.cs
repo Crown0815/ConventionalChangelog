@@ -38,6 +38,17 @@ public sealed class The_cli_program_when_given_an_output_file : CliTestsBase
         output.Should().Be(TeamCity.SetParameterCommand("CRN.Changelog", A.Changelog.WithGroup(Feature, 1)) + NewLine);
     }
 
+    [Theory]
+    [MemberData(nameof(OutputKeysData))]
+    public void run_from_github_prints_an_output_command_setting_a_parameter_to_the_changelog(string argument)
+    {
+        Repository.Commit(Feature, 1);
+
+        var output = OutputWithInput($"{argument} {_fileName} {Repository.Path()}", (GitHub.EnvironmentVariable, "true"));
+
+        output.Should().Be(GitHub.SetOutputCommand("CRN.Changelog", A.Changelog.WithGroup(Feature, 1)) + NewLine);
+    }
+
     public override void Dispose()
     {
         File.Delete(_fileName);
