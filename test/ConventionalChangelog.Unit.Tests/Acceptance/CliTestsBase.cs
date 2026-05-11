@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ConventionalChangelog.BuildSystems;
 using Xunit;
 
 namespace ConventionalChangelog.Unit.Tests.Acceptance;
@@ -30,6 +31,8 @@ public abstract class CliTestsBase : GitUsingTestsBase
         process.StartInfo.RedirectStandardError = true;
         process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
         process.StartInfo.CreateNoWindow = true;
+        process.StartInfo.EnvironmentVariables.Remove(GitHub.EnvironmentVariable);
+        process.StartInfo.EnvironmentVariables.Remove(TeamCity.EnvironmentVariable);
         if (!process.StartInfo.EnvironmentVariables.ContainsKey("DOTNET_ROOT"))
             process.StartInfo.EnvironmentVariables["DOTNET_ROOT"] = Path.GetDirectoryName(Environment.ProcessPath);
 
