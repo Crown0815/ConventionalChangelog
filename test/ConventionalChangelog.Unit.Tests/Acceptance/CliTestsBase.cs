@@ -19,6 +19,7 @@ public abstract class CliTestsBase : GitUsingTestsBase
     protected static readonly string[] SkipTitleFlag = ["-r", "--skip-title"];
     protected static readonly string[] IgnoreScope = ["-s", "--ignore-scope"];
     protected static readonly string[] ShowHash = ["-a", "--show-hash"];
+    protected static readonly string[] ConfigurationFile = ["-f", "--config-file"];
 
     protected static string OutputWithInput(string arguments, params (string, string)[] environmentVariables)
     {

@@ -14,12 +14,19 @@ void Execute(
     [Option('a')]bool showHash,
     [Option('c')]ChangelogOrder? changelogOrder,
     [Option('x')]string? referenceCommit,
+    [Option('f')]string? configFile,
     [Argument]string repositoryPath)
 {
+    var fileConfiguration = configFile is null
+        ? default
+        : ConfigurationFile.Read(configFile);
+
     var configuration = new Configuration(
         ignorePrerelease: ignorePrereleases,
         versionTagPrefix: tagPrefix,
         skipTitle: skipTitle,
+        commitTypes: fileConfiguration.CommitTypes,
+        scopes: fileConfiguration.Scopes,
         ignoreScope: ignoreScope,
         referenceCommit: referenceCommit,
         changelogOrder: changelogOrder,
