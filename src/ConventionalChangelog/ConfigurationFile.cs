@@ -1,8 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace ConventionalChangelog;
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
 internal static class ConfigurationFile
 {
     public static ConfigurationValues Read(string path)
@@ -12,7 +16,7 @@ internal static class ConfigurationFile
             .Build();
 
         var content = File.ReadAllText(path);
-        var configuration = deserializer.Deserialize<YamlConfiguration>(content) ?? new YamlConfiguration();
+        var configuration = deserializer.Deserialize<YamlConfiguration>(content);
 
         return new ConfigurationValues(
             CommitTypes: configuration.CommitTypes?
