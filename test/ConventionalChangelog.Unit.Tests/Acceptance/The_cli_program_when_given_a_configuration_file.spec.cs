@@ -20,7 +20,6 @@ public sealed class The_cli_program_when_given_a_configuration_file : CliTestsBa
             CommitTypes:
               - TypeIndicator: fix
                 GroupHeader: Corrective Actions
-                Relevance: show
             """);
 
         var output = OutputWithInput($"{argument} {configFile} {Repository.Path()}");
