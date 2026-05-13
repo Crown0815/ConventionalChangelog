@@ -15,6 +15,10 @@ public class The_cli_program_when_in_github_context : CliTestsBase
 
         var output = OutputWithInput(Repository.Path(), (GitHub.EnvironmentVariable, "true"));
 
-        output.Should().Be(GitHub.SetOutputCommand(Output.Changelog, A.Changelog.WithGroup(Feature, 1)) + NewLine);
+        output.Should().Be($"""
+                            {GitHub.SetOutputCommand(Output.ChangelogLegacy, A.Changelog.WithGroup(Feature, 1))}
+                            {GitHub.SetOutputCommand(Output.Changelog, A.Changelog.WithGroup(Feature, 1))}
+
+                            """);
     }
 }
