@@ -80,7 +80,7 @@ internal class Customization : IComparer<string>
 
     private CommitType InnerTypeFor(string typeIndicator)
     {
-        return _commitTypes.SingleOrDefault(typeIndicator.Matches) ?? CommitType.None;
+        return _commitTypes.FirstOrDefault(typeIndicator.Matches) ?? CommitType.None;
     }
 
     public bool IsVersionTag(string tagName)
