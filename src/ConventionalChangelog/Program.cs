@@ -40,8 +40,8 @@ void Execute(
         File.WriteAllText(output, changelog + Environment.NewLine);
         if (TeamCity.IsCurrentCi())
         {
-            Console.WriteLine(TeamCity.GenerateContent(Output.ChangelogLegacy, changelog));
-            Console.WriteLine(TeamCity.GenerateContent(Output.Changelog, changelog));
+            TeamCity.WriteOutput(Output.ChangelogLegacy, changelog);
+            TeamCity.WriteOutput(Output.Changelog, changelog);
         }
         else if (GitHub.IsCurrentCi())
         {
@@ -53,8 +53,8 @@ void Execute(
     {
         if (TeamCity.IsCurrentCi())
         {
-            Console.WriteLine(TeamCity.GenerateContent(Output.ChangelogLegacy, changelog));
-            Console.WriteLine(TeamCity.GenerateContent(Output.Changelog, changelog));
+            TeamCity.WriteOutput(Output.ChangelogLegacy, changelog);
+            TeamCity.WriteOutput(Output.Changelog, changelog);
         }
         else if (GitHub.IsCurrentCi())
         {
