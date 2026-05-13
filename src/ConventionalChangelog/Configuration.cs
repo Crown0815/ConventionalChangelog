@@ -16,6 +16,7 @@ public class Configuration(
     public bool ShowHash => showHash ?? false;
     public IReadOnlyCollection<string> IncludeDirectories => includeDirectories ?? [];
     private static readonly DefaultConfiguration Default = new();
+    public string MessageOverridePath => Default.MessageOverridePath;
 
     public string FooterPattern => Default.FooterPattern;
 
@@ -94,5 +95,6 @@ public class Configuration(
         public string? ReferenceCommit => null;
         public bool ShowHash => false;
         public IReadOnlyCollection<string> IncludeDirectories => Constants.IncludeDirectories;
+        public string MessageOverridePath => ".conventional-changelog";
     }
 }

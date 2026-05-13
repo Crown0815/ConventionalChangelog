@@ -102,7 +102,7 @@ internal class RepositoryReader(Customization customization)
 
         private string MessageFor(LibGit2Sharp.Commit c)
         {
-            var overwrite = Path.Combine(path, ".conventional-changelog", c.Sha);
+            var overwrite = Path.Combine(path, customization.MessageOverridePath, c.Sha);
             return File.Exists(overwrite)
                 ? File.ReadAllText(overwrite)
                 : c.Message;

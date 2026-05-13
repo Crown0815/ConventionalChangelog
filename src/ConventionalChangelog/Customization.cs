@@ -41,6 +41,7 @@ internal class Customization : IComparer<string>
         _skipTitle = configuration.SkipTitle;
         ReferenceCommit = configuration.ReferenceCommit;
         _configuration = configuration;
+        MessageOverridePath = configuration.MessageOverridePath;
         Relationships =
         [
             new Relationship(configuration.DropSelf, true, false),
@@ -65,6 +66,7 @@ internal class Customization : IComparer<string>
 
     public IReadOnlyCollection<Relationship> Relationships { get; }
     public string Title => _skipTitle ? "" : "# Changelog" + Environment.NewLine;
+    public string MessageOverridePath { get; }
 
     public string Sanitize(string typeIndicator, IEnumerable<CommitMessage.Footer> footers)
     {
