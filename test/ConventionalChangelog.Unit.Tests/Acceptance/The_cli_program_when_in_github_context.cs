@@ -1,7 +1,6 @@
 using ConventionalChangelog.BuildSystems;
 using AwesomeAssertions;
 using Xunit;
-using static System.Environment;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
 namespace ConventionalChangelog.Unit.Tests.Acceptance;
