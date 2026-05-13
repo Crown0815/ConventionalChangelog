@@ -20,11 +20,11 @@ public class GitHub_interaction_specs
     }
 
     [Theory]
-    // non ASCII characters represented as unicode
+    // non-ASCII characters represented as Unicode
     [InlineData("\u03a0", "\\u03a0")]
     [InlineData("\u0080", "\\u0080")]
 
-    // ASCII characters not escaped
+    // ASCII characters are not escaped
     [InlineData("\u007f", "\u007f")]
     [InlineData("\u007e", "~")]
 
