@@ -6,7 +6,7 @@ namespace ConventionalChangelog;
 public class Changelog
 {
     private readonly RepositoryReader _repositoryReader;
-    private readonly MessageParser _parser;
+    public MessageParser Parser { get; }
     private readonly RelationshipResolver _relationshipResolver;
     private readonly LogWriter _logWriter;
 
@@ -14,7 +14,7 @@ public class Changelog
     {
         var customization = new Customization(configuration);
         _repositoryReader = new RepositoryReader(customization);
-        _parser = new MessageParser(customization);
+        Parser = new MessageParser(customization);
         _relationshipResolver = new RelationshipResolver(customization);
         _logWriter = new LogWriter(customization);
     }
@@ -33,7 +33,7 @@ public class Changelog
 
     private IEnumerable<CommitMessage> Parse(IEnumerable<Commit> commits)
     {
-        return commits.Select(_parser.Parse);
+        return commits.Select(Parser.Parse);
     }
 
     private IEnumerable<IPrintReady> PrintReady(IEnumerable<CommitMessage> messages)

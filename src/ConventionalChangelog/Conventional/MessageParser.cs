@@ -7,10 +7,6 @@ public class MessageParser
 {
     private readonly Customization _customization;
 
-    public MessageParser() : this(new Customization(new DefaultConfiguration()))
-    {
-    }
-
     internal MessageParser(Customization customization) => _customization = customization;
 
     public CommitMessage Parse(Commit commit)
