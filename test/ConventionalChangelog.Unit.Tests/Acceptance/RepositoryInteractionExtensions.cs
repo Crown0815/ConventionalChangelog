@@ -35,6 +35,16 @@ internal static class RepositoryInteractionExtensions
         return r.Commit(message, Signature, Signature, CommitOptions);
     }
 
+    public static void Commit(this Repository r, string message, string file)
+    {
+        var fullPath = System.IO.Path.Combine(r.Info.WorkingDirectory, file);
+        var directory = System.IO.Path.GetDirectoryName(fullPath);
+        if (directory is not null) System.IO.Directory.CreateDirectory(directory);
+        System.IO.File.WriteAllText(fullPath, "");
+        Commands.Stage(r, file);
+        r.Commit(message, Signature, Signature, CommitOptions);
+    }
+
     public static void Tag(this GitObject target, string name)
     {
         target.Repository().Tags.Add(name, target);

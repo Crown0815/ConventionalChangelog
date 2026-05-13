@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ConventionalChangelog.BuildSystems;
 using Xunit;
 
 namespace ConventionalChangelog.Unit.Tests.Acceptance;
@@ -18,6 +19,7 @@ public abstract class CliTestsBase : GitUsingTestsBase
     protected static readonly string[] SkipTitleFlag = ["-r", "--skip-title"];
     protected static readonly string[] IgnoreScope = ["-s", "--ignore-scope"];
     protected static readonly string[] ShowHash = ["-a", "--show-hash"];
+    protected static readonly string[] ConfigurationFile = ["-f", "--config-file"];
 
     protected static string OutputWithInput(string arguments, params (string, string)[] environmentVariables)
     {
@@ -30,7 +32,9 @@ public abstract class CliTestsBase : GitUsingTestsBase
         process.StartInfo.RedirectStandardError = true;
         process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
         process.StartInfo.CreateNoWindow = true;
-        if (process.StartInfo.EnvironmentVariables.ContainsKey("DOTNET_ROOT") == false)
+        process.StartInfo.EnvironmentVariables.Remove(GitHub.EnvironmentVariable);
+        process.StartInfo.EnvironmentVariables.Remove(TeamCity.EnvironmentVariable);
+        if (!process.StartInfo.EnvironmentVariables.ContainsKey("DOTNET_ROOT"))
             process.StartInfo.EnvironmentVariables["DOTNET_ROOT"] = Path.GetDirectoryName(Environment.ProcessPath);
 
         foreach (var (name, value) in environmentVariables)

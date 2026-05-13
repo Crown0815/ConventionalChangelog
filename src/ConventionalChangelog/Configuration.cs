@@ -6,12 +6,15 @@ public class Configuration(
     bool? ignorePrerelease = null,
     string? versionTagPrefix = null,
     bool? skipTitle = null,
+    IReadOnlyCollection<CommitType>? commitTypes = null,
     IReadOnlyCollection<Scope>? scopes = null,
     bool? ignoreScope = null,
-    string? referenceCommit = null)
+    string? referenceCommit = null,
+    IReadOnlyCollection<string>? includeDirectories = null)
     : IConfiguration
 {
     public bool ShowHash => showHash ?? false;
+    public IReadOnlyCollection<string> IncludeDirectories => includeDirectories ?? [];
     private readonly DefaultConfiguration _default = new();
 
     public string FooterPattern => _default.FooterPattern;
@@ -23,7 +26,7 @@ public class Configuration(
 
     public bool IgnorePrerelease => ignorePrerelease ?? false;
 
-    public IEnumerable<CommitType> CommitTypes => _default.CommitTypes;
+    public IEnumerable<CommitType> CommitTypes => commitTypes ?? _default.CommitTypes;
     public IEnumerable<Scope> Scopes => scopes ?? _default.Scopes;
 
     public ChangelogOrder ChangelogOrder => changelogOrder ?? _default.ChangelogOrder;

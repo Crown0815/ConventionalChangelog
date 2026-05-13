@@ -74,8 +74,18 @@ internal class RepositoryReader(Customization customization)
         {
             return _inner.Commits
                 .QueryBy(AllSince(referenceCommit))
+                .Where(HasChangesInIncludeDirectories)
                 .Select(AsCommit)
                 .ToArray();
+        }
+
+        private bool HasChangesInIncludeDirectories(LibGit2Sharp.Commit commit)
+        {
+            if (customization.IncludeDirectories.Count == 0) return true;
+            var parent = commit.Parents.FirstOrDefault();
+            var changes = _inner.Diff.Compare<TreeChanges>(parent?.Tree, commit.Tree);
+
+            return changes.Any(change => customization.IncludeDirectories.Any(directory => change.Path.StartsWith(directory)));
         }
 
         private static CommitFilter AllSince(object? anchor) => new()

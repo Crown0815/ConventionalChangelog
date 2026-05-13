@@ -17,4 +17,5 @@ public interface IConfiguration
     bool SkipTitle { get; }
     string? ReferenceCommit { get; }
     bool ShowHash { get; }
+    IReadOnlyCollection<string> IncludeDirectories { get; }
 }

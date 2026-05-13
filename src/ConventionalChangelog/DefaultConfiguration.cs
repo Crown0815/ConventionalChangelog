@@ -44,6 +44,7 @@ internal class DefaultConfiguration : IConfiguration
         ];
 
         public static readonly Scope[] Scopes = [];
+        public static readonly string[] IncludeDirectories = [];
     }
 
     public string FooterPattern => Default.FooterPattern;
@@ -61,4 +62,5 @@ internal class DefaultConfiguration : IConfiguration
     public bool SkipTitle => false;
     public string? ReferenceCommit => null;
     public bool ShowHash => false;
+    public IReadOnlyCollection<string> IncludeDirectories => Default.IncludeDirectories;
 }

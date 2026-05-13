@@ -52,6 +52,7 @@ internal class Customization : IComparer<string>
     }
 
     public string? ReferenceCommit { get; }
+    public IReadOnlyCollection<string> IncludeDirectories => _configuration.IncludeDirectories;
 
     public Scope ScopeFor(string scopeIndicator)
     {

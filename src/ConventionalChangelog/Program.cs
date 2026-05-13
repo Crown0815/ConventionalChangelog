@@ -14,12 +14,19 @@ void Execute(
     [Option('a')]bool showHash,
     [Option('c')]ChangelogOrder? changelogOrder,
     [Option('x')]string? referenceCommit,
+    [Option('f')]string? configFile,
     [Argument]string repositoryPath)
 {
+    var fileConfiguration = configFile is null
+        ? default
+        : ConfigurationFile.Read(configFile);
+
     var configuration = new Configuration(
         ignorePrerelease: ignorePrereleases,
         versionTagPrefix: tagPrefix,
         skipTitle: skipTitle,
+        commitTypes: fileConfiguration.CommitTypes,
+        scopes: fileConfiguration.Scopes,
         ignoreScope: ignoreScope,
         referenceCommit: referenceCommit,
         changelogOrder: changelogOrder,
@@ -33,11 +40,16 @@ void Execute(
         File.WriteAllText(output, changelog + Environment.NewLine);
         if (TeamCity.IsCurrentCi())
             Console.WriteLine(TeamCity.SetParameterCommand(Output.Changelog, changelog));
+        else if (GitHub.IsCurrentCi())
+            Console.WriteLine(GitHub.SetOutputCommand(Output.Changelog, changelog));
     }
     else
     {
-        Console.WriteLine(TeamCity.IsCurrentCi()
-            ? TeamCity.SetParameterCommand(Output.Changelog, changelog)
-            : changelog);
+        if (TeamCity.IsCurrentCi())
+            Console.WriteLine(TeamCity.SetParameterCommand(Output.Changelog, changelog));
+        else if (GitHub.IsCurrentCi())
+            Console.WriteLine(GitHub.SetOutputCommand(Output.Changelog, changelog));
+        else
+            Console.WriteLine(changelog);
     }
 }
