@@ -45,8 +45,8 @@ void Execute(
         }
         else if (GitHub.IsCurrentCi())
         {
-            Console.WriteLine(GitHub.GenerateContent(Output.ChangelogLegacy, changelog));
-            Console.WriteLine(GitHub.GenerateContent(Output.Changelog, changelog));
+            GitHub.WriteOutput(Output.ChangelogLegacy, changelog);
+            GitHub.WriteOutput(Output.Changelog, changelog);
         }
     }
     else
@@ -58,8 +58,8 @@ void Execute(
         }
         else if (GitHub.IsCurrentCi())
         {
-            Console.WriteLine(GitHub.GenerateContent(Output.ChangelogLegacy, changelog));
-            Console.WriteLine(GitHub.GenerateContent(Output.Changelog, changelog));
+            GitHub.WriteOutput(Output.ChangelogLegacy, changelog);
+            GitHub.WriteOutput(Output.Changelog, changelog);
         }
         else
             Console.WriteLine(changelog);
