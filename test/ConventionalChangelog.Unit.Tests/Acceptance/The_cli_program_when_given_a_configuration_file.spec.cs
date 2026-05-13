@@ -43,6 +43,22 @@ public sealed class The_cli_program_when_given_a_configuration_file : CliTestsBa
         output.Should().Be(A.Changelog.WithGroup(Feature, "Infrastructure", 1) + NewLine);
     }
 
+    [Theory, MemberData(nameof(ConfigurationFileKeysData))]
+    public void uses_configured_empty_scope(string argument)
+    {
+        Repository.Commit(Feature, A.Description(1));
+        var configFile = CreateConfigFile(
+            """
+            Scopes:
+              - Name: ""
+                Header: General
+            """);
+
+        var output = OutputWithInput($"{argument} {configFile} {Repository.Path()}");
+
+        output.Should().Be(A.Changelog.WithGroup(Feature, "General", 1) + NewLine);
+    }
+
     private static string CreateConfigFile(string content)
     {
         var path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.yaml");
