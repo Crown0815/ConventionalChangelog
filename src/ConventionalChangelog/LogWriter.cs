@@ -39,10 +39,8 @@ internal class LogWriter(Customization customization)
                 case Relevance.Show:
                     AddBullet(type.GroupHeader, scope.GroupHeader, EntryFor(printReady));
                     break;
-                case Relevance.Hide:
-                    AddGeneralCodeImprovement();
-                    break;
                 case Relevance.Ignore:
+                    AddGeneralCodeImprovement();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));

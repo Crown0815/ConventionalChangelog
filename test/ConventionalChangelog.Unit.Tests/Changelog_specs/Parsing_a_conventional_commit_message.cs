@@ -10,7 +10,7 @@ public class Parsing_a_conventional_commit_message
 {
     // Based on: https://www.conventionalcommits.org/en/v1.0.0/#specification
 
-    private static readonly MessageParser MessageParser = new();
+    private static readonly MessageParser MessageParser = new Changelog(new Configuration()).Parser;
     private static CommitMessage Parsed(string message) => MessageParser.Parse(A.Commit(message));
 
     private static class TestCommit

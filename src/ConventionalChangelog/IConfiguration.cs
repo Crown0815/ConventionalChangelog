@@ -18,4 +18,5 @@ public interface IConfiguration
     string? ReferenceCommit { get; }
     bool ShowHash { get; }
     IReadOnlyCollection<string> IncludeDirectories { get; }
+    string MessageOverridePath { get; }
 }

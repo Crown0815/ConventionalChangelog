@@ -8,7 +8,7 @@ internal static class CommitTypeFor
     public static readonly CommitType Bugfix = new("fix", "Bug Fixes", Relevance.Show);
     public static readonly CommitType PerformanceImprovement = new("perf", "Performance Improvements", Relevance.Show);
 
-    public static readonly CommitType Irrelevant = new("chore", "", Relevance.Hide);
+    public static readonly CommitType Irrelevant = new("chore", "", Relevance.Ignore);
 
     public static CommitType ToCommitType(this string indicator) => new(indicator, "", Relevance.Show);
 }

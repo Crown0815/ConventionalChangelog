@@ -20,18 +20,11 @@ internal static class ConfigurationFile
 
         return new ConfigurationValues(
             CommitTypes: configuration.CommitTypes?
-                .Select(type => new CommitType(type.TypeIndicator, type.GroupHeader, ParseRelevance(type.Relevance)))
+                .Select(type => new CommitType(type.TypeIndicator, type.GroupHeader, Relevance.Show))
                 .ToArray(),
             Scopes: configuration.Scopes?
                 .Select(scope => new Scope(scope.Name, scope.Header))
                 .ToArray());
-    }
-
-    private static Relevance ParseRelevance(string value)
-    {
-        return Enum.TryParse<Relevance>(value, true, out var relevance)
-            ? relevance
-            : Relevance.Ignore;
     }
 
     public readonly record struct ConfigurationValues(
@@ -48,7 +41,6 @@ internal static class ConfigurationFile
     {
         public string TypeIndicator { get; init; } = "";
         public string GroupHeader { get; init; } = "";
-        public string Relevance { get; init; } = "Ignore";
     }
 
     private sealed class YamlScope

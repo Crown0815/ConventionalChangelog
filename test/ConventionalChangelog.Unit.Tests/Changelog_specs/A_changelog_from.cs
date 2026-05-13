@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using AwesomeAssertions;
 using Xunit;
 
@@ -21,28 +22,23 @@ public class A_changelog_from
         fromNull.Should().Throw<Exception>();
     }
 
-    public static readonly TheoryData<Commit[]> EmptyCases =
-    [
-        Array.Empty<Commit>(),
-        new[] { A.Commit("") },
-        new[] { A.Commit(""),  A.Commit("") },
-    ];
-
-    [Theory]
-    [MemberData(nameof(EmptyCases))]
-    public void empty_changes_is_empty(Commit[] noChanges)
+    [Fact]
+    public void no_changes_is_empty()
     {
-        var changelog = The.ChangelogFrom(noChanges);
+        var changelog = The.ChangelogFrom();
         changelog.Should().Be(A.Changelog.Empty);
     }
 
     [Theory]
+    [InlineData("")]
+    [InlineData("", "")]
     [InlineData("some message")]
     [InlineData("1234: abc")]
-    public void non_conventional_commits_is_empty(string nonConventionalCommitMessage)
+    public void non_conventional_commits_only_shows_general_code_improvements(params string[] messages)
     {
-        var changelog = The.ChangelogFrom(A.Commit(nonConventionalCommitMessage));
-        changelog.Should().Be(A.Changelog.Empty);
+        var commits = messages.Select(A.Commit).ToArray();
+        var changelog = The.ChangelogFrom(commits);
+        changelog.Should().Be(A.Changelog.WithGeneralCodeImprovementsMessage());
     }
 
     [Theory]
