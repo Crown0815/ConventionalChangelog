@@ -12,8 +12,14 @@ public class The_constant
     ];
 
     [Fact]
+    public void legacy_output_changelog_has_the_expected_value()
+    {
+        Output.ChangelogLegacy.Should().Be("CRN.Changelog");
+    }
+
+    [Fact]
     public void output_changelog_has_the_expected_value()
     {
-        Output.Changelog.Should().Be("CRN.Changelog");
+        Output.Changelog.Should().Be("Changelog");
     }
 }

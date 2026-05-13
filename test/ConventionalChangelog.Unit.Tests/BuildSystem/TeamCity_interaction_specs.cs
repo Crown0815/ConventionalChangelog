@@ -14,7 +14,7 @@ public class TeamCity_interaction_specs
     [Fact]
     public void TeamCity_set_parameter_command_for_a_given_parameter_name_to_a_value_returns_service_message_format()
     {
-        var message = TeamCity.SetParameterCommand("Parameter.Name", "NewValue");
+        var message = TeamCity.GenerateContent("Parameter.Name", "NewValue");
         message.Should().Be(ServiceMessageToSetParameter("Parameter.Name", "NewValue"));
     }
 
@@ -40,7 +40,7 @@ public class TeamCity_interaction_specs
         "This |'string|' |[text|] with |n|r |||0x00b0|| and |||0x03a0||")]
     public void TeamCity_set_parameter_command_escapes(string raw, string with)
     {
-        var message = TeamCity.SetParameterCommand("Parameter.Name", raw);
+        var message = TeamCity.GenerateContent("Parameter.Name", raw);
         message.Should().Be(ServiceMessageToSetParameter("Parameter.Name", with));
     }
 }

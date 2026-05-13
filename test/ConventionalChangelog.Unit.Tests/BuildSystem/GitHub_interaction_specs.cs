@@ -15,16 +15,16 @@ public class GitHub_interaction_specs
     [Fact]
     public void GitHub_set_output_command_for_a_given_parameter_name_to_a_value_returns_output_command_format()
     {
-        var message = GitHub.SetOutputCommand("Parameter.Name", "NewValue");
+        var message = GitHub.GenerateContent("Parameter.Name", "NewValue");
         message.Should().Be(OutputCommandToSetParameter("Parameter.Name", "NewValue"));
     }
 
     [Theory]
-    // non ASCII characters represented as unicode
+    // non-ASCII characters represented as Unicode
     [InlineData("\u03a0", "\\u03a0")]
     [InlineData("\u0080", "\\u0080")]
 
-    // ASCII characters not escaped
+    // ASCII characters are not escaped
     [InlineData("\u007f", "\u007f")]
     [InlineData("\u007e", "~")]
 
@@ -34,7 +34,7 @@ public class GitHub_interaction_specs
         "This 'string' [text] with \n\r |\\u00b0| and |\\u03a0|")]
     public void GitHub_set_output_command_escapes(string raw, string with)
     {
-        var message = GitHub.SetOutputCommand("Parameter.Name", raw);
+        var message = GitHub.GenerateContent("Parameter.Name", raw);
         message.Should().Be(OutputCommandToSetParameter("Parameter.Name", with));
     }
 }

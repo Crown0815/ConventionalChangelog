@@ -11,6 +11,7 @@ namespace ConventionalChangelog.Unit.Tests.Acceptance;
 public sealed class The_cli_program_when_given_an_output_file : CliTestsBase
 {
     private readonly string _fileName = Guid.NewGuid().ToString();
+    private string _githubOutputFileName = Path.GetTempFileName();
     public static TheoryData<string> OutputKeysData => TheoryDataFrom(OutputKeys);
 
     [Theory]
@@ -35,7 +36,11 @@ public sealed class The_cli_program_when_given_an_output_file : CliTestsBase
 
         var output = OutputWithInput($"{argument} {_fileName} {Repository.Path()}", (TeamCity.EnvironmentVariable, "whatever"));
 
-        output.Should().Be(TeamCity.SetParameterCommand("CRN.Changelog", A.Changelog.WithGroup(Feature, 1)) + NewLine);
+        output.Should().Be($"""
+                            {TeamCity.GenerateContent(Output.ChangelogLegacy, A.Changelog.WithGroup(Feature, 1))}
+                            {TeamCity.GenerateContent(Output.Changelog, A.Changelog.WithGroup(Feature, 1))}
+
+                            """);
     }
 
     [Theory]
@@ -44,13 +49,23 @@ public sealed class The_cli_program_when_given_an_output_file : CliTestsBase
     {
         Repository.Commit(Feature, 1);
 
-        var output = OutputWithInput($"{argument} {_fileName} {Repository.Path()}", (GitHub.EnvironmentVariable, "true"));
+        var output = OutputWithInput(
+            $"{argument} {_fileName} {Repository.Path()}",
+            (GitHub.EnvironmentVariable, "true"),
+            (GitHub.EnvironmentOutputVariable, _githubOutputFileName));
 
-        output.Should().Be(GitHub.SetOutputCommand("CRN.Changelog", A.Changelog.WithGroup(Feature, 1)) + NewLine);
+        output.Should().BeEmpty();
+
+        File.ReadAllText(_githubOutputFileName).Should().Be($"""
+            {GitHub.GenerateContent(Output.ChangelogLegacy, A.Changelog.WithGroup(Feature, 1))}
+            {GitHub.GenerateContent(Output.Changelog, A.Changelog.WithGroup(Feature, 1))}
+
+            """);
     }
 
     public override void Dispose()
     {
+        File.Delete(_githubOutputFileName);
         File.Delete(_fileName);
         base.Dispose();
     }

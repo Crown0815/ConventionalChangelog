@@ -1,7 +1,6 @@
 ﻿using ConventionalChangelog.BuildSystems;
 using AwesomeAssertions;
 using Xunit;
-using static System.Environment;
 using static ConventionalChangelog.Unit.Tests.CommitTypeFor;
 
 namespace ConventionalChangelog.Unit.Tests.Acceptance;
@@ -15,6 +14,10 @@ public class The_cli_program_when_in_teamcity_context : CliTestsBase
 
         var output = OutputWithInput(Repository.Path(), (TeamCity.EnvironmentVariable, "whatever"));
 
-        output.Should().Be(TeamCity.SetParameterCommand(Output.Changelog, A.Changelog.WithGroup(Feature, 1)) + NewLine);
+        output.Should().Be($"""
+                            {TeamCity.GenerateContent(Output.ChangelogLegacy, A.Changelog.WithGroup(Feature, 1))}
+                            {TeamCity.GenerateContent(Output.Changelog, A.Changelog.WithGroup(Feature, 1))}
+
+                            """);
     }
 }

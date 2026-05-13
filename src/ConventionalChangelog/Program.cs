@@ -39,16 +39,28 @@ void Execute(
     {
         File.WriteAllText(output, changelog + Environment.NewLine);
         if (TeamCity.IsCurrentCi())
-            Console.WriteLine(TeamCity.SetParameterCommand(Output.Changelog, changelog));
+        {
+            TeamCity.WriteOutput(Output.ChangelogLegacy, changelog);
+            TeamCity.WriteOutput(Output.Changelog, changelog);
+        }
         else if (GitHub.IsCurrentCi())
-            Console.WriteLine(GitHub.SetOutputCommand(Output.Changelog, changelog));
+        {
+            GitHub.WriteOutput(Output.ChangelogLegacy, changelog);
+            GitHub.WriteOutput(Output.Changelog, changelog);
+        }
     }
     else
     {
         if (TeamCity.IsCurrentCi())
-            Console.WriteLine(TeamCity.SetParameterCommand(Output.Changelog, changelog));
+        {
+            TeamCity.WriteOutput(Output.ChangelogLegacy, changelog);
+            TeamCity.WriteOutput(Output.Changelog, changelog);
+        }
         else if (GitHub.IsCurrentCi())
-            Console.WriteLine(GitHub.SetOutputCommand(Output.Changelog, changelog));
+        {
+            GitHub.WriteOutput(Output.ChangelogLegacy, changelog);
+            GitHub.WriteOutput(Output.Changelog, changelog);
+        }
         else
             Console.WriteLine(changelog);
     }

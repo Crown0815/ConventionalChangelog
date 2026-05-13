@@ -8,8 +8,13 @@ public static class TeamCity
     // [...] This property can be used to determine if the build is run within TeamCity.
     public const string EnvironmentVariable = "TEAMCITY_VERSION";
 
+    public static void WriteOutput(string name, string value)
+    {
+        Console.WriteLine(GenerateContent(name, value));
+    }
+
     // see https://www.jetbrains.com/help/teamcity/service-messages.html for details
-    public static string SetParameterCommand(string name, string value)
+    public static string GenerateContent(string name, string value)
     {
         return $"##teamcity[setParameter name='{name}' value='{Escaped(value)}']";
     }
