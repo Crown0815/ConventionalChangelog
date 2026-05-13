@@ -12,29 +12,17 @@ public class GitHub_interaction_specs
     private static string OutputCommandToSetParameter(string name, string value) =>
         $"{name}<<EOF{NewLine}{value}{NewLine}EOF";
 
-    [Fact]
-    public void GitHub_set_output_command_for_a_given_parameter_name_to_a_value_returns_output_command_format()
-    {
-        var message = GitHub.GenerateContent("Parameter.Name", "NewValue");
-        message.Should().Be(OutputCommandToSetParameter("Parameter.Name", "NewValue"));
-    }
-
     [Theory]
-    // non-ASCII characters represented as Unicode
-    [InlineData("\u03a0", "\\u03a0")]
-    [InlineData("\u0080", "\\u0080")]
-
-    // ASCII characters are not escaped
-    [InlineData("\u007f", "\u007f")]
-    [InlineData("\u007e", "~")]
-
-    // All together
-    [InlineData(
-        "This 'string' [text] with \n\r |\u00b0| and |\u03a0|",
-        "This 'string' [text] with \n\r |\\u00b0| and |\\u03a0|")]
-    public void GitHub_set_output_command_escapes(string raw, string with)
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("SomeValue")]
+    [InlineData("\u007f")]
+    [InlineData("~")]
+    [InlineData("🚀")]
+    [InlineData("🧑‍🔬")]
+    public void GitHub_set_output_command_for_a_given_parameter_name_to_a_value_returns_output_command_format(string content)
     {
-        var message = GitHub.GenerateContent("Parameter.Name", raw);
-        message.Should().Be(OutputCommandToSetParameter("Parameter.Name", with));
+        var message = GitHub.GenerateContent("Parameter.Name", content);
+        message.Should().Be(OutputCommandToSetParameter("Parameter.Name", content));
     }
 }
