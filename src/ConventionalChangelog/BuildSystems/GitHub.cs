@@ -9,7 +9,7 @@ public static class GitHub
     public const string EnvironmentVariable = "GITHUB_ACTIONS";
 
     // see https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#setting-an-output-parameter
-    public static string SetOutputCommand(string name, string value)
+    public static string GenerateContent(string name, string value)
     {
         return $"{name}<<EOF{Environment.NewLine}{Escaped(value)}{Environment.NewLine}EOF";
     }

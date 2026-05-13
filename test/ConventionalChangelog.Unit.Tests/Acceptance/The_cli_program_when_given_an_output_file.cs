@@ -36,8 +36,8 @@ public sealed class The_cli_program_when_given_an_output_file : CliTestsBase
         var output = OutputWithInput($"{argument} {_fileName} {Repository.Path()}", (TeamCity.EnvironmentVariable, "whatever"));
 
         output.Should().Be($"""
-                            {TeamCity.SetParameterCommand(Output.ChangelogLegacy, A.Changelog.WithGroup(Feature, 1))}
-                            {TeamCity.SetParameterCommand(Output.Changelog, A.Changelog.WithGroup(Feature, 1))}
+                            {TeamCity.GenerateContent(Output.ChangelogLegacy, A.Changelog.WithGroup(Feature, 1))}
+                            {TeamCity.GenerateContent(Output.Changelog, A.Changelog.WithGroup(Feature, 1))}
 
                             """);
     }
@@ -51,8 +51,8 @@ public sealed class The_cli_program_when_given_an_output_file : CliTestsBase
         var output = OutputWithInput($"{argument} {_fileName} {Repository.Path()}", (GitHub.EnvironmentVariable, "true"));
 
         output.Should().Be($"""
-                            {GitHub.SetOutputCommand(Output.ChangelogLegacy, A.Changelog.WithGroup(Feature, 1))}
-                            {GitHub.SetOutputCommand(Output.Changelog, A.Changelog.WithGroup(Feature, 1))}
+                            {GitHub.GenerateContent(Output.ChangelogLegacy, A.Changelog.WithGroup(Feature, 1))}
+                            {GitHub.GenerateContent(Output.Changelog, A.Changelog.WithGroup(Feature, 1))}
 
                             """);
     }

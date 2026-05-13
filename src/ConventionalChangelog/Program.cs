@@ -40,26 +40,26 @@ void Execute(
         File.WriteAllText(output, changelog + Environment.NewLine);
         if (TeamCity.IsCurrentCi())
         {
-            Console.WriteLine(TeamCity.SetParameterCommand(Output.ChangelogLegacy, changelog));
-            Console.WriteLine(TeamCity.SetParameterCommand(Output.Changelog, changelog));
+            Console.WriteLine(TeamCity.GenerateContent(Output.ChangelogLegacy, changelog));
+            Console.WriteLine(TeamCity.GenerateContent(Output.Changelog, changelog));
         }
         else if (GitHub.IsCurrentCi())
         {
-            Console.WriteLine(GitHub.SetOutputCommand(Output.ChangelogLegacy, changelog));
-            Console.WriteLine(GitHub.SetOutputCommand(Output.Changelog, changelog));
+            Console.WriteLine(GitHub.GenerateContent(Output.ChangelogLegacy, changelog));
+            Console.WriteLine(GitHub.GenerateContent(Output.Changelog, changelog));
         }
     }
     else
     {
         if (TeamCity.IsCurrentCi())
         {
-            Console.WriteLine(TeamCity.SetParameterCommand(Output.ChangelogLegacy, changelog));
-            Console.WriteLine(TeamCity.SetParameterCommand(Output.Changelog, changelog));
+            Console.WriteLine(TeamCity.GenerateContent(Output.ChangelogLegacy, changelog));
+            Console.WriteLine(TeamCity.GenerateContent(Output.Changelog, changelog));
         }
         else if (GitHub.IsCurrentCi())
         {
-            Console.WriteLine(GitHub.SetOutputCommand(Output.ChangelogLegacy, changelog));
-            Console.WriteLine(GitHub.SetOutputCommand(Output.Changelog, changelog));
+            Console.WriteLine(GitHub.GenerateContent(Output.ChangelogLegacy, changelog));
+            Console.WriteLine(GitHub.GenerateContent(Output.Changelog, changelog));
         }
         else
             Console.WriteLine(changelog);
