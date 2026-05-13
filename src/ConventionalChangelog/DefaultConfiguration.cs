@@ -34,13 +34,6 @@ internal class DefaultConfiguration : IConfiguration
             new("feat", "Features", Relevance.Show),
             new("fix", "Bug Fixes", Relevance.Show),
             new("perf", "Performance Improvements", Relevance.Show),
-            new("build", "", Relevance.Hide),
-            new("chore", "", Relevance.Hide),
-            new("ci", "", Relevance.Hide),
-            new("docs", "", Relevance.Hide),
-            new("style", "", Relevance.Hide),
-            new("refactor", "", Relevance.Hide),
-            new("test", "", Relevance.Hide),
         ];
 
         public static readonly Scope[] Scopes = [];
